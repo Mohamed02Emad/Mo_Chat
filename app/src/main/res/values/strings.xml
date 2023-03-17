@@ -22,4 +22,5 @@
     <string name="enter_room_name">Enter Room Name</string>
     <string name="enter_room_password">Enter Room Password</string>
     <string name="room_id">Room Id :</string>
+    <string name="enter_room_id">Enter Room Id</string>
 </resources>
