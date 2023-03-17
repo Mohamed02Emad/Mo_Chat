@@ -1,4 +1,4 @@
-package com.mo_chatting.chatapp.presentation
+package com.mo_chatting.chatapp.presentation.signUp
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
