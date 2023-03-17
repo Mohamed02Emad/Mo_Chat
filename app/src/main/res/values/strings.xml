@@ -14,4 +14,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="user_name">User name</string>
     <string name="type_something">type something</string>
+    <string name="new_room">New Room</string>
+    <string name="join">join</string>
+    <string name="create">create</string>
 </resources>
