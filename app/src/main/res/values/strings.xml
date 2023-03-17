@@ -4,4 +4,23 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="welcome">Welcome</string>
     <string name="add_new_chat">add new chat</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="login">login</string>
+    <string name="or_login_with">or login with</string>
+    <string name="have_no_account">Have no account ?</string>
+    <string name="have_account">Have account ?</string>
+    <string name="sign_up">Sign-up</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="user_name">User name</string>
+    <string name="type_something">type something</string>
+    <string name="new_room">New Room</string>
+    <string name="join">join</string>
+    <string name="create">create</string>
+    <string name="room_name">Room name</string>
+    <string name="room_type">Room type</string>
+    <string name="enter_room_name">Enter Room Name</string>
+    <string name="enter_room_password">Enter Room Password</string>
+    <string name="room_id">Room Id :</string>
+    <string name="enter_room_id">Enter Room Id</string>
 </resources>
