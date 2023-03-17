@@ -17,4 +17,8 @@
     <string name="new_room">New Room</string>
     <string name="join">join</string>
     <string name="create">create</string>
+    <string name="room_name">Room name</string>
+    <string name="room_type">Room type</string>
+    <string name="enter_room_name">Enter Room Name</string>
+    <string name="enter_room_password">Enter Room Password</string>
 </resources>
