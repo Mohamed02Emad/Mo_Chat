@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/black"
-    tools:context=".presentation.login.LoginFragment">
+    tools:context=".presentation.SignUpFragment">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -25,16 +26,49 @@
 
 
         <TextView
-            android:id="@+id/tv_email"
+            android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/corners_space"
             android:layout_marginTop="50dp"
-            android:text="@string/e_mail"
+            android:text="@string/user_name"
             android:textColor="@color/blue_white"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
+
+
+        <EditText
+            android:id="@+id/et_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/corners_space"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/corners_space"
+            android:background="@drawable/app_edit_text"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="10dp"
+            android:textColor="@color/dark_blue"
+            android:textColorHint="@color/light_blue"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_user_name"
+            tools:text="user name" />
+
+
+
+
+        <TextView
+            android:id="@+id/tv_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/corners_space"
+            android:layout_marginTop="20dp"
+            android:text="@string/e_mail"
+            android:textColor="@color/blue_white"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_user_name" />
 
 
         <EditText
@@ -60,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/corners_space"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:text="@string/password"
             android:textColor="@color/blue_white"
             android:textSize="18sp"
@@ -85,19 +119,36 @@
             app:layout_constraintTop_toBottomOf="@id/tv_password"
             tools:text="password" />
 
-
         <TextView
-            android:id="@+id/tv_forgot_password"
+            android:id="@+id/tv_confirm_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:paddingVertical="4dp"
-            android:paddingEnd="8dp"
-            android:text="forgot password!"
+            android:layout_marginStart="@dimen/corners_space"
+            android:layout_marginTop="20dp"
+            android:text="@string/confirm_password"
             android:textColor="@color/blue_white"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@id/et_password"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_password" />
+
+
+        <EditText
+            android:id="@+id/et_confirm_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/corners_space"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/corners_space"
+            android:background="@drawable/app_edit_text"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="10dp"
+            android:textColor="@color/dark_blue"
+            android:textColorHint="@color/light_blue"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_confirm_password"
+            tools:text="confirm password" />
+
 
 
         <androidx.appcompat.widget.AppCompatButton
@@ -107,16 +158,17 @@
             android:layout_marginHorizontal="@dimen/corners_space"
             android:layout_marginTop="35dp"
             android:background="@drawable/app_button"
-            android:text="@string/login"
+            android:text="SignUp"
+            android:textAllCaps="false"
             android:textColor="@color/blue_white"
-            app:layout_constraintTop_toBottomOf="@id/tv_forgot_password" />
+            app:layout_constraintTop_toBottomOf="@id/et_confirm_password" />
 
         <TextView
             android:id="@+id/tv_or_login_with"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:text="@string/or_login_with"
+            android:text="or sign-up with"
             android:textColor="@color/blue_white"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -169,16 +221,16 @@
                 android:layout_height="wrap_content"
                 android:paddingVertical="4dp"
                 android:paddingStart="4dp"
-                android:text="@string/have_no_account"
+                android:text="@string/have_account"
                 android:textColor="@color/blue_white"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/tv_sign_up"
+                android:id="@+id/tv_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:text="@string/sign_up"
+                android:text="@string/login"
                 android:textColor="@color/light_blue"
                 android:textSize="18sp" />
 
@@ -186,4 +238,5 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>

@@ -9,4 +9,8 @@
     <string name="login">login</string>
     <string name="or_login_with">or login with</string>
     <string name="have_no_account">Have no account ?</string>
+    <string name="have_account">Have account ?</string>
+    <string name="sign_up">Sign-up</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="user_name">User name</string>
 </resources>
