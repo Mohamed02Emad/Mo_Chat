@@ -23,8 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/corners_space"
-        android:text="@string/room_name"
         android:paddingVertical="10dp"
+        android:text="@string/room_name"
         android:textColor="@color/grey_dark"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,15 +39,14 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="@dimen/corners_space"
         android:background="@drawable/app_edit_text"
-        android:paddingHorizontal="8dp"
         android:hint="@string/enter_room_name"
+        android:paddingHorizontal="8dp"
         android:paddingVertical="15dp"
         android:textColor="@color/dark_blue"
-        android:textColorHint="@color/light_blue"
+        android:textColorHint="@color/bla"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_room_name"
-        />
+        app:layout_constraintTop_toBottomOf="@id/tv_room_name" />
 
 
     <TextView
@@ -70,8 +69,8 @@
         android:layout_marginStart="40dp"
         android:src="@drawable/ic_family_room"
         app:layout_constraintBottom_toBottomOf="@id/tv_room_type"
-        app:layout_constraintStart_toEndOf="@id/tv_room_type"
         app:layout_constraintEnd_toEndOf="@id/et_room_name"
+        app:layout_constraintStart_toEndOf="@id/tv_room_type"
         app:layout_constraintTop_toTopOf="@id/tv_room_type"
         app:tint="@color/grey" />
 
@@ -107,20 +106,21 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="@dimen/corners_space"
         android:background="@drawable/app_edit_text"
+        android:hint="@string/enter_room_password"
         android:paddingHorizontal="8dp"
         android:paddingVertical="15dp"
         android:textColor="@color/dark_blue"
-        android:textColorHint="@color/light_blue"
+        android:textColorHint="@color/dark_blue"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_use_password"
-        android:hint="@string/enter_room_password" />
+        app:layout_constraintTop_toBottomOf="@id/tv_use_password" />
 
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_create_new_room"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/app_button"
         android:text="@string/create"
@@ -128,9 +128,8 @@
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_password"/>
+        app:layout_constraintTop_toBottomOf="@id/et_password" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
