@@ -36,4 +36,11 @@ fun validatePassword(password: String): ValidationResault {
     return ValidationResault(true, "is valid")
 }
 
+fun validateUserName(userName:String):ValidationResault{
+    if (userName.isBlank())return ValidationResault(false,"name is empty")
+    if (userName.length==1)return ValidationResault(false,"name is too short")
+    if (userName.length>30)return ValidationResault(false,"name is too long")
+    return ValidationResault(true,"is valid")
+}
+
 class ValidationResault(val isValid: Boolean, val message: String)
