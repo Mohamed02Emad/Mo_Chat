@@ -72,12 +72,6 @@ class SignUpFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
             }
         }
-        binding.loginWithFacebook.setOnClickListener {
-            showToast("Soon")
-        }
-        binding.loginWithGoogle.setOnClickListener {
-            showToast("Soon")
-        }
     }
 
     private fun accountCreated(): Boolean {

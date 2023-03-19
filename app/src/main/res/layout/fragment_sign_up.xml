@@ -173,44 +173,44 @@
             android:textColor="@color/blue_white"
             app:layout_constraintTop_toBottomOf="@id/et_confirm_password" />
 
-        <TextView
-            android:id="@+id/tv_or_login_with"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="or sign-up with"
-            android:textColor="@color/blue_white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_sign_up" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_or_login_with"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="40dp"-->
+<!--            android:text="or sign-up with"-->
+<!--            android:textColor="@color/blue_white"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/btn_sign_up" />-->
 
-        <LinearLayout
-            android:id="@+id/linear_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_or_login_with">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/linear_layout"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:orientation="horizontal"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/tv_or_login_with">-->
 
-            <ImageView
-                android:id="@+id/login_with_facebook"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:padding="5dp"
-                android:src="@drawable/ic_facebook" />
+<!--            <ImageView-->
+<!--                android:id="@+id/login_with_facebook"-->
+<!--                android:layout_width="55dp"-->
+<!--                android:layout_height="55dp"-->
+<!--                android:padding="5dp"-->
+<!--                android:src="@drawable/ic_facebook" />-->
 
-            <ImageView
-                android:id="@+id/login_with_google"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_marginStart="10dp"
-                android:padding="5dp"
-                android:src="@drawable/ic_google" />
+<!--            <ImageView-->
+<!--                android:id="@+id/login_with_google"-->
+<!--                android:layout_width="55dp"-->
+<!--                android:layout_height="55dp"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:padding="5dp"-->
+<!--                android:src="@drawable/ic_google" />-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/signup_linear"
@@ -222,7 +222,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linear_layout">
+            app:layout_constraintTop_toBottomOf="@id/btn_sign_up">
 
             <TextView
                 android:layout_width="wrap_content"
