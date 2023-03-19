@@ -65,12 +65,7 @@ class SignUpFragment : Fragment() {
             findNavController().navigateUp()
         }
         binding.btnSignUp.setOnClickListener {
-            if (accountCreated()) {
-                startActivity(Intent(requireActivity(), MainActivity::class.java))
-            } else {
-                //todo add loigc
-                Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
-            }
+            accountCreated()
         }
     }
 
@@ -104,7 +99,6 @@ class SignUpFragment : Fragment() {
                     showToast("User Exists")
                 }
             }
-
         return true
     }
 

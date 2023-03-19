@@ -29,7 +29,6 @@ import kotlinx.coroutines.withContext
 
 class LoginFragment : Fragment() {
 
-    private val GOOGLE_RESULT_CODE = 0
     lateinit var binding: FragmentLoginBinding
     lateinit var firebaseAuth: FirebaseAuth
     private val viewModel: LoginViewModel by viewModels()
@@ -39,6 +38,10 @@ class LoginFragment : Fragment() {
     ): View {
         binding = FragmentLoginBinding.inflate(layoutInflater)
         firebaseAuth = FirebaseAuth.getInstance()
+        if (firebaseAuth.currentUser != null){
+            startActivity(Intent(requireActivity(), MainActivity::class.java))
+            requireActivity().finish()
+        }
         return binding.root
     }
 
@@ -76,11 +79,11 @@ class LoginFragment : Fragment() {
         binding.tvForgotPassword.setOnClickListener {
             showToast("Soon")
         }
-//
-//
-//        binding.loginWithFacebook.setOnClickListener {
-//            showToast("Soon")
-//        }
+
+
+        binding.loginWithFacebook.setOnClickListener {
+            showToast("Soon")
+        }
 
         binding.loginWithGoogle.setOnClickListener {
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
