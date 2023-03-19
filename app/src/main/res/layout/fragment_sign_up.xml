@@ -29,8 +29,8 @@
             android:id="@+id/tv_welcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="@string/welcome"
+            android:layout_marginTop="60dp"
+            android:text="@string/sign_up"
             android:textColor="@color/light_blue"
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -162,7 +162,7 @@
 
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_login"
+            android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/corners_space"
@@ -183,7 +183,7 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_login" />
+            app:layout_constraintTop_toBottomOf="@id/btn_sign_up" />
 
         <LinearLayout
             android:id="@+id/linear_layout"
@@ -200,8 +200,7 @@
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:padding="5dp"
-                android:src="@drawable/ic_facebook"
-                app:layout_constraintTop_toBottomOf="@id/tv_or_login_with" />
+                android:src="@drawable/ic_facebook" />
 
             <ImageView
                 android:id="@+id/login_with_google"
@@ -209,8 +208,7 @@
                 android:layout_height="55dp"
                 android:layout_marginStart="10dp"
                 android:padding="5dp"
-                android:src="@drawable/ic_google"
-                app:layout_constraintTop_toBottomOf="@id/tv_or_login_with" />
+                android:src="@drawable/ic_google" />
 
         </LinearLayout>
 
