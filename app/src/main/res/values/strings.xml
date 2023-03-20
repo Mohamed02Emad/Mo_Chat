@@ -23,4 +23,6 @@
     <string name="enter_room_password">Enter Room Password</string>
     <string name="room_id">Room Id :</string>
     <string name="enter_room_id">Enter Room Id</string>
+    <string name="logout">logOut</string>
+    <string name="signup">Sign Up</string>
 </resources>
