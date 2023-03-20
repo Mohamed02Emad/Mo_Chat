@@ -41,7 +41,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUserViews() {
-        binding.tvWelcome.text = firebaseAuth.currentUser!!.displayName
+        binding.tvUserName.text = firebaseAuth.currentUser!!.displayName
         binding.profile.setImageURI(firebaseAuth.currentUser!!.photoUrl)
     }
 
