@@ -95,15 +95,14 @@ class SignUpFragment : Fragment() {
                     startActivity(Intent(requireActivity(), MainActivity::class.java))
                     requireActivity().finish()
                 } else {
-                    Log.d("mohamed", "validateAccount: signup else")
-                    showToast("User Exists")
+                    showToast(it.exception!!.message.toString())
                 }
             }
         return true
     }
 
     private fun showToast(s: String) =
-        Toast.makeText(requireActivity(), s, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show()
 
 
 }

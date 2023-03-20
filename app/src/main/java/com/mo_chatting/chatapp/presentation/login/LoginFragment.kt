@@ -17,7 +17,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.mo_chatting.chatapp.MainActivity
-import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.firebase_client_id
 import com.mo_chatting.chatapp.databinding.FragmentLoginBinding
 import com.mo_chatting.chatapp.validation.isValidEmail
@@ -30,8 +29,8 @@ import kotlinx.coroutines.withContext
 
 class LoginFragment : Fragment() {
 
-    lateinit var binding: FragmentLoginBinding
-    lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var binding: FragmentLoginBinding
+    private lateinit var firebaseAuth: FirebaseAuth
     private val viewModel: LoginViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +38,7 @@ class LoginFragment : Fragment() {
     ): View {
         binding = FragmentLoginBinding.inflate(layoutInflater)
         firebaseAuth = FirebaseAuth.getInstance()
-        if (firebaseAuth.currentUser != null){
+        if (firebaseAuth.currentUser != null) {
             startActivity(Intent(requireActivity(), MainActivity::class.java))
             requireActivity().finish()
         }
@@ -78,8 +77,11 @@ class LoginFragment : Fragment() {
         }
 
         binding.tvForgotPassword.setOnClickListener {
-            showToast("Soon")
-        }
+            CoroutineScope(Dispatchers.IO).launch {
+                resetPassword(binding.etEmail.text.toString())
+            }
+
+            }
 
 
         binding.loginWithFacebook.setOnClickListener {
@@ -88,27 +90,29 @@ class LoginFragment : Fragment() {
 
         binding.loginWithGoogle.setOnClickListener {
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    //git ignored
+                //git ignored
                 .requestIdToken(firebase_client_id)
                 .requestEmail()
                 .build()
             val signInClient = GoogleSignIn.getClient(requireActivity(), options)
-            signInClient.signInIntent.also { resultLauncher.launch(it) }
+            signInClient.signInIntent.also {
+                resultLauncher.launch(it)
+            }
 
         }
     }
 
 
     private fun validateAccount(email: String, password: String): Boolean {
-        val emailValidationResault = isValidEmail(email)
-        val passwordValidationResault = validatePassword(password)
+        val emailValidationResult = isValidEmail(email)
+        val passwordValidationResult = validatePassword(password)
 
-        if (!emailValidationResault.isValid) {
-            showToast(emailValidationResault.message)
+        if (!emailValidationResult.isValid) {
+            showToast(emailValidationResult.message)
             return false
         }
-        if (!passwordValidationResault.isValid) {
-            showToast(passwordValidationResault.message)
+        if (!passwordValidationResult.isValid) {
+            showToast(passwordValidationResult.message)
             return false
         }
 
@@ -117,7 +121,7 @@ class LoginFragment : Fragment() {
                 startActivity(Intent(requireActivity(), MainActivity::class.java))
                 requireActivity().finish()
             } else {
-                showToast("no user")
+                showToast(it.exception!!.message.toString())
             }
         }
 
@@ -125,27 +129,28 @@ class LoginFragment : Fragment() {
     }
 
     private fun showToast(s: String) {
-        Toast.makeText(requireActivity(), s, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show()
     }
 
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val data = result.data
-            val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
-            account?.let {
-                googleAuthForFirebase(it)
+            try {
+                val data = result.data
+                val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
+                account?.let {
+                    googleAuthForFirebase(it)
+                    startActivity(Intent(requireActivity(), MainActivity::class.java))
+                    requireActivity().finish()
+                }
+            } catch (_: Exception) {
             }
-
         }
-
 
     private fun googleAuthForFirebase(account: GoogleSignInAccount) {
         val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 firebaseAuth.signInWithCredential(credentials).await()
-
-
             } catch (e: java.lang.Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), e.message.toString(), Toast.LENGTH_SHORT)
@@ -153,7 +158,20 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+    }
 
+    private suspend fun resetPassword(email: String?) {
+        if (email.isNullOrBlank()){
+            withContext(Dispatchers.Main) {
+                showToast("Enter your Email first")
+            }
+                return
+
+        }
+        firebaseAuth.sendPasswordResetEmail(email).await()
+        withContext(Dispatchers.Main) {
+            showToast("check your email")
+        }
     }
 
 }
