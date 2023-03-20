@@ -26,4 +26,7 @@
     <string name="logout">logOut</string>
     <string name="signup">Sign Up</string>
     <string name="firebase_client_id">280685173349-4pkvdtpc0f82kbetn6li6fp3mfs6fed6.apps.googleusercontent.com</string>
+    <string name="edit_image">Edit Image</string>
+    <string name="camera">camera</string>
+    <string name="gallery">gallery</string>
 </resources>
