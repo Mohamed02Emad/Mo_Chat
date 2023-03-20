@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeBinding.inflate(layoutInflater)
         firebaseAuth = FirebaseAuth.getInstance()
         return binding.root
@@ -41,8 +41,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUserViews() {
-        binding.tvWelcome.text = firebaseAuth.currentUser?.displayName
-        binding.profile.setImageURI(firebaseAuth.currentUser?.photoUrl)
+        binding.tvWelcome.text = firebaseAuth.currentUser!!.displayName
+        binding.profile.setImageURI(firebaseAuth.currentUser!!.photoUrl)
     }
 
     private fun setOnClicks() {

@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -70,12 +72,21 @@ class SignUpFragment : Fragment() {
         binding.tvLogin.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.btnSignUp.setOnClickListener {
-            accountCreated()
+        binding.btnSignUp.apply {
+            setOnClickListener {
+                startAnimation {
+                    binding.progressBar.visibility = View.VISIBLE
+                    lifecycleScope.launch {
+                        accountCreated()
+                        binding.progressBar.visibility = View.INVISIBLE
+                        revertAnimation()
+                    }
+                }
+            }
         }
     }
 
-    private fun accountCreated(): Boolean {
+    private suspend fun accountCreated() {
 
 
         val emailValidationResault = isValidEmail(viewModel.email)
@@ -83,44 +94,42 @@ class SignUpFragment : Fragment() {
 
         if (!emailValidationResault.isValid) {
             showToast(emailValidationResault.message)
-            return false
+            return
         }
         if (!passwordValidationResault.isValid) {
             showToast(passwordValidationResault.message)
-            return false
+            return
         }
 
         if (viewModel.passwrod != viewModel.confirmPassword) {
             showToast("password don't match")
-            return false
+            return
         }
 
-        firebaseAuth.createUserWithEmailAndPassword(viewModel.email, viewModel.passwrod)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    firebaseAuth.currentUser?.let {user->
-                        val name = binding.etUserName.text.toString()
-                        val imageUri =
-                            Uri.parse("android.resource://${requireActivity().packageName}/${R.drawable.ic_profile}")
-                        val profileUpdates = UserProfileChangeRequest.Builder()
-                            .setDisplayName(name)
-                            .setPhotoUri(imageUri)
-                            .build()
+        try {
+            firebaseAuth.createUserWithEmailAndPassword(viewModel.email, viewModel.passwrod).await()
+                firebaseAuth.currentUser?.let { user ->
+                    val name = binding.etUserName.text.toString()
+                    val imageUri =
+                        Uri.parse("android.resource://${requireActivity().packageName}/${R.drawable.ic_profile}")
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .setPhotoUri(imageUri)
+                        .build()
 
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                           user.updateProfile(profileUpdates).await()
-                        }catch (_:Exception){ }
+                            user.updateProfile(profileUpdates).await()
+
+                            startActivity(Intent(requireActivity(), MainActivity::class.java))
+                            requireActivity().finish()
+                        } catch (_: Exception) {
+                        }
                     }
 
-                    }
-                    startActivity(Intent(requireActivity(), MainActivity::class.java))
-                    requireActivity().finish()
-                } else {
-                    showToast(it.exception!!.message.toString())
                 }
-            }
-        return true
+        } catch (e: java.lang.Exception) {
+        }
     }
 
     private fun showToast(s: String) =

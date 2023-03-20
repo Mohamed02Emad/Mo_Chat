@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustResize"
     android:background="@drawable/black_blue_gradient"
     tools:context=".presentation.login.LoginFragment">
 
@@ -45,6 +46,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/corners_space"
             android:background="@drawable/app_edit_text"
+            android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
             android:textColor="@color/dark_blue"
@@ -76,8 +78,10 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/corners_space"
             android:background="@drawable/app_edit_text"
+            android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
+            android:inputType="textPassword"
             android:textColor="@color/dark_blue"
             android:textColorHint="@color/light_blue"
             android:textSize="16sp"
@@ -105,13 +109,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:elevation="20dp"
-            android:visibility="invisible"
             android:indeterminateTint="@color/black"
-            app:layout_constraintTop_toTopOf="@id/btn_login"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/btn_login"
-            app:layout_constraintStart_toStartOf="@id/btn_login"
             app:layout_constraintEnd_toEndOf="@id/btn_login"
-            />
+            app:layout_constraintStart_toStartOf="@id/btn_login"
+            app:layout_constraintTop_toTopOf="@id/btn_login" />
 
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/btn_login"
@@ -120,16 +123,16 @@
             android:layout_marginHorizontal="@dimen/corners_space"
             android:layout_marginTop="25dp"
             android:background="@drawable/app_button"
-            android:text="@string/login"
             android:elevation="4dp"
+            android:text="@string/login"
             android:textColor="@color/blue_white"
+            app:initialCornerAngle="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_forgot_password"
-            app:spinning_bar_width="40dp"
             app:spinning_bar_color="@color/light_blue"
             app:spinning_bar_padding="2dp"
-            app:initialCornerAngle="8dp"/>
+            app:spinning_bar_width="40dp" />
 
 
         <TextView

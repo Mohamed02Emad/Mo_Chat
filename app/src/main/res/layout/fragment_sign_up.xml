@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustResize"
     android:background="@drawable/black_blue_gradient"
     tools:context=".presentation.signUp.SignUpFragment">
 
@@ -19,10 +20,10 @@
             android:layout_marginStart="@dimen/corners_space"
             android:layout_marginTop="@dimen/corners_space"
             android:src="@drawable/baseline_arrow_back_24"
-            app:tint="@color/blue_white"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:tint="@color/blue_white" />
 
 
         <TextView
@@ -59,6 +60,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/corners_space"
             android:background="@drawable/app_edit_text"
+            android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
             android:textColor="@color/dark_blue"
@@ -90,6 +92,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/corners_space"
             android:background="@drawable/app_edit_text"
+            android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
             android:textColor="@color/dark_blue"
@@ -121,6 +124,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/corners_space"
             android:background="@drawable/app_edit_text"
+            android:inputType="textPassword"
+            android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
             android:textColor="@color/dark_blue"
@@ -151,6 +156,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/corners_space"
             android:background="@drawable/app_edit_text"
+            android:inputType="textPassword"
+            android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
             android:textColor="@color/dark_blue"
@@ -161,56 +168,75 @@
             tools:text="confirm password" />
 
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="20dp"
+            android:indeterminateTint="@color/black"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/btn_sign_up"
+            app:layout_constraintEnd_toEndOf="@id/btn_sign_up"
+            app:layout_constraintStart_toStartOf="@id/btn_sign_up"
+            app:layout_constraintTop_toTopOf="@id/btn_sign_up" />
+
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/btn_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/corners_space"
             android:layout_marginTop="35dp"
             android:background="@drawable/app_button"
-            android:text="SignUp"
+            android:elevation="4dp"
+            android:text="@string/signup"
             android:textAllCaps="false"
             android:textColor="@color/blue_white"
-            app:layout_constraintTop_toBottomOf="@id/et_confirm_password" />
+            app:initialCornerAngle="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_confirm_password"
+            app:spinning_bar_color="@color/light_blue"
+            app:spinning_bar_padding="2dp"
+            app:spinning_bar_width="40dp" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/tv_or_login_with"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="40dp"-->
-<!--            android:text="or sign-up with"-->
-<!--            android:textColor="@color/blue_white"-->
-<!--            android:textSize="16sp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/btn_sign_up" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/tv_or_login_with"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="40dp"-->
+        <!--            android:text="or sign-up with"-->
+        <!--            android:textColor="@color/blue_white"-->
+        <!--            android:textSize="16sp"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/btn_sign_up" />-->
 
-<!--        <LinearLayout-->
-<!--            android:id="@+id/linear_layout"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:orientation="horizontal"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/tv_or_login_with">-->
+        <!--        <LinearLayout-->
+        <!--            android:id="@+id/linear_layout"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="10dp"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/tv_or_login_with">-->
 
-<!--            <ImageView-->
-<!--                android:id="@+id/login_with_facebook"-->
-<!--                android:layout_width="55dp"-->
-<!--                android:layout_height="55dp"-->
-<!--                android:padding="5dp"-->
-<!--                android:src="@drawable/ic_facebook" />-->
+        <!--            <ImageView-->
+        <!--                android:id="@+id/login_with_facebook"-->
+        <!--                android:layout_width="55dp"-->
+        <!--                android:layout_height="55dp"-->
+        <!--                android:padding="5dp"-->
+        <!--                android:src="@drawable/ic_facebook" />-->
 
-<!--            <ImageView-->
-<!--                android:id="@+id/login_with_google"-->
-<!--                android:layout_width="55dp"-->
-<!--                android:layout_height="55dp"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                android:padding="5dp"-->
-<!--                android:src="@drawable/ic_google" />-->
+        <!--            <ImageView-->
+        <!--                android:id="@+id/login_with_google"-->
+        <!--                android:layout_width="55dp"-->
+        <!--                android:layout_height="55dp"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:padding="5dp"-->
+        <!--                android:src="@drawable/ic_google" />-->
 
-<!--        </LinearLayout>-->
+        <!--        </LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/signup_linear"
