@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setOnClicks() {
-        binding.tvLogout.setOnClickListener {
+        binding.btnLogout.setOnClickListener {
             firebaseAuth.signOut()
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
