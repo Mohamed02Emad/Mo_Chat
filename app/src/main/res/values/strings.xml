@@ -23,6 +23,5 @@
     <string name="enter_room_password">Enter Room Password</string>
     <string name="room_id">Room Id :</string>
     <string name="enter_room_id">Enter Room Id</string>
-    <string name="firebase_client_id">280685173349-4pkvdtpc0f82kbetn6li6fp3mfs6fed6.apps.googleusercontent.com</string>
     <string name="logout">logOut</string>
 </resources>

@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.R
+import com.mo_chatting.chatapp.appClasses.firebase_client_id
 import com.mo_chatting.chatapp.databinding.FragmentLoginBinding
 import com.mo_chatting.chatapp.validation.isValidEmail
 import com.mo_chatting.chatapp.validation.validatePassword
@@ -87,7 +88,8 @@ class LoginFragment : Fragment() {
 
         binding.loginWithGoogle.setOnClickListener {
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.firebase_client_id))
+                    //git ignored
+                .requestIdToken(firebase_client_id)
                 .requestEmail()
                 .build()
             val signInClient = GoogleSignIn.getClient(requireActivity(), options)
