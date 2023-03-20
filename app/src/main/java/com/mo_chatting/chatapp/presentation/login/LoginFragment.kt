@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -32,17 +33,22 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private val viewModel: LoginViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(layoutInflater)
         firebaseAuth = FirebaseAuth.getInstance()
+        checkIfLoggedIn()
+        return binding.root
+    }
+
+    private fun checkIfLoggedIn() {
         if (firebaseAuth.currentUser != null) {
             startActivity(Intent(requireActivity(), MainActivity::class.java))
             requireActivity().finish()
         }
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,10 +73,19 @@ class LoginFragment : Fragment() {
     }
 
     private fun setOnClicks() {
-        binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
-            validateAccount(email, password)
+        binding.btnLogin.apply {
+            setOnClickListener {
+                startAnimation {
+                    binding.progressBar.visibility=View.VISIBLE
+                    lifecycleScope.launch {
+                        val email = binding.etEmail.text.toString()
+                        val password = binding.etPassword.text.toString()
+                        validateAccount(email, password)
+                        binding.progressBar.visibility=View.INVISIBLE
+                        revertAnimation()
+                    }
+                }
+            }
         }
         binding.tvSignUp.setOnClickListener {
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
@@ -80,52 +95,79 @@ class LoginFragment : Fragment() {
             CoroutineScope(Dispatchers.IO).launch {
                 resetPassword(binding.etEmail.text.toString())
             }
-
-            }
+        }
 
 
         binding.loginWithFacebook.setOnClickListener {
-            showToast("Soon")
+//            setPermissions("email", "public_profile")
+//            registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+//                override fun onSuccess(loginResult: LoginResult) {
+//                    CoroutineScope(Dispatchers.IO).launch {
+//                        handleFacebookAccessToken(loginResult.accessToken)
+//                    }
+//                }
+//                override fun onCancel() {
+//                    // Handle cancellation
+//                }
+//
+//                override fun onError(error: FacebookException) {
+//                    // Handle error
+//                }
+//            })
+            showToast("soon")
         }
 
         binding.loginWithGoogle.setOnClickListener {
-            val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                //git ignored
-                .requestIdToken(firebase_client_id)
-                .requestEmail()
-                .build()
-            val signInClient = GoogleSignIn.getClient(requireActivity(), options)
-            signInClient.signInIntent.also {
-                resultLauncher.launch(it)
-            }
-
+            // googleSignIn()
+            showToast("soon")
         }
     }
 
+    private fun googleSignIn() {
 
-    private fun validateAccount(email: String, password: String): Boolean {
+        val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            //git ignored
+            .requestIdToken(firebase_client_id)
+            .requestEmail()
+            .build()
+        val signInClient = GoogleSignIn.getClient(requireActivity(), options)
+        signInClient.signInIntent.also {
+            resultLauncher.launch(it)
+        }
+    }
+
+//    private suspend fun handleFacebookAccessToken(token: AccessToken) {
+//        val credential = FacebookAuthProvider.getCredential(token.token)
+//        firebaseAuth.signInWithCredential(credential).await()
+//    }
+
+
+    private suspend fun validateAccount(
+        email: String,
+        password: String
+    ) {
         val emailValidationResult = isValidEmail(email)
         val passwordValidationResult = validatePassword(password)
 
         if (!emailValidationResult.isValid) {
             showToast(emailValidationResult.message)
-            return false
+            return
         }
         if (!passwordValidationResult.isValid) {
             showToast(passwordValidationResult.message)
-            return false
+            return
         }
 
-        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                startActivity(Intent(requireActivity(), MainActivity::class.java))
-                requireActivity().finish()
-            } else {
-                showToast(it.exception!!.message.toString())
+        try {
+            firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            startActivity(Intent(requireActivity(), MainActivity::class.java))
+            requireActivity().finish()
+        } catch (e: java.lang.Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), e.message.toString(), Toast.LENGTH_SHORT)
+                    .show()
             }
         }
-
-        return true
     }
 
     private fun showToast(s: String) {
@@ -161,17 +203,24 @@ class LoginFragment : Fragment() {
     }
 
     private suspend fun resetPassword(email: String?) {
-        if (email.isNullOrBlank()){
+        if (email.isNullOrBlank()) {
             withContext(Dispatchers.Main) {
                 showToast("Enter your Email first")
             }
-                return
-
+            return
         }
-        firebaseAuth.sendPasswordResetEmail(email).await()
-        withContext(Dispatchers.Main) {
-            showToast("check your email")
+        try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            withContext(Dispatchers.Main) {
+                showToast("check your email")
+            }
+        } catch (e: Exception) {
+            showToast(e.toString())
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.btnLogin.dispose()
+    }
 }

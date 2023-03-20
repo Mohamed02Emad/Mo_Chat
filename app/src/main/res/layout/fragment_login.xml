@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/corners_space"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:text="@string/password"
             android:textColor="@color/blue_white"
             android:textSize="18sp"
@@ -90,7 +90,7 @@
             android:id="@+id/tv_forgot_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:paddingVertical="4dp"
             android:paddingEnd="8dp"
             android:text="forgot password!"
@@ -100,16 +100,37 @@
             app:layout_constraintTop_toBottomOf="@id/et_password" />
 
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="20dp"
+            android:visibility="invisible"
+            android:indeterminateTint="@color/black"
+            app:layout_constraintTop_toTopOf="@id/btn_login"
+            app:layout_constraintBottom_toBottomOf="@id/btn_login"
+            app:layout_constraintStart_toStartOf="@id/btn_login"
+            app:layout_constraintEnd_toEndOf="@id/btn_login"
+            />
+
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/corners_space"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="25dp"
             android:background="@drawable/app_button"
             android:text="@string/login"
+            android:elevation="4dp"
             android:textColor="@color/blue_white"
-            app:layout_constraintTop_toBottomOf="@id/tv_forgot_password" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_forgot_password"
+            app:spinning_bar_width="40dp"
+            app:spinning_bar_color="@color/light_blue"
+            app:spinning_bar_padding="2dp"
+            app:initialCornerAngle="8dp"/>
+
 
         <TextView
             android:id="@+id/tv_or_login_with"
@@ -137,9 +158,9 @@
                 android:id="@+id/login_with_facebook"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:padding="5dp"
-                android:src="@drawable/ic_facebook"
-                app:layout_constraintTop_toBottomOf="@id/tv_or_login_with" />
+                android:layout_gravity="center"
+                android:padding="1dp"
+                android:src="@drawable/ic_facebook" />
 
             <ImageView
                 android:id="@+id/login_with_google"

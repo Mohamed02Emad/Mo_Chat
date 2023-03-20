@@ -91,6 +91,10 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
 
+    //loading button animation
+    implementation 'br.com.simplepass:loading-button-android:2.2.0'
+
+    implementation 'com.facebook.android:facebook-login:15.1.0'
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1"
 
