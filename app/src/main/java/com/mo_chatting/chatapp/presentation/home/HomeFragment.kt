@@ -3,6 +3,8 @@ package com.mo_chatting.chatapp.presentation.home
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -31,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 
 class HomeFragment : Fragment() {
 
@@ -58,11 +61,11 @@ class HomeFragment : Fragment() {
         val storageRef = FirebaseStorage.getInstance()
             .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
         storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-            Glide.with(requireContext()).load(downloadUri).into(binding.profile)
+            Glide.with(requireContext()).load(downloadUri).override(500, 400).into(binding.profile)
         }.addOnFailureListener { exception ->
+            binding.profile.setImageResource(R.drawable.ic_profile)
             Log.e("mohamed", "Error downloading image", exception)
         }
-
     }
 
     private fun setOnClicks() {
@@ -88,48 +91,6 @@ class HomeFragment : Fragment() {
 
     }
 
-    private fun updateUserData(name: String, imageUri: Uri) {
-        firebaseAuth.currentUser?.let { user ->
-            val profileUpdates = UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .build()
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    user.updateProfile(profileUpdates).await()
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "renamed", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            requireContext(),
-                            e.message.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-        }
-
-        val storageRef = FirebaseStorage.getInstance()
-            .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
-        storageRef.putFile(imageUri)
-            .addOnSuccessListener { taskSnapshot ->
-                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    val userRef = FirebaseDatabase.getInstance().getReference("users")
-                        .child(firebaseAuth.currentUser!!.uid)
-                    userRef.child("image").setValue(downloadUri.toString())
-                }
-            }
-            .addOnFailureListener { exception ->
-                // Handle any errors that occurred during the upload
-                Log.e("mohamed", "Error uploading image", exception)
-            }
-
-
-    }
-
-
     private fun showBottomSheet() {
         val dialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.chose_edit_image, null)
@@ -147,7 +108,6 @@ class HomeFragment : Fragment() {
         dialog.setContentView(view)
         dialog.show()
     }
-
 
     private fun startCameraIntent() {
         val values = ContentValues()
@@ -197,4 +157,42 @@ class HomeFragment : Fragment() {
                 )
             }
         }
+
+    private fun updateUserData(name: String, imageUri: Uri) {
+        firebaseAuth.currentUser?.let { user ->
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .build()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    user.updateProfile(profileUpdates).await()
+
+                } catch (_: Exception) {
+                }
+            }
+        }
+
+        val imageStream = requireActivity().contentResolver.openInputStream(imageUri)
+        val selectedImage = BitmapFactory.decodeStream(imageStream)
+        val baos = ByteArrayOutputStream()
+        selectedImage.compress(Bitmap.CompressFormat.JPEG, 90, baos)
+        val data = baos.toByteArray()
+
+        val storageRef = FirebaseStorage.getInstance()
+            .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
+        storageRef.putBytes(data).addOnSuccessListener { taskSnapshot ->
+            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                val userRef = FirebaseDatabase.getInstance().getReference("users")
+                    .child(firebaseAuth.currentUser!!.uid)
+                userRef.child("image").setValue(downloadUri.toString())
+            }
+        }
+            .addOnFailureListener { exception ->
+                // Handle any errors that occurred during the upload
+                Log.e("mohamed", "Error uploading image", exception)
+            }
+
+
+    }
+
 }

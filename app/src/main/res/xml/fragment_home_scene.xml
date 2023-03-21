@@ -9,50 +9,44 @@
             android:id="@+id/tv_user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/profile"
-            app:layout_constraintBottom_toBottomOf="@id/profile">
+            app:layout_constraintBottom_toBottomOf="@id/profile"
+            app:layout_constraintTop_toTopOf="@id/profile">
             <CustomAttribute
-                app:attributeName="backgroundColor"
-                app:customColorValue="#0021429A" />
+                app:attributeName="textColor"
+                app:customColorValue="@color/blue_white" />
         </Constraint>
+
+        <Constraint
+            android:id="@+id/profile"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@+id/btn_logout"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:alpha="0"
             android:layout_marginEnd="-16dp"
-            >
-            <CustomAttribute
-                app:attributeName="backgroundColor"
-                app:customColorValue="#0021429A" />
-        </Constraint>
+            android:alpha="0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <Constraint
             android:id="@+id/tv_edit_image"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            app:layout_constraintTop_toBottomOf="@id/btn_logout"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:alpha="0"
             android:layout_marginEnd="-16dp"
-            >
-            <CustomAttribute
-                app:attributeName="backgroundColor"
-                app:customColorValue="#0021429A" />
-        </Constraint>
-
-        <Constraint
-            android:id="@+id/profile"
-            android:layout_width="35dp"
-            android:layout_height="40dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="0dp"
-            android:layout_marginStart="10dp"/>
+            android:alpha="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </ConstraintSet>
+
+
+
 
     <ConstraintSet android:id="@+id/end">
 
@@ -60,11 +54,12 @@
             android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/profile"
-            app:layout_constraintStart_toStartOf="@id/profile">
-        <CustomAttribute
-            app:attributeName="backgroundColor"
-            app:customColorValue="#97133388" />
+            app:layout_constraintStart_toStartOf="@id/profile"
+            app:layout_constraintTop_toTopOf="@id/profile">
+            <CustomAttribute
+                app:attributeName="textColor"
+                app:customColorValue="@color/dark_blue_top_bar" />
+
         </Constraint>
 
 
@@ -72,36 +67,28 @@
             android:id="@+id/profile"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@+id/btn_logout"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:alpha="1"
-            app:layout_constraintTop_toTopOf="@id/profile"
             app:layout_constraintEnd_toEndOf="@id/profile"
-            >
-            <CustomAttribute
-                app:attributeName="backgroundColor"
-                app:customColorValue="#D721429A" />
-        </Constraint>
+            app:layout_constraintTop_toTopOf="@id/profile" />
 
         <Constraint
             android:id="@+id/tv_edit_image"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            app:layout_constraintTop_toBottomOf="@id/btn_logout"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:alpha="1"
-            >
-            <CustomAttribute
-                app:attributeName="backgroundColor"
-                app:customColorValue="#D721429A"/>
-        </Constraint>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </ConstraintSet>
 
     <Transition

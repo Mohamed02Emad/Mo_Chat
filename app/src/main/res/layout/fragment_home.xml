@@ -1,81 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/black_blue_gradient"
-    tools:context=".presentation.home.HomeFragment"
-    app:layoutDescription="@xml/fragment_home_scene">
+    tools:context=".presentation.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/tv_user_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:padding="8dp"
-        android:textColor="@color/blue_white"
-        android:text="@string/welcome"
-        android:textSize="18sp"
-        android:elevation="17dp"
-        app:layout_constraintTop_toTopOf="parent" />
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/tv_edit_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_edit_image"
-        android:elevation="17dp"/>
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/btn_logout"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:src="@drawable/ic_logout"
-        android:elevation="18dp"
-        app:layout_constraintTop_toTopOf="@id/profile"
-        app:layout_constraintBottom_toBottomOf="@id/profile"
-        app:layout_constraintEnd_toEndOf="parent"
-
-        />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profile"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:paddingTop="5dp"
-        android:elevation="16dp"
-        android:scaleType="centerCrop"
-        />
-
-    <View
-        android:id="@+id/view1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/blue_white"
-        android:alpha="0.3"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/profile" />
-    <View
+    <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/anchor_view"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:elevation="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/view1"
-        />
+        android:layout_height="wrap_content"
+        app:layoutDescription="@xml/fragment_home_scene"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="17dp"
+            android:gravity="center_horizontal"
+            android:padding="8dp"
+            tools:text="@string/welcome"
+            android:textStyle="bold"
+            android:textColor="@color/blue_white"
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/tv_edit_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="17dp"
+            android:background="#0DCFDCFF"
+            android:src="@drawable/ic_edit_image" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btn_logout"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:elevation="18dp"
+            android:background="#0DCFDCFF"
+            android:src="@drawable/ic_logout"
+            app:layout_constraintBottom_toBottomOf="@id/profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/profile"
+
+            />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profile"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:elevation="16dp"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:alpha="0.3"
+            android:background="@color/blue_white"
+            app:layout_constraintTop_toBottomOf="@id/profile" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_add_chat"
-        app:tint="@color/blue_white"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/dark_blue"
         android:contentDescription="@string/add_new_chat"
-        />
+        android:src="@drawable/ic_add_chat"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/blue_white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_home"
@@ -86,6 +88,6 @@
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_user_name" />
+        app:layout_constraintTop_toBottomOf="@id/anchor_view" />
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
