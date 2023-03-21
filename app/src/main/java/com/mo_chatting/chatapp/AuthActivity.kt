@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import com.facebook.FacebookSdk
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
 
     private val pushPermissionLauncher = registerForActivityResult(
@@ -21,7 +23,6 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         checkCameraPermission()
         setContentView(R.layout.activity_auth)
-        //FacebookSdk.sdkInitialize(FacebookSdk.getApplicationContext())
         requestForPermission()
     }
 

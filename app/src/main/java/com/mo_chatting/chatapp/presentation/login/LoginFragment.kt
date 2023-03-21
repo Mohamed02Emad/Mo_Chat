@@ -22,16 +22,20 @@ import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentLoginBinding
 import com.mo_chatting.chatapp.validation.isValidEmail
 import com.mo_chatting.chatapp.validation.validatePassword
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var firebaseAuth: FirebaseAuth
+    @Inject
+     lateinit var firebaseAuth: FirebaseAuth
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
@@ -39,7 +43,6 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(layoutInflater)
-        firebaseAuth = FirebaseAuth.getInstance()
         checkIfLoggedIn()
         return binding.root
     }
