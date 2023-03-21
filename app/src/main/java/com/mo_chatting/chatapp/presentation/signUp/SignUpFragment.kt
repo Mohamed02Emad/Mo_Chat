@@ -138,5 +138,9 @@ class SignUpFragment : Fragment() {
     private fun showToast(s: String) =
         Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show()
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.btnSignUp.dispose()
+    }
 
 }
