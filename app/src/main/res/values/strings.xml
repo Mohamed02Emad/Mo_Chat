@@ -29,4 +29,5 @@
     <string name="edit_image">Edit Image</string>
     <string name="camera">camera</string>
     <string name="gallery">gallery</string>
+    <string name="enter_new_name">Enter new Name</string>
 </resources>

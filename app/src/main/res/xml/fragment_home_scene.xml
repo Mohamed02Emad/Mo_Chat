@@ -16,6 +16,16 @@
                 app:customColorValue="@color/blue_white" />
         </Constraint>
 
+
+        <Constraint
+            android:id="@+id/btn_edit_name"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="-40dp"
+            android:alpha="0"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@id/profile" />
+
         <Constraint
             android:id="@+id/profile"
             android:layout_width="55dp"
@@ -43,9 +53,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+
     </ConstraintSet>
-
-
 
 
     <ConstraintSet android:id="@+id/end">
@@ -54,19 +63,32 @@
             android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/profile"
-            app:layout_constraintTop_toTopOf="@id/profile">
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintStart_toEndOf="@id/btn_edit_name"
+            app:layout_constraintBottom_toBottomOf="@id/btn_edit_name"
+            app:layout_constraintTop_toTopOf="@id/btn_edit_name"
+            >
             <CustomAttribute
                 app:attributeName="textColor"
                 app:customColorValue="@color/dark_blue_top_bar" />
 
         </Constraint>
 
+        <Constraint
+            android:id="@+id/btn_edit_name"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:alpha="1"
+            app:layout_constraintStart_toStartOf="@id/profile"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@+id/profile"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="220dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -89,6 +111,9 @@
             android:alpha="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+
+
     </ConstraintSet>
 
     <Transition

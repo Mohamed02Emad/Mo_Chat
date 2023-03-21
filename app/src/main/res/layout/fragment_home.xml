@@ -20,12 +20,22 @@
             android:layout_height="wrap_content"
             android:elevation="17dp"
             android:gravity="center_horizontal"
-            android:padding="8dp"
             tools:text="@string/welcome"
             android:textStyle="bold"
             android:textColor="@color/blue_white"
             android:textSize="18sp"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btn_edit_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="20dp"
+            android:src="@drawable/ic_edit"
+            android:background="#0DCFDCFF"
+            />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/tv_edit_image"

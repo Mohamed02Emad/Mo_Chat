@@ -22,17 +22,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
+import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
 import java.io.ByteArrayOutputStream
 
 class HomeFragment : Fragment() {
@@ -53,6 +48,11 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUserViews()
         setOnClicks()
+        oservers()
+    }
+
+    private fun oservers() {
+
     }
 
     private fun setUserViews() {
@@ -89,6 +89,15 @@ class HomeFragment : Fragment() {
             showBottomSheet()
         }
 
+        binding.btnEditName.setOnClickListener {
+            showNameDialog()
+        }
+
+    }
+
+    private fun showNameDialog() {
+        val dialogFragment = RenameDialog()
+        dialogFragment.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun showBottomSheet() {
@@ -139,7 +148,6 @@ class HomeFragment : Fragment() {
                 binding.profile.setImageURI(viewModel.uri.value)
 
                 updateUserData(
-                    firebaseAuth.currentUser!!.displayName.toString(),
                     viewModel.uri.value!!
                 )
             }
@@ -152,26 +160,12 @@ class HomeFragment : Fragment() {
                 if (viewModel.uri.value != null)
                     binding.profile.setImageURI(viewModel.uri.value)
                 updateUserData(
-                    firebaseAuth.currentUser!!.displayName.toString(),
                     viewModel.uri.value!!
                 )
             }
         }
 
-    private fun updateUserData(name: String, imageUri: Uri) {
-        firebaseAuth.currentUser?.let { user ->
-            val profileUpdates = UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .build()
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    user.updateProfile(profileUpdates).await()
-
-                } catch (_: Exception) {
-                }
-            }
-        }
-
+    private fun updateUserData(imageUri: Uri) {
         val imageStream = requireActivity().contentResolver.openInputStream(imageUri)
         val selectedImage = BitmapFactory.decodeStream(imageStream)
         val baos = ByteArrayOutputStream()
