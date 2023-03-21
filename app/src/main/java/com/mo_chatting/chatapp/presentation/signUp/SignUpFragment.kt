@@ -20,14 +20,18 @@ import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentSignUpBinding
 import com.mo_chatting.chatapp.validation.isValidEmail
 import com.mo_chatting.chatapp.validation.validatePassword
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SignUpFragment : Fragment() {
 
     lateinit var binding: FragmentSignUpBinding
+    @Inject
     lateinit var firebaseAuth: FirebaseAuth
     private val viewModel: SignUpViewModel by viewModels()
 
@@ -36,7 +40,6 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSignUpBinding.inflate(layoutInflater)
-        firebaseAuth = FirebaseAuth.getInstance()
         return binding.root
     }
 
@@ -135,5 +138,9 @@ class SignUpFragment : Fragment() {
     private fun showToast(s: String) =
         Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show()
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.btnSignUp.dispose()
+    }
 
 }

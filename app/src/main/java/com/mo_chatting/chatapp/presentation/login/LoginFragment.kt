@@ -22,16 +22,21 @@ import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentLoginBinding
 import com.mo_chatting.chatapp.validation.isValidEmail
 import com.mo_chatting.chatapp.validation.validatePassword
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var firebaseAuth: FirebaseAuth
+
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
@@ -39,7 +44,6 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(layoutInflater)
-        firebaseAuth = FirebaseAuth.getInstance()
         checkIfLoggedIn()
         return binding.root
     }
@@ -76,12 +80,12 @@ class LoginFragment : Fragment() {
         binding.btnLogin.apply {
             setOnClickListener {
                 startAnimation {
-                    binding.progressBar.visibility=View.VISIBLE
+                    binding.progressBar.visibility = View.VISIBLE
                     lifecycleScope.launch {
                         val email = binding.etEmail.text.toString()
                         val password = binding.etPassword.text.toString()
                         validateAccount(email, password)
-                        binding.progressBar.visibility=View.INVISIBLE
+                        binding.progressBar.visibility = View.INVISIBLE
                         revertAnimation()
                     }
                 }
@@ -124,9 +128,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun googleSignIn() {
-
         val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            //git ignored
             .requestIdToken(requireActivity().getString(R.string.firebase_client_id))
             .requestEmail()
             .build()
@@ -135,12 +137,6 @@ class LoginFragment : Fragment() {
             resultLauncher.launch(it)
         }
     }
-
-//    private suspend fun handleFacebookAccessToken(token: AccessToken) {
-//        val credential = FacebookAuthProvider.getCredential(token.token)
-//        firebaseAuth.signInWithCredential(credential).await()
-//    }
-
 
     private suspend fun validateAccount(
         email: String,
@@ -209,13 +205,12 @@ class LoginFragment : Fragment() {
             }
             return
         }
-        try {
-            firebaseAuth.sendPasswordResetEmail(email).await()
-            withContext(Dispatchers.Main) {
-                showToast("check your email")
+        lifecycleScope.launch {
+            if (viewModel.resetPassword(email)) {
+                withContext(Dispatchers.Main) {
+                    showToast("Check your Email")
+                }
             }
-        } catch (e: Exception) {
-            showToast(e.toString())
         }
     }
 

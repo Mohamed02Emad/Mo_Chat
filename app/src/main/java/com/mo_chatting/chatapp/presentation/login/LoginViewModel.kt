@@ -3,8 +3,15 @@ package com.mo_chatting.chatapp.presentation.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(val firebaseAuth: FirebaseAuth): ViewModel() {
 
     private var _email = MutableLiveData<String>("")
      val email : LiveData<String> = _email
@@ -17,5 +24,13 @@ class LoginViewModel : ViewModel() {
     }
     fun setPassword(password:String){
         _password.value=password
+    }
+
+    suspend fun resetPassword(email: String): Boolean {
+        try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            return true
+        } catch (_: Exception) { }
+        return false
     }
 }
