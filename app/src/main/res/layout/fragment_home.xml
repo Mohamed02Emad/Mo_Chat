@@ -7,70 +7,90 @@
     android:background="@drawable/black_blue_gradient"
     tools:context=".presentation.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/tv_welcome"
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/anchor_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="8dp"
-        android:textColor="@color/blue_white"
-        android:background="@color/dark_blue"
-        android:text="@string/welcome"
-        android:textSize="24sp"
-        android:elevation="16dp"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layoutDescription="@xml/fragment_home_scene"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tv_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/logout"
-        android:textColor="@color/blue_white"
-        android:textSize="14sp"
-        android:padding="4dp"
-        android:elevation="20dp"
-        app:layout_constraintTop_toTopOf="@id/tv_welcome"
-        app:layout_constraintBottom_toBottomOf="@id/tv_welcome"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="16dp"
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="17dp"
+            android:gravity="center_horizontal"
+            tools:text="@string/welcome"
+            android:textStyle="bold"
+            android:textColor="@color/blue_white"
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profile"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/tv_welcome"
-        android:src="@drawable/ic_profile"
-        android:elevation="20dp"
-        app:tint="@color/blue_white"
-        android:layout_marginStart="16dp"
-        />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/blue_white"
-        android:alpha="0.3"
-        app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btn_edit_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="20dp"
+            android:src="@drawable/ic_edit"
+            android:background="#0DCFDCFF"
+            />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/tv_edit_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="17dp"
+            android:background="#0DCFDCFF"
+            android:src="@drawable/ic_edit_image" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btn_logout"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:elevation="18dp"
+            android:background="#0DCFDCFF"
+            android:src="@drawable/ic_logout"
+            app:layout_constraintBottom_toBottomOf="@id/profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/profile"
+
+            />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profile"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:elevation="16dp"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:alpha="0.3"
+            android:background="@color/blue_white"
+            app:layout_constraintTop_toBottomOf="@id/profile" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_add_chat"
-        app:tint="@color/blue_white"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/dark_blue"
         android:contentDescription="@string/add_new_chat"
-        />
+        android:src="@drawable/ic_add_chat"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/blue_white" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_home"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingStart="16dp"
@@ -78,6 +98,6 @@
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
+        app:layout_constraintTop_toBottomOf="@id/anchor_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

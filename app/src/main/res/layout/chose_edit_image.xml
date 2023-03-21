@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#0B1940"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/camera_choice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:layout_marginTop="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="16dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            app:tint="@color/blue_white"
+            android:src="@drawable/camera_icon"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/blue_white"
+            android:textSize="16sp"
+            android:layout_marginStart="8dp"
+            android:text="@string/camera"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/gallery_choice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground"
+        >
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="16dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            app:tint="@color/blue_white"
+            android:src="@drawable/ic_gallery"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/blue_white"
+            android:textSize="16sp"
+            android:layout_marginStart="8dp"
+            android:text="@string/gallery"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

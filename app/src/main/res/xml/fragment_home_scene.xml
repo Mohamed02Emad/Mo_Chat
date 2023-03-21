@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <ConstraintSet android:id="@+id/start">
+
+        <Constraint
+            android:id="@+id/tv_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/profile"
+            app:layout_constraintTop_toTopOf="@id/profile">
+            <CustomAttribute
+                app:attributeName="textColor"
+                app:customColorValue="@color/blue_white" />
+        </Constraint>
+
+
+        <Constraint
+            android:id="@+id/btn_edit_name"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="-40dp"
+            android:alpha="0"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@id/profile" />
+
+        <Constraint
+            android:id="@+id/profile"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@+id/btn_logout"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="-16dp"
+            android:alpha="0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@+id/tv_edit_image"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="-16dp"
+            android:alpha="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+    </ConstraintSet>
+
+
+    <ConstraintSet android:id="@+id/end">
+
+        <Constraint
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintStart_toEndOf="@id/btn_edit_name"
+            app:layout_constraintBottom_toBottomOf="@id/btn_edit_name"
+            app:layout_constraintTop_toTopOf="@id/btn_edit_name"
+            >
+            <CustomAttribute
+                app:attributeName="textColor"
+                app:customColorValue="@color/dark_blue_top_bar" />
+
+        </Constraint>
+
+        <Constraint
+            android:id="@+id/btn_edit_name"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:alpha="1"
+            app:layout_constraintStart_toStartOf="@id/profile"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@+id/profile"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@+id/btn_logout"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:alpha="1"
+            app:layout_constraintEnd_toEndOf="@id/profile"
+            app:layout_constraintTop_toTopOf="@id/profile" />
+
+        <Constraint
+            android:id="@+id/tv_edit_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:alpha="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+    </ConstraintSet>
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="700">
+        <KeyFrameSet></KeyFrameSet>
+        <OnSwipe
+            app:touchRegionId="@id/anchor_view"
+            motion:dragDirection="dragDown" />
+    </Transition>
+</MotionScene>
