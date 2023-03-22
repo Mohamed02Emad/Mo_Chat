@@ -81,12 +81,10 @@ class HomeFragment : Fragment() {
 
     private fun onRoomLongClick(room: Room, position: Int) {
         showToast(room.roomName)
-       // TODO("Not yet implemented")
     }
 
     private fun onRoomClick(room: Room, position: Int) {
-        showToast("${room.roomName} , position : $position")
-       // TODO("Not yet implemented")
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToChatFragment(room))
     }
 
     private suspend fun setUserViews() {
