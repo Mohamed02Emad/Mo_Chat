@@ -4,27 +4,42 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import com.mo_chatting.chatapp.R
+import com.mo_chatting.chatapp.data.models.Room
+import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(val appContext:Application, val firebaseAuth: FirebaseAuth) : ViewModel() {
+class HomeViewModel @Inject constructor(
+    val appContext: Application,
+    val firebaseAuth: FirebaseAuth,
+    val repository: RoomsRepository
+) : ViewModel() {
 
-    var uri  = MutableLiveData<Uri?>(null)
 
-     fun updateUserData() {
+    private val _roomsList = MutableLiveData<ArrayList<Room>>()
+    val roomsList: LiveData<ArrayList<Room>> = _roomsList
+
+     fun setListInitialData() {
+            _roomsList.value = repository.getFakeRoomsList()
+    }
+
+    var uri = MutableLiveData<Uri?>(null)
+
+    fun updateUserData() {
         val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
         val selectedImage = BitmapFactory.decodeStream(imageStream)
         val baos = ByteArrayOutputStream()
@@ -53,7 +68,7 @@ class HomeViewModel @Inject constructor(val appContext:Application, val firebase
     }
 
     suspend fun getUserImage(): Uri? {
-        var uriToReturn :Uri? = null
+        var uriToReturn: Uri? = null
         try {
             val storageRef = FirebaseStorage.getInstance()
                 .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
@@ -63,7 +78,7 @@ class HomeViewModel @Inject constructor(val appContext:Application, val firebase
                 }
                 await()
             }
-        }catch (_:Exception){
+        } catch (_: Exception) {
 
         }
 
