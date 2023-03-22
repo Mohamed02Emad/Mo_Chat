@@ -12,6 +12,8 @@ import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +21,7 @@ import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
+import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +34,7 @@ class HomeFragment : Fragment() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
-
+    private lateinit var adapter: HomeRoomAdapter
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
     override fun onCreateView(
@@ -49,10 +52,21 @@ class HomeFragment : Fragment() {
         }
         setOnClicks()
         oservers()
+        viewModel.setListInitialData()
     }
 
     private fun oservers() {
+      viewModel.roomsList.observe(viewLifecycleOwner){
+          try {
+              setupRecyclerView()
+          }catch (_:Exception){}
+      }
+    }
 
+    private fun setupRecyclerView() {
+        adapter = HomeRoomAdapter(viewModel.roomsList.value!!)
+        binding.rvHome.adapter = adapter
+        binding.rvHome.layoutManager = LinearLayoutManager(requireActivity())
     }
 
     private suspend fun setUserViews() {

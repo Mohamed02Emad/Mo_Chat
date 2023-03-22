@@ -96,8 +96,9 @@
         android:layout_height="0dp"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
-        android:paddingEnd="16dp"
+        android:paddingEnd="66dp"
         android:paddingBottom="8dp"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/anchor_view" />
 
