@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="white">#FFFFFFFF</color>
 
+
     <color name="red_50">#6E650606</color>
     <color name="dark_yellow">#A2980F</color>
     <color name="grey">#E0CBCBCB</color>
@@ -19,7 +20,7 @@
     <color name="red_background">#FFB7B7</color>
     <color name="yellow">#946F6811</color>
     <color name="yellow2">#91891F</color>
-    <color name="black">#202020</color>
+    <color name="black">#01081B</color>
     <color name="blue_50">#6E0B2FBF</color>
     <color name="blue_white">#CFDCFF</color>
     <color name="grey_dark">#CBCBCB</color>
