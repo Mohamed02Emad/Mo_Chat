@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.R
+import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
@@ -64,9 +66,27 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = HomeRoomAdapter(viewModel.roomsList.value!!)
+        adapter = HomeRoomAdapter(viewModel.roomsList.value!!,
+        HomeRoomAdapter.OnRoomClickListener{room, position ->
+          onRoomClick(room,position)
+        },
+        HomeRoomAdapter.OnLongClickListener{room, position ->
+          onRoomLongClick(room,position)
+            false
+        }
+            )
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireActivity())
+    }
+
+    private fun onRoomLongClick(room: Room, position: Int) {
+        showToast(room.roomName)
+       // TODO("Not yet implemented")
+    }
+
+    private fun onRoomClick(room: Room, position: Int) {
+        showToast("${room.roomName} , position : $position")
+       // TODO("Not yet implemented")
     }
 
     private suspend fun setUserViews() {
@@ -168,5 +188,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-
+   private fun showToast(string: String){
+       Toast.makeText(requireContext(),string,Toast.LENGTH_LONG).show()
+   }
 }
