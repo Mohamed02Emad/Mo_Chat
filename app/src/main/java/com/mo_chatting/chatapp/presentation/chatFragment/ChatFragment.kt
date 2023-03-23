@@ -1,5 +1,6 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -43,17 +44,9 @@ class ChatFragment : Fragment() {
     }
 
     private fun setObservers() {
-        viewModel.messageList.observe(viewLifecycleOwner) {
-            try {
-                refreshRV()
-            } catch (_: Exception) {
-            }
-        }
+
     }
 
-    private fun refreshRV() {
-        binding.rvChat.adapter!!.notifyDataSetChanged()
-    }
 
     private fun setOnClicks() {
         binding.apply {
@@ -72,11 +65,36 @@ class ChatFragment : Fragment() {
                     )
                 )
                 binding.etMessage.setText("")
+                smoothRefreshRV()
             }
 
+            pushViewsToTopOfKeyBoard()
+
             btnRoomInfo.setOnClickListener {
-                showToast("Soon")
+                viewModel.changeUserID()
             }
+        }
+    }
+
+    private fun pushViewsToTopOfKeyBoard() {
+        val rootView = binding.root
+
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val screenHeight = resources.displayMetrics.heightPixels
+            val rect = Rect()
+            rootView.getWindowVisibleDisplayFrame(rect)
+            val keyboardHeight = screenHeight - rect.bottom
+            if (keyboardHeight > screenHeight * 0.15) {
+                if (viewModel.isKeyboard) {
+
+                } else {
+                    viewModel.isKeyboard = true
+                    scrollRV()
+                }
+            } else {
+                viewModel.isKeyboard = false
+            }
+
         }
     }
 
@@ -95,7 +113,7 @@ class ChatFragment : Fragment() {
         binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
     }
 
-    private fun onChatLongClick(room: Message, position: Int) {
+    private fun onChatLongClick(message: Message, position: Int) {
 
     }
 
@@ -105,6 +123,25 @@ class ChatFragment : Fragment() {
 
     private fun setViews() {
         binding.tvRoomName.text = thisRoom.roomName
+    }
+
+    private fun smoothRefreshRV() {
+        try {
+            binding.rvChat.adapter!!.notifyItemInserted(viewModel.messageList.value!!.size)
+            val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
+            binding.rvChat.smoothScrollToPosition(lastPosition)
+        } catch (e: Exception) {
+            showToast(e.message.toString())
+        }
+    }
+
+    private fun scrollRV() {
+        try {
+            val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
+            binding.rvChat.scrollToPosition(lastPosition)
+        } catch (e: Exception) {
+            showToast(e.message.toString())
+        }
     }
 
     private fun showToast(string: String) {
