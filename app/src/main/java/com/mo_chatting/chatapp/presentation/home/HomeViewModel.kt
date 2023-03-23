@@ -7,7 +7,6 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -16,8 +15,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -30,12 +27,13 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _roomsList = MutableLiveData<ArrayList<Room>>()
+    private val _roomsList = MutableLiveData<ArrayList<Room>>(ArrayList())
     val roomsList: LiveData<ArrayList<Room>> = _roomsList
 
-     fun setListInitialData() {
-            _roomsList.value = repository.getFakeRoomsList()
+    init {
+        _roomsList.postValue(repository.getFakeRoomsList())
     }
+
 
     var uri = MutableLiveData<Uri?>(null)
 
@@ -84,5 +82,6 @@ class HomeViewModel @Inject constructor(
 
         return uriToReturn
     }
+
 
 }

@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.mo_chatting.chatapp.AuthActivity
+import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
@@ -36,6 +37,7 @@ class HomeFragment : Fragment() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
+
     private lateinit var adapter: HomeRoomAdapter
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
@@ -47,34 +49,55 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         CoroutineScope(Dispatchers.IO).launch {
             setUserViews()
         }
         setOnClicks()
+        setupRecyclerView()
         oservers()
-        viewModel.setListInitialData()
     }
 
+    private suspend fun setUserViews() {
+        val uri = viewModel.getUserImage()
+        val currentUser = firebaseAuth.currentUser
+        val currentUserName = currentUser?.displayName.toString()
+        if (currentUserName == "null") {
+            restart()
+        } else {
+            binding.tvUserName.text = currentUserName
+        }
+        withContext(Dispatchers.Main) {
+            Glide.with(requireContext())
+                .load(uri)
+                .error(R.drawable.ic_profile)
+                .override(500, 400)
+                .into(binding.profile)
+        }
+    }
+
+
     private fun oservers() {
-      viewModel.roomsList.observe(viewLifecycleOwner){
-          try {
-              setupRecyclerView()
-          }catch (_:Exception){}
-      }
+        viewModel.roomsList.observe(viewLifecycleOwner) {
+            try {
+                setupRecyclerView()
+            } catch (_: Exception) {
+            }
+        }
     }
 
     private fun setupRecyclerView() {
         adapter = HomeRoomAdapter(viewModel.roomsList.value!!,
-        HomeRoomAdapter.OnRoomClickListener{room, position ->
-          onRoomClick(room,position)
-        },
-        HomeRoomAdapter.OnLongClickListener{room, position ->
-          onRoomLongClick(room,position)
-            false
-        }
-            )
+            HomeRoomAdapter.OnRoomClickListener { room, position ->
+                onRoomClick(room, position)
+            },
+            HomeRoomAdapter.OnLongClickListener { room, position ->
+                onRoomLongClick(room, position)
+                false
+            }
+        )
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireActivity())
     }
@@ -85,20 +108,6 @@ class HomeFragment : Fragment() {
 
     private fun onRoomClick(room: Room, position: Int) {
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToChatFragment(room))
-    }
-
-    private suspend fun setUserViews() {
-        binding.tvUserName.text = firebaseAuth.currentUser!!.displayName
-        val uri = viewModel.getUserImage()
-        if (uri == null) {
-            withContext(Dispatchers.Main) {
-                binding.profile.setImageResource(R.drawable.ic_profile)
-            }
-        } else {
-            withContext(Dispatchers.Main) {
-                Glide.with(requireContext()).load(uri).override(500, 400).into(binding.profile)
-            }
-        }
     }
 
     private fun setOnClicks() {
@@ -186,7 +195,14 @@ class HomeFragment : Fragment() {
             }
         }
 
-   private fun showToast(string: String){
-       Toast.makeText(requireContext(),string,Toast.LENGTH_LONG).show()
-   }
+    private fun showToast(string: String) {
+        Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+    }
+
+    fun restart() {
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        requireContext().startActivity(intent)
+        requireActivity().finishAffinity()
+        requireActivity().overridePendingTransition(0, 0)
+    }
 }

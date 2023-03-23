@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentLoginBinding
@@ -35,8 +36,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
 
-    @Inject
-    lateinit var firebaseAuth: FirebaseAuth
+
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
@@ -49,7 +49,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun checkIfLoggedIn() {
-        if (firebaseAuth.currentUser != null) {
+        if (viewModel.UserIsLoged()) {
             startActivity(Intent(requireActivity(), MainActivity::class.java))
             requireActivity().finish()
         }
@@ -103,40 +103,14 @@ class LoginFragment : Fragment() {
 
 
         binding.loginWithFacebook.setOnClickListener {
-//            setPermissions("email", "public_profile")
-//            registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-//                override fun onSuccess(loginResult: LoginResult) {
-//                    CoroutineScope(Dispatchers.IO).launch {
-//                        handleFacebookAccessToken(loginResult.accessToken)
-//                    }
-//                }
-//                override fun onCancel() {
-//                    // Handle cancellation
-//                }
-//
-//                override fun onError(error: FacebookException) {
-//                    // Handle error
-//                }
-//            })
             showToast("soon")
         }
 
         binding.loginWithGoogle.setOnClickListener {
-            // googleSignIn()
-            showToast("soon")
+            googleSignIn()
         }
     }
 
-    private fun googleSignIn() {
-        val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(requireActivity().getString(R.string.firebase_client_id))
-            .requestEmail()
-            .build()
-        val signInClient = GoogleSignIn.getClient(requireActivity(), options)
-        signInClient.signInIntent.also {
-            resultLauncher.launch(it)
-        }
-    }
 
     private suspend fun validateAccount(
         email: String,
@@ -155,7 +129,7 @@ class LoginFragment : Fragment() {
         }
 
         try {
-            firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            viewModel.loginWithEmailAndPassword(email,password)
             startActivity(Intent(requireActivity(), MainActivity::class.java))
             requireActivity().finish()
         } catch (e: java.lang.Exception) {
@@ -166,8 +140,15 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun showToast(s: String) {
-        Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show()
+    private fun googleSignIn() {
+        val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(requireActivity().getString(R.string.firebase_client_id))
+            .requestEmail()
+            .build()
+        val signInClient = GoogleSignIn.getClient(requireActivity(), options)
+        signInClient.signInIntent.also {
+            resultLauncher.launch(it)
+        }
     }
 
     private val resultLauncher =
@@ -177,6 +158,7 @@ class LoginFragment : Fragment() {
                 val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
                 account?.let {
                     googleAuthForFirebase(it)
+                    viewModel.updateUser()
                     startActivity(Intent(requireActivity(), MainActivity::class.java))
                     requireActivity().finish()
                 }
@@ -188,7 +170,7 @@ class LoginFragment : Fragment() {
         val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                firebaseAuth.signInWithCredential(credentials).await()
+                viewModel.loginWithGoogle(credentials)
             } catch (e: java.lang.Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), e.message.toString(), Toast.LENGTH_SHORT)
@@ -212,6 +194,10 @@ class LoginFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showToast(s: String) {
+        Toast.makeText(requireActivity(), s, Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
