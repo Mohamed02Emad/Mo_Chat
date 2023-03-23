@@ -3,6 +3,7 @@ package com.mo_chatting.chatapp.presentation.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,4 +34,18 @@ class LoginViewModel @Inject constructor(val firebaseAuth: FirebaseAuth): ViewMo
         } catch (_: Exception) { }
         return false
     }
+
+    fun UserIsLoged(): Boolean = firebaseAuth.currentUser != null
+    suspend fun loginWithEmailAndPassword(email: String, password: String) {
+        firebaseAuth.signInWithEmailAndPassword(email, password).await()
+    }
+
+    suspend fun loginWithGoogle(credentials: AuthCredential) {
+        firebaseAuth.signInWithCredential(credentials).await()
+    }
+
+    fun updateUser() {
+
+    }
+
 }
