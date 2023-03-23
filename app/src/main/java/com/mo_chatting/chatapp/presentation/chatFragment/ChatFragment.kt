@@ -47,7 +47,6 @@ class ChatFragment : Fragment() {
 
     }
 
-
     private fun setOnClicks() {
         binding.apply {
             btnBackArrow.setOnClickListener {
@@ -72,6 +71,7 @@ class ChatFragment : Fragment() {
 
             btnRoomInfo.setOnClickListener {
                 viewModel.changeUserID()
+                showToast("user id changed")
             }
         }
     }

@@ -1,12 +1,14 @@
 package com.mo_chatting.chatapp.presentation.recyclerViews
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Message
-import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.MessageCardBinding
 
 class ChatAdapter(
@@ -63,14 +65,29 @@ class ChatAdapter(
         position: Int
     ) {
 
+        val myParentView = holder.binding.myParent
+
         if (currentMessage.messageOwner==userId){
-            holder.binding.myParent.background = ContextCompat.getDrawable(
-                holder.binding.myParent.context, R.drawable.my_message
+            myParentView.background = ContextCompat.getDrawable(
+                myParentView.context, R.drawable.my_message
             )
+            holder.binding.apply {
+                view1.visibility=View.VISIBLE
+                view2.visibility=View.GONE
+            }
+            val params = myParentView.layoutParams as LinearLayout.LayoutParams
+            params.setMargins(150, 0, 0, 0)
+            myParentView.layoutParams = params
+
         }else{
-            holder.binding.myParent.background = ContextCompat.getDrawable(
-                holder.binding.myParent.context, R.drawable.their_message
-            )
+            myParentView.background = ContextCompat.getDrawable(myParentView.context, R.drawable.their_message)
+            holder.binding.apply {
+                view1.visibility=View.GONE
+                view2.visibility=View.VISIBLE
+            }
+            val params = myParentView.layoutParams as LinearLayout.LayoutParams
+            params.setMargins(0, 0, 150, 0)
+            myParentView.layoutParams = params
         }
 
     }
