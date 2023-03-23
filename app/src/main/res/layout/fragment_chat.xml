@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustResize"
     android:background="@color/black"
     tools:context=".presentation.chatFragment.ChatFragment">
 
@@ -58,7 +59,8 @@
         android:layout_height="0dp"
         android:layout_marginBottom="4dp"
         android:paddingHorizontal="@dimen/corners_space"
-        app:layout_constraintBottom_toTopOf="@id/et_message"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/btn_send"
         app:layout_constraintTop_toBottomOf="@id/tv_room_name" />
 
 
@@ -83,7 +85,7 @@
         android:layout_marginBottom="6dp"
         android:background="@drawable/send_edit_text"
         android:hint="@string/type_something"
-        android:maxLines="7"
+        android:maxLines="6"
         android:padding="10dp"
         android:textColor="@color/black"
         android:textColorHint="@color/light_blue"
