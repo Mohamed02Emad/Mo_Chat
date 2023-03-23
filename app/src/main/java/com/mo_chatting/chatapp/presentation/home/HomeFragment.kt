@@ -56,8 +56,8 @@ class HomeFragment : Fragment() {
             setUserViews()
         }
         setOnClicks()
+        setupRecyclerView()
         oservers()
-        viewModel.setListInitialData()
     }
 
     private suspend fun setUserViews() {
@@ -109,7 +109,6 @@ class HomeFragment : Fragment() {
     private fun onRoomClick(room: Room, position: Int) {
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToChatFragment(room))
     }
-
 
     private fun setOnClicks() {
         binding.btnLogout.setOnClickListener {
