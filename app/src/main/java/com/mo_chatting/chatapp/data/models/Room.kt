@@ -9,6 +9,8 @@ data class Room (
     var roomPinState:Boolean,
     var roomTypeImage:Int,
     val roomId:String,
+    var roomOwnerId:String,
+
     // user and boolean to check if user is still in the room or has left
    // var listOFUsers :ArrayList<Pair<User,Boolean>> = ArrayList()
         ): Parcelable

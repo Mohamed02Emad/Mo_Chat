@@ -6,6 +6,9 @@ class User (
     var userName:String,
     var userImageUri:String,
     var userId:String,
-    var lastSeen:String,
+    var userAbout:String=" hi there ^_- ",
+    var lastSeen:String ="--/-/----  --:--",
     var isOnline:Boolean = false,
+    var showOnlineStateToOthers:Boolean = true,
+    var showLastSeenToOthers:Boolean = true
         )
