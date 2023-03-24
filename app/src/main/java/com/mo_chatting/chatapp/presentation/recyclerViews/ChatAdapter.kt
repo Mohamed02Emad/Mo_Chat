@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mo_chatting.chatapp.R
@@ -34,8 +33,8 @@ class ChatAdapter(
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentMessage = list[position]
-        holder.binding.messageBody.text = currentMessage.messageContent
-        holder.binding.tvMessageDate.text = currentMessage.messageDate
+        holder.binding.messageBody.text = currentMessage.messageText
+        holder.binding.tvMessageDate.text = currentMessage.messageDateAndTime
         setCardColors(holder, currentMessage, position)
         setCardOnClicks(holder, currentMessage, position)
     }
@@ -67,7 +66,7 @@ class ChatAdapter(
 
         val myParentView = holder.binding.myParent
 
-        if (currentMessage.messageOwner==userId){
+        if (currentMessage.messageOwnerId==userId){
             myParentView.background = ContextCompat.getDrawable(
                 myParentView.context, R.drawable.my_message
             )
