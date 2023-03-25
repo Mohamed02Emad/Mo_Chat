@@ -5,7 +5,6 @@ import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,11 +20,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
-import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
 import com.mo_chatting.chatapp.presentation.dialogs.AddRoomDialog
+import com.mo_chatting.chatapp.presentation.dialogs.MyDialogListener
 import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +35,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : MyFragmentParent(){
+class HomeFragment : MyFragmentParent(),MyDialogListener{
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -148,7 +147,7 @@ class HomeFragment : MyFragmentParent(){
     }
 
     private fun showAddRoomDialog() {
-        val addRoomDialog = AddRoomDialog()
+        val addRoomDialog = AddRoomDialog(this)
         addRoomDialog.show(requireActivity().supportFragmentManager,null)
     }
 
@@ -216,4 +215,9 @@ class HomeFragment : MyFragmentParent(){
             }
         }
 
+    override fun onDataPassed(room: Room) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.createNewRoom(room)
+        }
+    }
 }

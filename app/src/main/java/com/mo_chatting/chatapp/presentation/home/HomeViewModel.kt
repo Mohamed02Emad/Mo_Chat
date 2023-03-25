@@ -87,6 +87,13 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun createNewRoom(room:Room){
+        val roomId = getNewRoomId()
         repository.createNewRoom(room)
+    }
+
+    private fun getNewRoomId(): String {
+      var id =""
+
+        return id
     }
 }

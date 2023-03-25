@@ -8,22 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.databinding.FragmentAddRoomDialogBinding
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import com.mo_chatting.chatapp.presentation.home.HomeFragment
 
-@AndroidEntryPoint
-class AddRoomDialog : DialogFragment() {
+class AddRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
 
     private lateinit var binding: FragmentAddRoomDialogBinding
-
-    @Inject
-    lateinit var firebaseAuth: FirebaseAuth
-
-    @Inject
-    lateinit var firebaseStore: FirebaseFirestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +40,9 @@ class AddRoomDialog : DialogFragment() {
             }
 
             btnCreateNewRoom.setOnClickListener {
-                val createRoomDialogBinding = CraeteRoomDialog()
+                val createRoomDialogBinding = CreateRoomDialog(homeFragment)
+//                 TODO: remember to slove this
+//                createRoomDialogBinding.setTargetFragment(parentFragment,0)
                 createRoomDialogBinding.show(requireActivity().supportFragmentManager,null)
                 this@AddRoomDialog.dismiss()
             }
