@@ -26,6 +26,8 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
 
     suspend fun joinRoom(room: Room){
         room.let {
+            if (it.listOFUsers.any { it == firebaseAuth.currentUser!!.uid })return
+
             it.listOFUsers.add(firebaseAuth.currentUser!!.uid)
             updateRoom(it)
         }

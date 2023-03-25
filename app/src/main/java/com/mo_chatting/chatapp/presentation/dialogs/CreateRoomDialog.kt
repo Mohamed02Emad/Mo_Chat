@@ -7,11 +7,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.google.firebase.auth.FirebaseAuth
+import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentCreateRoomDialogBinding
 import com.mo_chatting.chatapp.presentation.home.HomeFragment
+import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -20,6 +24,8 @@ class CreateRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
+
+    private var roomType=0
 
     lateinit var binding: FragmentCreateRoomDialogBinding
     private var listener: MyDialogListener? = null
@@ -45,28 +51,79 @@ class CreateRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
             }
 
             btnCreateNewRoom.setOnClickListener {
-                listener?.onDataPassed(
-                    Room(
-                        roomName = binding.etRoomName.text.toString(),
-                        hasPassword = binding.checkboxPassword.isChecked,
-                        password = binding.etPassword.text.toString(),
-                        roomTypeImage = getRoomType(),
-                        roomOwnerId = firebaseAuth.currentUser!!.uid
+                if (binding.etRoomName.text.isNotEmpty()) {
+                    if (binding.checkboxPassword.isChecked && etPassword.text.isEmpty()){
+                        Toast.makeText(requireContext(),"Enter Password",Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    }
+                    listener?.onDataPassed(
+                        Room(
+                            roomName = binding.etRoomName.text.toString(),
+                            hasPassword = binding.checkboxPassword.isChecked,
+                            password = binding.etPassword.text.toString(),
+                            roomTypeImage = roomType,
+                            roomOwnerId = firebaseAuth.currentUser!!.uid
+                        )
                     )
-                )
-               this@CreateRoomDialog.dismiss()
+                    this@CreateRoomDialog.dismiss()
+                }else{
+                    Toast.makeText(requireContext(),"Enter Room name",Toast.LENGTH_LONG).show()
+                }
             }
+
 
             btnRoomType.setOnClickListener {
 
             }
 
+            checkboxPassword.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (!isChecked){
+                    binding.etPassword.setText("")
+                    binding.etPassword.isVisible=false
+                }else{
+                    binding.etPassword.isVisible=true
+                }
+
+            }
+
+            btnRoomType.setOnClickListener {
+                changeRoomType()
+            }
+
         }
     }
 
-    private fun getRoomType(): Int {
-        // TODO: add logic
-        return 0
+    private fun changeRoomType() {
+        roomType++
+        setRoomType(roomType)
+    }
+
+    private fun setRoomType(roomType: Int) {
+        val image = when (roomType) {
+            0 -> {
+                R.drawable.ic_family
+            }
+            1 -> {
+                R.drawable.ic_technology
+            }
+            2 -> {
+                R.drawable.ic_talk
+            }
+            3 -> {
+                R.drawable.ic_study
+            }
+            4 -> {
+                R.drawable.ic_sport
+
+            }
+            5 -> {
+                R.drawable.ic_heart
+            }
+            else -> {
+                R.drawable.ic_food
+            }
+        }
+        binding.btnRoomType.setImageResource(image)
     }
 
     private fun setDimentions() {

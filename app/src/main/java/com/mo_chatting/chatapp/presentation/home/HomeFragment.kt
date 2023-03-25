@@ -35,7 +35,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
-    MyJoinRoomListener {
+    MyJoinRoomListener,MyEnterPasswordListener {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -230,7 +230,8 @@ class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
             val room = viewModel.checkIfRoomExist(roomId)
             if (room!=null){
                 if (room.hasPassword){
-                    // TODO: create dialog for this 
+                    val enterPasswordDialog = EnterPasswordDialog(this@HomeFragment,room)
+                    enterPasswordDialog.show(requireActivity().supportFragmentManager,null)
                 }else{
                     viewModel.joinRoom(room)
                 }
@@ -240,6 +241,12 @@ class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
                         .show()
                 }
             }
+        }
+    }
+
+    override fun onPasswordReceive(room: Room) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.joinRoom(room)
         }
     }
 
