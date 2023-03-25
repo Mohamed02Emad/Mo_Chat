@@ -22,7 +22,7 @@ object module {
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
     @Singleton
     @Provides
-    fun provideRoomsRepository(): RoomsRepository = RoomsRepository()
+    fun provideRoomsRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth): RoomsRepository = RoomsRepository(firebaseFireStore, firebaseAuth)
 
     @Singleton
     @Provides

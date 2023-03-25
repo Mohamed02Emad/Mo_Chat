@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentChatBinding
+import com.mo_chatting.chatapp.presentation.dialogs.RoomIdDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -70,8 +71,8 @@ class ChatFragment : Fragment() {
             pushViewsToTopOfKeyBoard()
 
             btnRoomInfo.setOnClickListener {
-                viewModel.changeUserID()
-                showToast("user id changed")
+                val roomIdDialog = RoomIdDialog(args.room.roomId)
+                roomIdDialog.show(requireActivity().supportFragmentManager,null)
             }
         }
     }

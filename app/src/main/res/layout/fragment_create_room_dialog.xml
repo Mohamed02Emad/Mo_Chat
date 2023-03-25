@@ -89,8 +89,10 @@
         app:layout_constraintTop_toBottomOf="@id/tv_room_type" />
 
     <CheckBox
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:id="@+id/checkbox_password"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/app_check_btn"
         android:checked="true"
         app:layout_constraintBottom_toBottomOf="@id/tv_use_password"
         app:layout_constraintEnd_toEndOf="@id/btn_room_type"
@@ -107,6 +109,7 @@
         android:layout_marginEnd="@dimen/corners_space"
         android:background="@drawable/app_edit_text"
         android:hint="@string/enter_room_password"
+        android:inputType="textPassword"
         android:paddingHorizontal="8dp"
         android:paddingVertical="15dp"
         android:textColor="@color/dark_blue"

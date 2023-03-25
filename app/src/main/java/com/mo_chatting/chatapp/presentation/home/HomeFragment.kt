@@ -11,19 +11,20 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.AuthActivity
-import com.mo_chatting.chatapp.MainActivity
+import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
+import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
-import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
+import com.mo_chatting.chatapp.presentation.dialogs.*
 import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -33,10 +34,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
+    MyJoinRoomListener,MyEnterPasswordListener {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
+    @Inject
+    lateinit var firebaseStore : FirebaseFirestore
 
     private lateinit var adapter: HomeRoomAdapter
     private lateinit var binding: FragmentHomeBinding
@@ -48,7 +52,6 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,7 +68,7 @@ class HomeFragment : Fragment() {
         val currentUser = firebaseAuth.currentUser
         val currentUserName = currentUser?.displayName.toString()
         if (currentUserName == "null") {
-            restart()
+              restart()
         } else {
             binding.tvUserName.text = currentUserName
         }
@@ -77,7 +80,6 @@ class HomeFragment : Fragment() {
                 .into(binding.profile)
         }
     }
-
 
     private fun oservers() {
         viewModel.roomsList.observe(viewLifecycleOwner) {
@@ -118,7 +120,10 @@ class HomeFragment : Fragment() {
         }
 
         binding.fabAdd.setOnClickListener {
-
+//            CoroutineScope(Dispatchers.IO).launch {
+//                viewModel.createNewRoom(Room("testRoom", false, 0, "123", "mohamed"))
+//            }
+            showAddRoomDialog()
         }
 
         binding.tvEditImage.setOnClickListener {
@@ -129,10 +134,25 @@ class HomeFragment : Fragment() {
             showNameDialog()
         }
 
+        //firebase listener
+        firebaseStore.collection(roomsCollection).addSnapshotListener { value, error ->
+            error?.let {
+                return@addSnapshotListener
+            }
+            value?.let {
+                viewModel.resetList(value)
+            }
+        }
+
+    }
+
+    private fun showAddRoomDialog() {
+        val addRoomDialog = AddRoomDialog(this)
+        addRoomDialog.show(requireActivity().supportFragmentManager,null)
     }
 
     private fun showNameDialog() {
-        val dialogFragment = RenameDialog()
+        val dialogFragment = RenameDialog(this)
         dialogFragment.show(requireActivity().supportFragmentManager, null)
     }
 
@@ -195,14 +215,39 @@ class HomeFragment : Fragment() {
             }
         }
 
-    private fun showToast(string: String) {
-        Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+    override fun onDataPassed(room: Room) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.createNewRoom(room)
+        }
     }
 
-    fun restart() {
-        val intent = Intent(requireActivity(), MainActivity::class.java)
-        requireContext().startActivity(intent)
-        requireActivity().finishAffinity()
-        requireActivity().overridePendingTransition(0, 0)
+    override fun onDataPassedRename(name: String) {
+        binding.tvUserName.text=name
     }
+
+    override fun onDataPassedJoinRoom(roomId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val room = viewModel.checkIfRoomExist(roomId)
+            if (room!=null){
+                if (room.hasPassword){
+                    val enterPasswordDialog = EnterPasswordDialog(this@HomeFragment,room)
+                    enterPasswordDialog.show(requireActivity().supportFragmentManager,null)
+                }else{
+                    viewModel.joinRoom(room)
+                }
+            }else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "No Room with that id", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+    }
+
+    override fun onPasswordReceive(room: Room) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.joinRoom(room)
+        }
+    }
+
 }

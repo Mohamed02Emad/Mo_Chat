@@ -11,12 +11,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,16 +28,15 @@ class HomeViewModel @Inject constructor(
     val repository: RoomsRepository
 ) : ViewModel() {
 
-
     private val _roomsList = MutableLiveData<ArrayList<Room>>(ArrayList())
     val roomsList: LiveData<ArrayList<Room>> = _roomsList
 
-    init {
-        _roomsList.postValue(repository.getFakeRoomsList())
-    }
-
-
     var uri = MutableLiveData<Uri?>(null)
+
+    fun resetList(value: QuerySnapshot?) {
+        val arrayList = repository.getUserRooms(value)
+        _roomsList.postValue(arrayList)
+    }
 
     fun updateUserData() {
         val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
@@ -83,5 +84,35 @@ class HomeViewModel @Inject constructor(
         return uriToReturn
     }
 
+    suspend fun createNewRoom(room: Room) {
+        var roomId = getNewRoomId()
+        while (!isRoomValidId(roomId)){
+            roomId=getNewRoomId()
+        }
+            room.roomId = roomId
+        repository.createNewRoom(room)
+    }
 
+    private suspend fun isRoomValidId(roomId: String): Boolean {
+        val roomsList = repository.getAllRooms()
+        return !roomsList.any { it.roomId == roomId }
+    }
+
+    private suspend fun getNewRoomId(): String {
+        val numchars = 8
+        val r = Random()
+        val sb = StringBuffer()
+        while (sb.length < numchars) {
+            sb.append(Integer.toHexString(r.nextInt()))
+        }
+        return sb.toString().substring(0, numchars)
+    }
+
+    suspend fun checkIfRoomExist(roomId: String): Room?{
+      return repository.checkIfRoomExist(roomId)
+    }
+
+    suspend fun joinRoom(room: Room) {
+      repository.joinRoom(room)
+    }
 }

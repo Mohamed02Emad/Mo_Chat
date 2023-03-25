@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Android/Sdk/icons/material/materialicons/message/baseline_message_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Android/Sdk/icons/material/materialicons/exposure_plus_1/baseline_exposure_plus_1_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -29,7 +29,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="1b2283" />
-                            <entry key="outputName" value="baseline_message_24" />
+                            <entry key="outputName" value="baseline_exposure_plus_1_24" />
                           </map>
                         </option>
                       </PersistentState>
