@@ -9,7 +9,7 @@ data class Room (
     var roomPinState:Boolean=false,
     var roomTypeImage:Int = 0,
     //todo add it in viewModel
-    val roomId:String = "123",
+    var roomId:String = "123",
     var roomOwnerId:String = "mohamed",
     var hasPassword :Boolean= false,
     var password:String=""

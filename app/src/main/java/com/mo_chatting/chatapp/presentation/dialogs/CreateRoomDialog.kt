@@ -85,7 +85,6 @@ class CreateRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
             throw ClassCastException("$context must implement MyDialogListener")
         }
     }
-
 }
 
 interface MyDialogListener {

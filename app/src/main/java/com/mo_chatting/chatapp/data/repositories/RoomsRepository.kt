@@ -41,5 +41,17 @@ class RoomsRepository(val firebaseStore : FirebaseFirestore,val firebaseAuth: Fi
         return arrayList
     }
 
+    suspend fun getAllRooms():ArrayList<Room>{
+        val arrayList = ArrayList<Room>()
+        try {
+            val result = allRoomsRef.get().await()
+            val list = result.documents
+            for (i in list) {
+                arrayList.add(i.toObject<Room>()!!)
+            }
+        }catch (e:Exception){}
+        return arrayList
+    }
+
 
 }

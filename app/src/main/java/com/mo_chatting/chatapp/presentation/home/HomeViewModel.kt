@@ -4,7 +4,6 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,9 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
-import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,8 +32,8 @@ class HomeViewModel @Inject constructor(
 
     var uri = MutableLiveData<Uri?>(null)
 
-    fun resetList(value: QuerySnapshot?){
-         val arrayList = repository.getUserRooms(value)
+    fun resetList(value: QuerySnapshot?) {
+        val arrayList = repository.getUserRooms(value)
         _roomsList.postValue(arrayList)
     }
 
@@ -86,14 +83,14 @@ class HomeViewModel @Inject constructor(
         return uriToReturn
     }
 
-    suspend fun createNewRoom(room:Room){
+    suspend fun createNewRoom(room: Room) {
         val roomId = getNewRoomId()
+        room.roomId=roomId
         repository.createNewRoom(room)
     }
 
-    private fun getNewRoomId(): String {
-      var id =""
-
-        return id
+    private suspend fun getNewRoomId(): String {
+        val arrayList = repository.getAllRooms()
+        return (arrayList.size+1).toString()
     }
 }
