@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -83,5 +84,10 @@ class HomeViewModel @Inject constructor(
         return uriToReturn
     }
 
+    suspend fun createNewRoom(room:Room){
+        Log.d("mohamed", "createNewRoom: "+"before")
+        repository.createNewRoom(room)
+        Log.d("mohamed", "createNewRoom: "+"after")
 
+    }
 }

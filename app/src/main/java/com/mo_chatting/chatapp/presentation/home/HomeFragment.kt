@@ -118,7 +118,9 @@ class HomeFragment : Fragment() {
         }
 
         binding.fabAdd.setOnClickListener {
-
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.createNewRoom(Room("testRoom", false, 0, "123", "mohamed"))
+            }
         }
 
         binding.tvEditImage.setOnClickListener {
