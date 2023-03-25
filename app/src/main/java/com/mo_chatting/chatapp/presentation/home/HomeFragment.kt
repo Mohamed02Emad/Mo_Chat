@@ -135,7 +135,7 @@ class HomeFragment : MyFragmentParent(),MyDialogListener{
         }
 
         //firebase listener
-        firebaseStore.collection("$roomsCollection${firebaseAuth.currentUser!!.uid}").addSnapshotListener { value, error ->
+        firebaseStore.collection(roomsCollection).addSnapshotListener { value, error ->
             error?.let {
                 return@addSnapshotListener
             }

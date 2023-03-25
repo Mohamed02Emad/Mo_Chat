@@ -18,6 +18,7 @@ import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -84,13 +85,26 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun createNewRoom(room: Room) {
-        val roomId = getNewRoomId()
-        room.roomId=roomId
+        var roomId = getNewRoomId()
+        while (!isRoomValidId(roomId)){
+            roomId=getNewRoomId()
+        }
+            room.roomId = roomId
         repository.createNewRoom(room)
     }
 
+    private suspend fun isRoomValidId(roomId: String): Boolean {
+        val roomsList = repository.getAllRooms()
+        return !roomsList.any { it.roomId == roomId }
+    }
+
     private suspend fun getNewRoomId(): String {
-        val arrayList = repository.getAllRooms()
-        return (arrayList.size+1).toString()
+        val numchars = 8
+        val r = Random()
+        val sb = StringBuffer()
+        while (sb.length < numchars) {
+            sb.append(Integer.toHexString(r.nextInt()))
+        }
+        return sb.toString().substring(0, numchars)
     }
 }
