@@ -12,7 +12,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
+import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,12 +34,14 @@ class HomeViewModel @Inject constructor(
     private val _roomsList = MutableLiveData<ArrayList<Room>>(ArrayList())
     val roomsList: LiveData<ArrayList<Room>> = _roomsList
 
-    init {
-        _roomsList.postValue(repository.getFakeRoomsList())
-    }
-
-
     var uri = MutableLiveData<Uri?>(null)
+
+
+    fun resetList(value: QuerySnapshot?){
+         val arrayList = repository.getUserRooms(value)
+        Log.d(Constants.TAG, "resetList2 : "+arrayList.size)
+        _roomsList.postValue(arrayList)
+    }
 
     fun updateUserData() {
         val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
@@ -85,9 +90,6 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun createNewRoom(room:Room){
-        Log.d("mohamed", "createNewRoom: "+"before")
         repository.createNewRoom(room)
-        Log.d("mohamed", "createNewRoom: "+"after")
-
     }
 }

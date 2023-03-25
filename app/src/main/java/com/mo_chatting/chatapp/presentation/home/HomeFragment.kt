@@ -5,22 +5,24 @@ import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.AuthActivity
-import com.mo_chatting.chatapp.MainActivity
+import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
+import com.mo_chatting.chatapp.appClasses.Constants
+import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
@@ -33,10 +35,12 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : MyFragmentParent(){
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
+    @Inject
+    lateinit var firebaseStore : FirebaseFirestore
 
     private lateinit var adapter: HomeRoomAdapter
     private lateinit var binding: FragmentHomeBinding
@@ -65,7 +69,7 @@ class HomeFragment : Fragment() {
         val currentUser = firebaseAuth.currentUser
         val currentUserName = currentUser?.displayName.toString()
         if (currentUserName == "null") {
-            restart()
+              restart()
         } else {
             binding.tvUserName.text = currentUserName
         }
@@ -86,6 +90,10 @@ class HomeFragment : Fragment() {
             } catch (_: Exception) {
             }
         }
+    }
+
+    private fun refreshRV(){
+     //   binding.rvHome.adapter!!.notifyDataSetChanged()
     }
 
     private fun setupRecyclerView() {
@@ -129,6 +137,18 @@ class HomeFragment : Fragment() {
 
         binding.btnEditName.setOnClickListener {
             showNameDialog()
+        }
+
+        //firebase listener
+        firebaseStore.collection(roomsCollection).addSnapshotListener { value, error ->
+
+            error?.let {
+                return@addSnapshotListener
+            }
+            value?.let {
+                viewModel.resetList(value)
+            }
+
         }
 
     }
@@ -197,14 +217,5 @@ class HomeFragment : Fragment() {
             }
         }
 
-    private fun showToast(string: String) {
-        Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
-    }
 
-    fun restart() {
-        val intent = Intent(requireActivity(), MainActivity::class.java)
-        requireContext().startActivity(intent)
-        requireActivity().finishAffinity()
-        requireActivity().overridePendingTransition(0, 0)
-    }
 }

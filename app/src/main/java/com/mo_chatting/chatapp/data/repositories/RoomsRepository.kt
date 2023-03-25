@@ -3,11 +3,12 @@ package com.mo_chatting.chatapp.data.repositories
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.toObject
+import com.mo_chatting.chatapp.appClasses.Constants
+import com.mo_chatting.chatapp.appClasses.Constants.TAG
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Room
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class RoomsRepository(val firebaseStore : FirebaseFirestore,val firebaseAuth: FirebaseAuth) {
@@ -16,11 +17,10 @@ class RoomsRepository(val firebaseStore : FirebaseFirestore,val firebaseAuth: Fi
 
     suspend fun createNewRoom(room:Room){
         try {
-            Log.d("mohamed", "createNewRoom: " + "before2")
             roomRef.add(room).await()
-            Log.d("mohamed", "createNewRoom: " + "no error")
+            // TODO: add this room to user data too
         } catch (e: Exception) {
-            Log.d("mohamed", "createNewRoom: " + e.message.toString())
+            Log.d(TAG, "createNewRoom: " + e.message.toString())
         }
     }
 
@@ -31,19 +31,21 @@ class RoomsRepository(val firebaseStore : FirebaseFirestore,val firebaseAuth: Fi
     }
 
     fun deleteRoom(room: Room){
-
     }
 
-    fun getUserRooms(){
-        val user = firebaseAuth.currentUser!!
-        val userId = user.uid
-    }
+    fun getUserRooms(value: QuerySnapshot?):ArrayList<Room>{
+//        val user = firebaseAuth.currentUser!!
+//        val userId = user.uid
 
-    fun getFakeRoomsList():ArrayList<Room>{
-        val list = ArrayList<Room>()
-        for (i in 0..10){
-            list.add(Room("Room $i",false,i%5,"tempId","bla"))
+        val arrayList = ArrayList<Room>()
+        for (i in value!!.documents){
+            arrayList.add(i.toObject<Room>()!!)
         }
-        return list
+        Log.d(TAG, "resetList: "+arrayList.size)
+
+
+        return arrayList
     }
+
+
 }
