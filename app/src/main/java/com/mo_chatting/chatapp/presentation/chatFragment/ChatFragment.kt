@@ -58,9 +58,9 @@ class ChatFragment : Fragment() {
                 viewModel.addFakeMessage(
                     Message(
                         viewModel.getUserId(),
-                        binding.etMessage.text.toString(),
-                        "23/3/2002 17:40",
-                        false
+                        binding.etMessage.text.toString().trimEnd(),
+                        "23/3/2002     17:40",
+                        viewModel.firebaseAuth.currentUser!!.displayName.toString()
                     )
                 )
                 binding.etMessage.setText("")
