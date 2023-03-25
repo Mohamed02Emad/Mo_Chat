@@ -53,7 +53,6 @@ class HomeFragment : MyFragmentParent(){
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         CoroutineScope(Dispatchers.IO).launch {
@@ -82,7 +81,6 @@ class HomeFragment : MyFragmentParent(){
         }
     }
 
-
     private fun oservers() {
         viewModel.roomsList.observe(viewLifecycleOwner) {
             try {
@@ -90,10 +88,6 @@ class HomeFragment : MyFragmentParent(){
             } catch (_: Exception) {
             }
         }
-    }
-
-    private fun refreshRV(){
-     //   binding.rvHome.adapter!!.notifyDataSetChanged()
     }
 
     private fun setupRecyclerView() {
@@ -141,14 +135,12 @@ class HomeFragment : MyFragmentParent(){
 
         //firebase listener
         firebaseStore.collection(roomsCollection).addSnapshotListener { value, error ->
-
             error?.let {
                 return@addSnapshotListener
             }
             value?.let {
                 viewModel.resetList(value)
             }
-
         }
 
     }
@@ -216,6 +208,5 @@ class HomeFragment : MyFragmentParent(){
                 viewModel.updateUserData()
             }
         }
-
 
 }

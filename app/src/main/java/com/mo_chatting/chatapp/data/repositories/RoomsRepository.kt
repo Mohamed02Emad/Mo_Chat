@@ -1,12 +1,9 @@
 package com.mo_chatting.chatapp.data.repositories
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
-import com.mo_chatting.chatapp.appClasses.Constants
-import com.mo_chatting.chatapp.appClasses.Constants.TAG
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Room
 import kotlinx.coroutines.tasks.await
@@ -19,11 +16,10 @@ class RoomsRepository(val firebaseStore : FirebaseFirestore,val firebaseAuth: Fi
         try {
             roomRef.add(room).await()
             // TODO: add this room to user data too
-        } catch (e: Exception) {
-            Log.d(TAG, "createNewRoom: " + e.message.toString())
+        } catch (_: Exception) {
+           // Log.d(TAG, "createNewRoom: " + e.message.toString())
         }
     }
-
 
 
     fun updateRoom(room: Room){
@@ -41,9 +37,6 @@ class RoomsRepository(val firebaseStore : FirebaseFirestore,val firebaseAuth: Fi
         for (i in value!!.documents){
             arrayList.add(i.toObject<Room>()!!)
         }
-        Log.d(TAG, "resetList: "+arrayList.size)
-
-
         return arrayList
     }
 

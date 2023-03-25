@@ -30,16 +30,13 @@ class HomeViewModel @Inject constructor(
     val repository: RoomsRepository
 ) : ViewModel() {
 
-
     private val _roomsList = MutableLiveData<ArrayList<Room>>(ArrayList())
     val roomsList: LiveData<ArrayList<Room>> = _roomsList
 
     var uri = MutableLiveData<Uri?>(null)
 
-
     fun resetList(value: QuerySnapshot?){
          val arrayList = repository.getUserRooms(value)
-        Log.d(Constants.TAG, "resetList2 : "+arrayList.size)
         _roomsList.postValue(arrayList)
     }
 
