@@ -25,6 +25,7 @@ import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
 import com.mo_chatting.chatapp.presentation.dialogs.AddRoomDialog
 import com.mo_chatting.chatapp.presentation.dialogs.MyDialogListener
+import com.mo_chatting.chatapp.presentation.dialogs.MyRenameDialogListener
 import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +36,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : MyFragmentParent(),MyDialogListener{
+class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -152,7 +153,7 @@ class HomeFragment : MyFragmentParent(),MyDialogListener{
     }
 
     private fun showNameDialog() {
-        val dialogFragment = RenameDialog()
+        val dialogFragment = RenameDialog(this)
         dialogFragment.show(requireActivity().supportFragmentManager, null)
     }
 
@@ -220,4 +221,10 @@ class HomeFragment : MyFragmentParent(),MyDialogListener{
             viewModel.createNewRoom(room)
         }
     }
+
+    override fun onDataPassedRename(name: String) {
+        binding.tvUserName.text=name
+    }
+
+
 }

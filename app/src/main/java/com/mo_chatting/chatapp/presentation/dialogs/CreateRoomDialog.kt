@@ -27,7 +27,7 @@ class CreateRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentCreateRoomDialogBinding.inflate(layoutInflater)
         return binding.root
     }

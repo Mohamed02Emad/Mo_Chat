@@ -1,5 +1,6 @@
 package com.mo_chatting.chatapp.presentation.dialogs
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -15,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.databinding.FragmentRenameDialogBinding
+import com.mo_chatting.chatapp.presentation.home.HomeFragment
 import com.mo_chatting.chatapp.validation.validateUserName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,11 +24,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class RenameDialog : DialogFragment() {
+class RenameDialog(val homeFragment: HomeFragment) : DialogFragment() {
 
     private lateinit var binding: FragmentRenameDialogBinding
     private var newName = ""
     private lateinit var firebaseAuth: FirebaseAuth
+    private var listener: MyRenameDialogListener? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,7 +99,8 @@ class RenameDialog : DialogFragment() {
                 try {
                     user.updateProfile(profileUpdates).await()
                     withContext(Dispatchers.Main) {
-                       restart()
+                       listener!!.onDataPassedRename(newName)
+                        this@RenameDialog.dismiss()
                     }
                 } catch (_: Exception) {
 
@@ -104,10 +109,17 @@ class RenameDialog : DialogFragment() {
         }
 
     }
-    fun restart() {
-        val intent = Intent(requireActivity(), MainActivity::class.java)
-        requireContext().startActivity(intent)
-        requireActivity().finishAffinity()
-        requireActivity().overridePendingTransition(0, 0)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = homeFragment
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must implement MyDialogListener")
+        }
     }
+}
+
+interface MyRenameDialogListener {
+    fun onDataPassedRename(name:String )
 }
