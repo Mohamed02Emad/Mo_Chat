@@ -71,7 +71,7 @@ class ChatFragment : Fragment() {
 
             btnRoomInfo.setOnClickListener {
                 viewModel.changeUserID()
-                showToast("user id changed")
+                showToast(args.room.roomId)
             }
         }
     }
