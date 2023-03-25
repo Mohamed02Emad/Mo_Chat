@@ -25,6 +25,7 @@ import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
+import com.mo_chatting.chatapp.presentation.dialogs.AddRoomDialog
 import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -120,9 +121,10 @@ class HomeFragment : MyFragmentParent(){
         }
 
         binding.fabAdd.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.createNewRoom(Room("testRoom", false, 0, "123", "mohamed"))
-            }
+//            CoroutineScope(Dispatchers.IO).launch {
+//                viewModel.createNewRoom(Room("testRoom", false, 0, "123", "mohamed"))
+//            }
+            showAddRoomDialog()
         }
 
         binding.tvEditImage.setOnClickListener {
@@ -134,7 +136,7 @@ class HomeFragment : MyFragmentParent(){
         }
 
         //firebase listener
-        firebaseStore.collection(roomsCollection).addSnapshotListener { value, error ->
+        firebaseStore.collection("$roomsCollection${firebaseAuth.currentUser!!.uid}").addSnapshotListener { value, error ->
             error?.let {
                 return@addSnapshotListener
             }
@@ -143,6 +145,11 @@ class HomeFragment : MyFragmentParent(){
             }
         }
 
+    }
+
+    private fun showAddRoomDialog() {
+        val addRoomDialog = AddRoomDialog()
+        addRoomDialog.show(requireActivity().supportFragmentManager,null)
     }
 
     private fun showNameDialog() {

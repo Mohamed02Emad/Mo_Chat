@@ -10,12 +10,15 @@ import kotlinx.coroutines.tasks.await
 
 class RoomsRepository(val firebaseStore : FirebaseFirestore,val firebaseAuth: FirebaseAuth) {
 
-    val roomRef = firebaseStore.collection(roomsCollection)
+    val roomRef = firebaseStore.collection("$roomsCollection${firebaseAuth.currentUser!!.uid}")
+    val allRoomsRef = firebaseStore.collection("$roomsCollection")
 
     suspend fun createNewRoom(room:Room){
         try {
+            // add room to this user as owner
             roomRef.add(room).await()
-            // TODO: add this room to user data too
+            // add room to allRooms data  so that i can reach it later foe other users
+            allRoomsRef.add(room).await()
         } catch (_: Exception) {
            // Log.d(TAG, "createNewRoom: " + e.message.toString())
         }
@@ -23,16 +26,14 @@ class RoomsRepository(val firebaseStore : FirebaseFirestore,val firebaseAuth: Fi
 
 
     fun updateRoom(room: Room){
-
+        // TODO: update for all users
     }
 
     fun deleteRoom(room: Room){
+        // TODO: if the owner deleted it remove it from all users else remove from this exact user
     }
 
     fun getUserRooms(value: QuerySnapshot?):ArrayList<Room>{
-//        val user = firebaseAuth.currentUser!!
-//        val userId = user.uid
-
         val arrayList = ArrayList<Room>()
         for (i in value!!.documents){
             arrayList.add(i.toObject<Room>()!!)

@@ -10,6 +10,8 @@ data class Room (
     var roomTypeImage:Int = 0,
     val roomId:String = "123",
     var roomOwnerId:String = "mohamed",
+    var hasPassword :Boolean= false,
+    var password:String=""
 
     // user and boolean to check if user is still in the room or has left
    // var listOFUsers :ArrayList<Pair<User,Boolean>> = ArrayList()
