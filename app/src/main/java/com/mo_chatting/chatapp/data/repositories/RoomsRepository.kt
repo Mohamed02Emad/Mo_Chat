@@ -1,8 +1,10 @@
 package com.mo_chatting.chatapp.data.repositories
 
+import android.os.Build.VERSION_CODES.Q
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Room
@@ -22,23 +24,37 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         }
     }
 
-    suspend fun joinRoom(roomId: String){
-        val list = getAllRooms()
-        var room :Room? = null
-        for (i in list ){
-            if (i.roomId == roomId){
-                room=i
-                break
-            }
-        }
-        room?.let {
+    suspend fun joinRoom(room: Room){
+        room.let {
             it.listOFUsers.add(firebaseAuth.currentUser!!.uid)
             updateRoom(it)
         }
     }
 
-    fun updateRoom(room: Room) {
-        // TODO: update for all users
+    suspend fun checkIfRoomExist(roomId: String): Room? {
+        val list = getAllRooms()
+        for (i in list ){
+            if (i.roomId == roomId){
+                return i
+            }
+        }
+        return null
+    }
+
+    suspend fun updateRoom(room: Room) {
+        val map = mapMyRoom(room)
+        try {
+            val roomQuery = allRoomsRef
+                .whereEqualTo("roomId" , room.roomId)
+                .get()
+                .await()
+            if (roomQuery.documents.isNotEmpty()){
+                for (document in roomQuery){
+                    allRoomsRef.document(document.id).set(map, SetOptions.merge())
+                }
+            }
+        }catch (_:Exception){}
+
     }
 
     fun deleteRoom(room: Room) {
@@ -69,5 +85,17 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         return arrayList
     }
 
+    fun mapMyRoom(room: Room):Map<String,Any>{
+        val map = mutableMapOf<String,Any>()
+        map["roomName"]= room.roomName
+        map["roomPinState"] = room.roomPinState
+        map["roomTypeImage"]= room.roomTypeImage
+        map["roomId"]= room.roomId
+        map["roomOwnerId"]= room.roomOwnerId
+        map["hasPassword"]= room.hasPassword
+        map["password"]= room.password
+        map["listOFUsers"]= room.listOFUsers
+        return map
+    }
 
 }

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -23,10 +24,7 @@ import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
-import com.mo_chatting.chatapp.presentation.dialogs.AddRoomDialog
-import com.mo_chatting.chatapp.presentation.dialogs.MyDialogListener
-import com.mo_chatting.chatapp.presentation.dialogs.MyRenameDialogListener
-import com.mo_chatting.chatapp.presentation.dialogs.RenameDialog
+import com.mo_chatting.chatapp.presentation.dialogs.*
 import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +34,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener {
+class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
+    MyJoinRoomListener {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -226,5 +225,22 @@ class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener 
         binding.tvUserName.text=name
     }
 
+    override fun onDataPassedJoinRoom(roomId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val room = viewModel.checkIfRoomExist(roomId)
+            if (room!=null){
+                if (room.hasPassword){
+                    // TODO: create dialog for this 
+                }else{
+                    viewModel.joinRoom(room)
+                }
+            }else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "No Room with that id", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+    }
 
 }

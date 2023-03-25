@@ -107,4 +107,12 @@ class HomeViewModel @Inject constructor(
         }
         return sb.toString().substring(0, numchars)
     }
+
+    suspend fun checkIfRoomExist(roomId: String): Room?{
+      return repository.checkIfRoomExist(roomId)
+    }
+
+    suspend fun joinRoom(room: Room) {
+      repository.joinRoom(room)
+    }
 }

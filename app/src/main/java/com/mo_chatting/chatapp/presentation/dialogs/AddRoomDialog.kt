@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.createViewModelLazy
 import com.mo_chatting.chatapp.databinding.FragmentAddRoomDialogBinding
 import com.mo_chatting.chatapp.presentation.home.HomeFragment
 
@@ -36,13 +36,13 @@ class AddRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
             }
 
             btnJoin.setOnClickListener {
-                Toast.makeText(requireContext(),"soon",Toast.LENGTH_LONG).show()
+                val joinRoomDialog=JoinRoomDialog(homeFragment)
+                joinRoomDialog.show(requireActivity().supportFragmentManager,null)
+                this@AddRoomDialog.dismiss()
             }
 
             btnCreateNewRoom.setOnClickListener {
                 val createRoomDialogBinding = CreateRoomDialog(homeFragment)
-//                 TODO: remember to slove this
-//                createRoomDialogBinding.setTargetFragment(parentFragment,0)
                 createRoomDialogBinding.show(requireActivity().supportFragmentManager,null)
                 this@AddRoomDialog.dismiss()
             }
