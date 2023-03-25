@@ -1,8 +1,11 @@
 package com.mo_chatting.chatapp.data.repositories
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.data.models.Room
 
-class RoomsRepository() {
+class RoomsRepository(val firebaseStore : FirebaseFirestore) {
+
+
     fun getFakeRoomsList():ArrayList<Room>{
         val list = ArrayList<Room>()
         for (i in 0..10){
