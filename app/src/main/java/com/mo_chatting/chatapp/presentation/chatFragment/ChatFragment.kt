@@ -51,7 +51,7 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setViews()
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.getInitialData(args.room)
+            viewModel.getInitialData(thisRoom)
             withContext(Dispatchers.Main) {
                 setupRecyclerView()
                 setOnClicks()
@@ -77,8 +77,9 @@ class ChatFragment : Fragment() {
                             viewModel.getUserId(),
                             binding.etMessage.text.toString().trimEnd(),
                             System.currentTimeMillis().toString(),
+                            messageOwner = viewModel.getUserName(),
                             viewModel.firebaseAuth.currentUser!!.displayName.toString()
-                        ), room = args.room
+                        ), room = thisRoom
                     )
                     withContext(Dispatchers.Main) {
                         binding.btnSend.isClickable = true
@@ -92,12 +93,12 @@ class ChatFragment : Fragment() {
             pushViewsToTopOfKeyBoard()
 
             btnRoomInfo.setOnClickListener {
-                val roomIdDialog = RoomIdDialog(args.room.roomId)
+                val roomIdDialog = RoomIdDialog(thisRoom.roomId)
                 roomIdDialog.show(requireActivity().supportFragmentManager, null)
             }
         }
 
-        firebaseStore.collection("${Constants.roomsChatCollection}${args.room.roomId}")
+        firebaseStore.collection("${Constants.roomsChatCollection}${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
                 error?.let {
                     return@addSnapshotListener

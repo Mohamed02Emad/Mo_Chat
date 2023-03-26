@@ -51,4 +51,8 @@ class ChatFragmentViewModel @Inject constructor(
         } catch (e: Exception) {
         }
     }
+
+    fun getUserName(): String {
+        return firebaseAuth.currentUser!!.displayName.toString()
+    }
 }

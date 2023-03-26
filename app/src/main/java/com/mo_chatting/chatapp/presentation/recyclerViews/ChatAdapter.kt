@@ -35,6 +35,7 @@ class ChatAdapter(
         val currentMessage = list[position]
         holder.binding.messageBody.text = currentMessage.messageText
         holder.binding.tvMessageDate.text = currentMessage.messageDateAndTime
+        holder.binding.tvMessageOwner.text= currentMessage.messageOwner
         setCardColors(holder, currentMessage, position)
         setCardOnClicks(holder, currentMessage, position)
     }
