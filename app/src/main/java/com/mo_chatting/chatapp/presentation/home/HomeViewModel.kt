@@ -34,8 +34,10 @@ class HomeViewModel @Inject constructor(
     var uri = MutableLiveData<Uri?>(null)
 
     fun resetList(value: QuerySnapshot?) {
-        val arrayList = repository.getUserRooms(value)
-        _roomsList.postValue(arrayList)
+        try {
+            val arrayList = repository.getUserRooms(value)
+            _roomsList.postValue(arrayList)
+        }catch (_:Exception){}
     }
 
     fun updateUserData() {

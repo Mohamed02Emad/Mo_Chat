@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.Module
 import dagger.Provides
@@ -23,6 +24,10 @@ object module {
     @Singleton
     @Provides
     fun provideRoomsRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth): RoomsRepository = RoomsRepository(firebaseFireStore, firebaseAuth)
+
+    @Singleton
+    @Provides
+    fun provideChatRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth): MessagesRepository = MessagesRepository(firebaseFireStore, firebaseAuth)
 
     @Singleton
     @Provides
