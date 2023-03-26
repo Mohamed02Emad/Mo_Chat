@@ -1,25 +1,38 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
+import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.FirebaseFirestore
+import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentChatBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RoomIdDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
+
+    @Inject
+    lateinit var firebaseStore: FirebaseFirestore
 
     private lateinit var binding: FragmentChatBinding
     private val args: ChatFragmentArgs by navArgs()
@@ -39,13 +52,24 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setViews()
-        setOnClicks()
-        setupRecyclerView()
-        setObservers()
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.resetList(args.room)
+            withContext(Dispatchers.Main) {
+                setupRecyclerView()
+           //     setObservers()
+                setOnClicks()
+            }
+            binding.rvChat.scrollToPosition(binding.rvChat.adapter!!.itemCount - 1)
+        }
     }
 
     private fun setObservers() {
-
+        viewModel.messageList.observe(viewLifecycleOwner) {
+            try {
+                scrollRV()
+            } catch (_: Exception) {
+            }
+        }
     }
 
     private fun setOnClicks() {
@@ -56,25 +80,66 @@ class ChatFragment : Fragment() {
 
             btnSend.setOnClickListener {
                 if (binding.etMessage.text.isNullOrBlank()) return@setOnClickListener
-                viewModel.addFakeMessage(
-                    Message(
-                        viewModel.getUserId(),
-                        binding.etMessage.text.toString().trimEnd(),
-                        "23/3/2002     17:40",
-                        viewModel.firebaseAuth.currentUser!!.displayName.toString()
+                CoroutineScope(Dispatchers.IO).launch {
+                    withContext(Dispatchers.Main) {
+                        binding.btnSend.isClickable = false
+                    }
+                    viewModel.sendMessage(
+                        Message(
+                            viewModel.getUserId(),
+                            binding.etMessage.text.toString().trimEnd(),
+                            System.currentTimeMillis().toString(),
+                            viewModel.firebaseAuth.currentUser!!.displayName.toString()
+                        ), room = args.room
                     )
-                )
-                binding.etMessage.setText("")
-                smoothRefreshRV()
+                    withContext(Dispatchers.Main) {
+                        binding.btnSend.isClickable = true
+                        binding.etMessage.setText("")
+                       // scrollRV()
+                    }
+                }
+
             }
 
             pushViewsToTopOfKeyBoard()
 
             btnRoomInfo.setOnClickListener {
                 val roomIdDialog = RoomIdDialog(args.room.roomId)
-                roomIdDialog.show(requireActivity().supportFragmentManager,null)
+                roomIdDialog.show(requireActivity().supportFragmentManager, null)
             }
         }
+
+        firebaseStore.collection("${Constants.roomsChatCollection}${args.room.roomId}")
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    return@addSnapshotListener
+                }
+                value?.let {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.resetList(args.room)
+                        withContext(Dispatchers.Main){
+                            binding.rvChat.adapter!!.notifyDataSetChanged()
+                            scrollRV()
+                        }
+                    }
+                }
+            }
+    }
+
+
+    private fun setupRecyclerView() {
+        adapter = ChatAdapter(
+            viewModel.messageList.value!!,
+            ChatAdapter.OnChatClickListener { message, position ->
+                onChatClick(message, position)
+            },
+            ChatAdapter.OnChatLongClickListener { message, position ->
+                onChatLongClick(message, position)
+                false
+            }, viewModel.getUserId()
+        )
+        binding.rvChat.adapter = adapter
+        binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
     }
 
     private fun pushViewsToTopOfKeyBoard() {
@@ -97,21 +162,6 @@ class ChatFragment : Fragment() {
             }
 
         }
-    }
-
-    private fun setupRecyclerView() {
-        adapter = ChatAdapter(
-            viewModel.messageList.value!!,
-            ChatAdapter.OnChatClickListener { message, position ->
-                onChatClick(message, position)
-            },
-            ChatAdapter.OnChatLongClickListener { message, position ->
-                onChatLongClick(message, position)
-                false
-            }, viewModel.getUserId()
-        )
-        binding.rvChat.adapter = adapter
-        binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
     }
 
     private fun onChatLongClick(message: Message, position: Int) {

@@ -6,21 +6,38 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
+import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
+import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import kotlinx.coroutines.tasks.await
 
 class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: FirebaseAuth) {
 
-    // val roomRef = firebaseStore.collection("$roomsCollection${firebaseAuth.currentUser!!.uid}")
     val allRoomsRef = firebaseStore.collection("$roomsCollection")
 
     suspend fun createNewRoom(room: Room) {
         try {
             room.listOFUsers.add(firebaseAuth.currentUser!!.uid)
             allRoomsRef.add(room).await()
+            createChatForRoom(room)
         } catch (_: Exception) {
             // Log.d(TAG, "createNewRoom: " + e.message.toString())
+        }
+    }
+
+    suspend fun createChatForRoom(room: Room) {
+        try {
+            val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+            msgRef.add(
+                Message(
+                    messageOwner = "firebase",
+                    messageOwnerId = "firebase",
+                    messageText = "start texting",
+                    messageDateAndTime = "--/--/----  --:--"
+                )
+            ).await()
+        } catch (e: Exception) {
         }
     }
 
@@ -87,7 +104,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         return arrayList
     }
 
-    fun mapMyRoom(room: Room):Map<String,Any>{
+    private fun mapMyRoom(room: Room):Map<String,Any>{
         val map = mutableMapOf<String,Any>()
         map["roomName"]= room.roomName
         map["roomPinState"] = room.roomPinState
