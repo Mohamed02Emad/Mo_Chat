@@ -1,14 +1,12 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
-import android.annotation.SuppressLint
+
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -53,22 +51,12 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setViews()
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.resetList(args.room)
+            viewModel.getInitialData(args.room)
             withContext(Dispatchers.Main) {
                 setupRecyclerView()
-           //     setObservers()
                 setOnClicks()
             }
             binding.rvChat.scrollToPosition(binding.rvChat.adapter!!.itemCount - 1)
-        }
-    }
-
-    private fun setObservers() {
-        viewModel.messageList.observe(viewLifecycleOwner) {
-            try {
-                scrollRV()
-            } catch (_: Exception) {
-            }
         }
     }
 
@@ -95,7 +83,7 @@ class ChatFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         binding.btnSend.isClickable = true
                         binding.etMessage.setText("")
-                       // scrollRV()
+                        // scrollRV()
                     }
                 }
 
@@ -116,8 +104,8 @@ class ChatFragment : Fragment() {
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.resetList(args.room)
-                        withContext(Dispatchers.Main){
+                        viewModel.resetList(it)
+                        withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
                             scrollRV()
                         }
@@ -155,7 +143,7 @@ class ChatFragment : Fragment() {
 
                 } else {
                     viewModel.isKeyboard = true
-                    scrollRV()
+                    //scrollRV()
                 }
             } else {
                 viewModel.isKeyboard = false
