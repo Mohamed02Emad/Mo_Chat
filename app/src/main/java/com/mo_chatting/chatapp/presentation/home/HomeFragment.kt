@@ -3,6 +3,7 @@ package com.mo_chatting.chatapp.presentation.home
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -33,14 +34,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
-class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
-    MyJoinRoomListener,MyEnterPasswordListener {
+class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListener,
+    MyJoinRoomListener, MyEnterPasswordListener {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
+
     @Inject
-    lateinit var firebaseStore : FirebaseFirestore
+    lateinit var firebaseStore: FirebaseFirestore
 
     private lateinit var adapter: HomeRoomAdapter
     private lateinit var binding: FragmentHomeBinding
@@ -64,14 +67,31 @@ class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
     }
 
     private suspend fun setUserViews() {
-        val uri = viewModel.getUserImage()
-        val currentUser = firebaseAuth.currentUser
-        val currentUserName = currentUser?.displayName.toString()
-        if (currentUserName == "null") {
-              restart()
+
+        val name = viewModel.getUserName()
+        if (name != "null") {
+            withContext(Dispatchers.Main) {
+                binding.tvUserName.text = name
+            }
         } else {
-            binding.tvUserName.text = currentUserName
+
+            viewModel.setUserName()
+            withContext(Dispatchers.Main) {
+                binding.tvUserName.text = viewModel.getUserName()
+            }
         }
+
+        val img = viewModel.getUserImageFromDataStore()
+        val uri = Uri.parse(
+            if (img != "null") {
+                img
+            } else {
+                viewModel.setUserImageAtDataStore()
+                viewModel.getUserImageFromDataStore()
+
+            }
+        )
+
         withContext(Dispatchers.Main) {
             Glide.with(requireContext())
                 .load(uri)
@@ -114,15 +134,16 @@ class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
 
     private fun setOnClicks() {
         binding.btnLogout.setOnClickListener {
-            viewModel.signOut()
-            startActivity(Intent(requireActivity(), AuthActivity::class.java))
-            requireActivity().finish()
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.signOut()
+                withContext(Dispatchers.Main) {
+                    startActivity(Intent(requireActivity(), AuthActivity::class.java))
+                    requireActivity().finish()
+                }
+            }
         }
 
         binding.fabAdd.setOnClickListener {
-//            CoroutineScope(Dispatchers.IO).launch {
-//                viewModel.createNewRoom(Room("testRoom", false, 0, "123", "mohamed"))
-//            }
             showAddRoomDialog()
         }
 
@@ -148,7 +169,7 @@ class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
 
     private fun showAddRoomDialog() {
         val addRoomDialog = AddRoomDialog(this)
-        addRoomDialog.show(requireActivity().supportFragmentManager,null)
+        addRoomDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun showNameDialog() {
@@ -222,20 +243,20 @@ class HomeFragment : MyFragmentParent(),MyDialogListener,MyRenameDialogListener,
     }
 
     override fun onDataPassedRename(name: String) {
-        binding.tvUserName.text=name
+        binding.tvUserName.text = name
     }
 
     override fun onDataPassedJoinRoom(roomId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val room = viewModel.checkIfRoomExist(roomId)
-            if (room!=null){
-                if (room.hasPassword){
-                    val enterPasswordDialog = EnterPasswordDialog(this@HomeFragment,room)
-                    enterPasswordDialog.show(requireActivity().supportFragmentManager,null)
-                }else{
+            if (room != null) {
+                if (room.hasPassword) {
+                    val enterPasswordDialog = EnterPasswordDialog(this@HomeFragment, room)
+                    enterPasswordDialog.show(requireActivity().supportFragmentManager, null)
+                } else {
                     viewModel.joinRoom(room)
                 }
-            }else {
+            } else {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "No Room with that id", Toast.LENGTH_LONG)
                         .show()
