@@ -76,7 +76,7 @@ class ChatFragment : Fragment() {
                         Message(
                             viewModel.getUserId(),
                             binding.etMessage.text.toString().trimEnd(),
-                            System.currentTimeMillis().toString(),
+                            messageDateAndTime = viewModel.getDate(),
                             messageOwner = viewModel.getUserName(),
                             viewModel.firebaseAuth.currentUser!!.displayName.toString()
                         ), room = thisRoom
