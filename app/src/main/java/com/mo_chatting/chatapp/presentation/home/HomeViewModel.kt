@@ -17,9 +17,13 @@ import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
+import java.net.URI
 import java.util.*
 import javax.inject.Inject
 
@@ -60,7 +64,9 @@ class HomeViewModel @Inject constructor(
                 val userRef = FirebaseDatabase.getInstance().getReference("users")
                     .child(firebaseAuth.currentUser!!.uid)
                 userRef.child("image").setValue(downloadUri.toString())
-
+                CoroutineScope(Dispatchers.IO).launch {
+                    setUserImageAtDataStoreUri(downloadUri)
+                }
             }
         }
     }
@@ -135,11 +141,19 @@ class HomeViewModel @Inject constructor(
         dataStore.setUserName(userName)
     }
 
-    suspend fun getUserImageFromDataStore(): String {
-        return dataStore.getUserImage()
+    suspend fun getUserImageFromDataStore(): Uri? {
+        val data = dataStore.getUserImage()
+        if (data == "null" || data.isBlank()){
+            return null
+        }else{
+            return Uri.parse(data)
+        }
     }
 
     suspend fun setUserImageAtDataStore() {
         dataStore.setUserImage(getUserImage())
+    }
+    suspend fun setUserImageAtDataStoreUri(uri: Uri) {
+        dataStore.setUserImage(uri.toString())
     }
 }

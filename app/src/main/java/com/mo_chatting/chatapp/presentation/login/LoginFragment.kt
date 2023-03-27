@@ -15,9 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentLoginBinding
@@ -27,9 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -158,7 +154,6 @@ class LoginFragment : Fragment() {
                 val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
                 account?.let {
                     googleAuthForFirebase(it)
-                    viewModel.updateUser()
                     startActivity(Intent(requireActivity(), MainActivity::class.java))
                     requireActivity().finish()
                 }

@@ -3,7 +3,6 @@ package com.mo_chatting.chatapp.presentation.home
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -68,37 +67,43 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
 
     private suspend fun setUserViews() {
 
-        val name = viewModel.getUserName()
-        if (name != "null") {
-            withContext(Dispatchers.Main) {
-                binding.tvUserName.text = name
-            }
-        } else {
-
-            viewModel.setUserName()
-            withContext(Dispatchers.Main) {
-                binding.tvUserName.text = viewModel.getUserName()
-            }
+//        val name = viewModel.getUserName()
+//        if (name != "null") {
+//            withContext(Dispatchers.Main) {
+//                showToast("not null")
+//            }
+//            withContext(Dispatchers.Main) {
+//                binding.tvUserName.text = name
+//            }
+//        } else {
+//            withContext(Dispatchers.Main) {
+//                showToast("null")
+//            }
+//            viewModel.setUserName()
+//            withContext(Dispatchers.Main) {
+//                binding.tvUserName.text = viewModel.getUserName()
+//            }
+//        }
+        withContext(Dispatchers.Main) {
+            binding.tvUserName.text = "hhh"
         }
 
         val img = viewModel.getUserImageFromDataStore()
-        val uri = Uri.parse(
-            if (img != "null") {
-                img
-            } else {
-                viewModel.setUserImageAtDataStore()
-                viewModel.getUserImageFromDataStore()
-
-            }
-        )
+        val uri = if (img != null) {
+            img
+        } else {
+            viewModel.setUserImageAtDataStore()
+            viewModel.getUserImageFromDataStore()
+        }
 
         withContext(Dispatchers.Main) {
             Glide.with(requireContext())
                 .load(uri)
-                .error(R.drawable.ic_profile)
+                .error(R.drawable.mohamed)
                 .override(500, 400)
                 .into(binding.profile)
         }
+
     }
 
     private fun oservers() {
@@ -222,6 +227,7 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data
                 viewModel.uri.value = data!!.data
+
                 binding.profile.setImageURI(viewModel.uri.value)
                 viewModel.updateUserData()
             }
@@ -231,6 +237,7 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 if (viewModel.uri.value != null)
+
                     binding.profile.setImageURI(viewModel.uri.value)
                 viewModel.updateUserData()
             }

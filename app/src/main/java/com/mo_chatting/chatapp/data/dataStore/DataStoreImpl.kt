@@ -24,7 +24,7 @@ class DataStoreImpl(
 
     companion object {
         const val USER_NAME = "userName"
-        const val USER_IMAGE="userImage"
+        const val USER_IMAGE = "userImage"
     }
 
     override suspend fun clearAll() {
@@ -33,27 +33,29 @@ class DataStoreImpl(
 
     override suspend fun getUserImage(): String = withContext(dispatcher) {
         mDataStore.data.map { settings ->
-            settings[stringPreferencesKey(USER_IMAGE)]
-        }.first().toString()
-    }
-    override suspend fun setUserImage(imgLocation: String?) {
-        withContext(dispatcher) {
-            mDataStore.edit { settings ->
-                settings[stringPreferencesKey(USER_IMAGE)] = imgLocation ?: "null"
-            }
-        }
+            settings[stringPreferencesKey(USER_IMAGE)] ?: "null"
+        }.first()
     }
 
     override suspend fun getUserName(): String = withContext(dispatcher) {
         mDataStore.data.map { settings ->
-            settings[stringPreferencesKey(USER_NAME)]
-        }.first().toString()
+            settings[stringPreferencesKey(USER_NAME)] ?: "null"
+        }.first()
+
     }
 
-    override suspend fun setUserName(userName:String?) {
+    override suspend fun setUserImage(imgLocation: String) {
         withContext(dispatcher) {
             mDataStore.edit { settings ->
-                settings[stringPreferencesKey(USER_NAME)] = userName ?: "null"
+                settings[stringPreferencesKey(USER_IMAGE)] = imgLocation
+            }
+        }
+    }
+
+    override suspend fun setUserName(userName: String) {
+        withContext(dispatcher) {
+            mDataStore.edit { settings ->
+                settings[stringPreferencesKey(USER_NAME)] = userName
             }
         }
     }

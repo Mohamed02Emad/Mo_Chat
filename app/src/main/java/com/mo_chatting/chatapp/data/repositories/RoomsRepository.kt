@@ -16,8 +16,6 @@ import javax.inject.Inject
 
 class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: FirebaseAuth) {
 
-
-
     val allRoomsRef = firebaseStore.collection("$roomsCollection")
 
     suspend fun createNewRoom(room: Room) {
