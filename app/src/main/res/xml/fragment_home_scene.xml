@@ -9,8 +9,8 @@
             android:id="@+id/tv_user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/profile"
-            app:layout_constraintTop_toTopOf="@id/profile">
+            app:layout_constraintBottom_toBottomOf="@id/profile_card"
+            app:layout_constraintTop_toTopOf="@id/profile_card">
             <CustomAttribute
                 app:attributeName="textColor"
                 app:customColorValue="@color/blue_white" />
@@ -19,21 +19,25 @@
 
         <Constraint
             android:id="@+id/btn_edit_name"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginStart="-40dp"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_marginStart="-50dp"
             android:alpha="0"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="@id/profile" />
+            app:layout_constraintStart_toStartOf="@id/profile_card"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@+id/profile"
+            android:id="@+id/profile_card"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+            <CustomAttribute
+                app:attributeName="radius"
+                app:customDimension="45dp" />
+        </Constraint>
 
         <Constraint
             android:id="@+id/btn_logout"
@@ -53,12 +57,12 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
         <Constraint
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="match_parent"
-            app:layout_constraintTop_toBottomOf="@id/profile"
-            android:id="@+id/view1" />
+            app:layout_constraintTop_toBottomOf="@id/profile_card" />
 
 
     </ConstraintSet>
@@ -72,10 +76,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="4dp"
-            app:layout_constraintStart_toEndOf="@id/btn_edit_name"
             app:layout_constraintBottom_toBottomOf="@id/btn_edit_name"
-            app:layout_constraintTop_toTopOf="@id/btn_edit_name"
-            >
+            app:layout_constraintStart_toEndOf="@id/btn_edit_name"
+            app:layout_constraintTop_toTopOf="@id/btn_edit_name">
             <CustomAttribute
                 app:attributeName="textColor"
                 app:customColorValue="@color/dark_blue_top_bar" />
@@ -84,20 +87,24 @@
 
         <Constraint
             android:id="@+id/btn_edit_name"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:alpha="1"
-            app:layout_constraintStart_toStartOf="@id/profile"
+            app:layout_constraintStart_toStartOf="@id/profile_card"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@+id/profile"
+            android:id="@+id/profile_card"
             android:layout_width="match_parent"
             android:layout_height="220dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+            <CustomAttribute
+                app:attributeName="radius"
+                app:customDimension="0dp" />
+        </Constraint>
 
         <Constraint
             android:id="@+id/btn_logout"
@@ -106,8 +113,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:alpha="1"
-            app:layout_constraintEnd_toEndOf="@id/profile"
-            app:layout_constraintTop_toTopOf="@id/profile" />
+            app:layout_constraintEnd_toEndOf="@id/profile_card"
+            app:layout_constraintTop_toTopOf="@id/profile_card" />
 
         <Constraint
             android:id="@+id/tv_edit_image"
@@ -118,7 +125,6 @@
             android:alpha="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
-
 
 
     </ConstraintSet>
