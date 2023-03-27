@@ -1,14 +1,12 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
-import android.annotation.SuppressLint
+
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -53,22 +51,12 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setViews()
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.resetList(args.room)
+            viewModel.getInitialData(thisRoom)
             withContext(Dispatchers.Main) {
                 setupRecyclerView()
-           //     setObservers()
                 setOnClicks()
             }
             binding.rvChat.scrollToPosition(binding.rvChat.adapter!!.itemCount - 1)
-        }
-    }
-
-    private fun setObservers() {
-        viewModel.messageList.observe(viewLifecycleOwner) {
-            try {
-                scrollRV()
-            } catch (_: Exception) {
-            }
         }
     }
 
@@ -88,36 +76,37 @@ class ChatFragment : Fragment() {
                         Message(
                             viewModel.getUserId(),
                             binding.etMessage.text.toString().trimEnd(),
-                            System.currentTimeMillis().toString(),
-                            viewModel.firebaseAuth.currentUser!!.displayName.toString()
-                        ), room = args.room
+                            messageDateAndTime = viewModel.getDate(),
+                            messageOwner = viewModel.getUserName(),
+                            viewModel.firebaseAuth.currentUser!!.displayName.toString(),
+                            timeWithMillis = System.currentTimeMillis().toString()
+                        ), room = thisRoom
                     )
                     withContext(Dispatchers.Main) {
                         binding.btnSend.isClickable = true
                         binding.etMessage.setText("")
-                       // scrollRV()
+                        // scrollRV()
                     }
                 }
-
             }
 
             pushViewsToTopOfKeyBoard()
 
             btnRoomInfo.setOnClickListener {
-                val roomIdDialog = RoomIdDialog(args.room.roomId)
+                val roomIdDialog = RoomIdDialog(thisRoom.roomId)
                 roomIdDialog.show(requireActivity().supportFragmentManager, null)
             }
         }
 
-        firebaseStore.collection("${Constants.roomsChatCollection}${args.room.roomId}")
+        firebaseStore.collection("${Constants.roomsChatCollection}${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
                 error?.let {
                     return@addSnapshotListener
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.resetList(args.room)
-                        withContext(Dispatchers.Main){
+                        viewModel.resetList(it)
+                        withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
                             scrollRV()
                         }
@@ -155,7 +144,7 @@ class ChatFragment : Fragment() {
 
                 } else {
                     viewModel.isKeyboard = true
-                    scrollRV()
+                    //scrollRV()
                 }
             } else {
                 viewModel.isKeyboard = false

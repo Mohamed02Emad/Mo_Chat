@@ -13,11 +13,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
+import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
+import java.net.URI
 import java.util.*
 import javax.inject.Inject
 
@@ -28,6 +34,9 @@ class HomeViewModel @Inject constructor(
     val repository: RoomsRepository
 ) : ViewModel() {
 
+    @Inject
+    lateinit var dataStore: DataStoreImpl
+
     private val _roomsList = MutableLiveData<ArrayList<Room>>(ArrayList())
     val roomsList: LiveData<ArrayList<Room>> = _roomsList
 
@@ -37,10 +46,11 @@ class HomeViewModel @Inject constructor(
         try {
             val arrayList = repository.getUserRooms(value)
             _roomsList.postValue(arrayList)
-        }catch (_:Exception){}
+        } catch (_: Exception) {
+        }
     }
 
-    fun updateUserData() {
+    fun updateUserData(){
         val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
         val selectedImage = BitmapFactory.decodeStream(imageStream)
         val baos = ByteArrayOutputStream()
@@ -54,11 +64,14 @@ class HomeViewModel @Inject constructor(
                 val userRef = FirebaseDatabase.getInstance().getReference("users")
                     .child(firebaseAuth.currentUser!!.uid)
                 userRef.child("image").setValue(downloadUri.toString())
+                CoroutineScope(Dispatchers.IO).launch {
+                    setUserImageAtDataStoreUri(downloadUri)
+                }
             }
         }
     }
 
-    fun signOut() {
+    suspend fun signOut() {
         firebaseAuth.signOut()
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -66,32 +79,33 @@ class HomeViewModel @Inject constructor(
         val googleSignInClient = GoogleSignIn.getClient(appContext, gso)
 
         googleSignInClient.signOut()
+        dataStore.clearAll()
     }
 
-    suspend fun getUserImage(): Uri? {
-        var uriToReturn: Uri? = null
+    suspend fun getUserImage(): String {
+        delay(100)
+        var uriToReturn: String = "null"
         try {
             val storageRef = FirebaseStorage.getInstance()
                 .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
             storageRef.downloadUrl.apply {
                 addOnSuccessListener { downloadUri ->
-                    uriToReturn = downloadUri
+                    uriToReturn = downloadUri.toString()
                 }
                 await()
             }
         } catch (_: Exception) {
 
         }
-
         return uriToReturn
     }
 
     suspend fun createNewRoom(room: Room) {
         var roomId = getNewRoomId()
-        while (!isRoomValidId(roomId)){
-            roomId=getNewRoomId()
+        while (!isRoomValidId(roomId)) {
+            roomId = getNewRoomId()
         }
-            room.roomId = roomId
+        room.roomId = roomId
         repository.createNewRoom(room)
     }
 
@@ -110,11 +124,41 @@ class HomeViewModel @Inject constructor(
         return sb.toString().substring(0, numchars)
     }
 
-    suspend fun checkIfRoomExist(roomId: String): Room?{
-      return repository.checkIfRoomExist(roomId)
+    suspend fun checkIfRoomExist(roomId: String): Room? {
+        return repository.checkIfRoomExist(roomId)
     }
 
     suspend fun joinRoom(room: Room) {
-      repository.joinRoom(room)
+        repository.joinRoom(room)
+    }
+
+    suspend fun getUserName(): String {
+        return dataStore.getUserName()
+    }
+
+    suspend fun setUserName() {
+        val userName = firebaseAuth.currentUser?.let { it.displayName.toString() } ?: "null"
+        dataStore.setUserName(userName)
+    }
+
+    suspend fun getUserImageFromDataStore(): Uri? {
+        val data = dataStore.getUserImage()
+        if (data == "null" || data.isBlank()){
+            return null
+        }else{
+            return Uri.parse(data)
+        }
+    }
+
+    suspend fun setUserImageAtDataStore() {
+        dataStore.setUserImage(getUserImage())
+    }
+    suspend fun setUserImageAtDataStoreUri(uri: Uri) {
+        dataStore.setUserImage(uri.toString())
+    }
+
+    suspend fun deleteRoom(room:Room){
+        //this method just leave the room right now
+        repository.deleteRoom(room)
     }
 }

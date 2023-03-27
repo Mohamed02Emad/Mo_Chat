@@ -44,8 +44,5 @@ class LoginViewModel @Inject constructor(val firebaseAuth: FirebaseAuth): ViewMo
         firebaseAuth.signInWithCredential(credentials).await()
     }
 
-    fun updateUser() {
-
-    }
 
 }

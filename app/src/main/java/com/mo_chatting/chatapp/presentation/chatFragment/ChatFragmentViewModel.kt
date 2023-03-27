@@ -1,6 +1,5 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,12 +9,12 @@ import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatFragmentViewModel @Inject constructor(
     val firebaseAuth: FirebaseAuth,
-    val appContext: Application,
     val repository: MessagesRepository
 ) : ViewModel() {
 
@@ -29,27 +28,48 @@ class ChatFragmentViewModel @Inject constructor(
         userId = firebaseAuth.currentUser!!.uid
     }
 
-    suspend fun sendMessage(message: Message,room: Room) {
+    suspend fun sendMessage(message: Message, room: Room) {
         repository.addMesssgeToChat(message = message, room = room)
-        //_messageList.value!!.add(message)
     }
-
-    suspend fun getRoomMesseges(room: Room):ArrayList<Message>{
-        return repository.getChatForRoom(room)
-    }
-
     fun getUserId(): String {
         return userId
     }
 
-    suspend fun resetList(room: Room) {
+    suspend fun resetList(value: QuerySnapshot) {
         try {
-            val list = repository.getChatForRoom(room = room)
-            list.sortBy { it.messageDateAndTime }
-            val list2 =ArrayList<Message>()
-            list2.addAll(list)
-            list2.addAll(_messageList.value!!)
-            _messageList.value!!.addAll(list2.toSet())
-        }catch (e:Exception){}
+            val list = repository.getRoomMessages(value)
+            list.sortBy { it.timeWithMillis }
+            _messageList.value!!.addAll(list)
+        } catch (e: Exception) {
+        }
+    }
+
+    suspend fun getInitialData(room: Room) {
+        try {
+            val list = repository.getChatForRoom(room)
+            list.sortBy { it.timeWithMillis }
+            _messageList.value!!.addAll(list.toSet())
+        } catch (e: Exception) {
+        }
+    }
+
+    fun getUserName(): String {
+        return firebaseAuth.currentUser!!.displayName.toString()
+    }
+
+    fun getDate(): String {
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year = calendar.get(Calendar.YEAR)
+        var hour = calendar.get(Calendar.HOUR_OF_DAY).toString()
+        var minute : String = calendar.get(Calendar.MINUTE).toString()
+        if (minute.length==1){
+            minute = "0"+minute
+        }
+        if (hour.length==1){
+            hour = "0"+hour
+        }
+        return "$day/$month/$year , $hour:$minute"
     }
 }

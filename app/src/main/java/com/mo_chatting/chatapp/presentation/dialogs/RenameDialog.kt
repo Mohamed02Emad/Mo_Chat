@@ -15,16 +15,22 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.mo_chatting.chatapp.MainActivity
+import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.databinding.FragmentRenameDialogBinding
 import com.mo_chatting.chatapp.presentation.home.HomeFragment
 import com.mo_chatting.chatapp.validation.validateUserName
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class RenameDialog(val homeFragment: HomeFragment) : DialogFragment() {
+    @Inject
+    lateinit var dataStore:DataStoreImpl
 
     private lateinit var binding: FragmentRenameDialogBinding
     private var newName = ""
@@ -98,6 +104,7 @@ class RenameDialog(val homeFragment: HomeFragment) : DialogFragment() {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     user.updateProfile(profileUpdates).await()
+                    dataStore.setUserName(newName)
                     withContext(Dispatchers.Main) {
                        listener!!.onDataPassedRename(newName)
                         this@RenameDialog.dismiss()

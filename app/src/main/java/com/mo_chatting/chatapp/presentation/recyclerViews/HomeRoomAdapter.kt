@@ -11,7 +11,8 @@ import com.mo_chatting.chatapp.databinding.RoomCardBinding
 class HomeRoomAdapter(
     private val list: ArrayList<Room>,
     private val onClickListener: OnRoomClickListener,
-    private val onLongClickListener: OnLongClickListener
+    private val onLongClickListener: OnLongClickListener,
+    private val onRoomDeleteClickListener: OnRoomDeleteClickListener
 ) :
     RecyclerView.Adapter<HomeRoomAdapter.HomeViewHolder>() {
 
@@ -50,6 +51,9 @@ class HomeRoomAdapter(
                 setOnLongClickListener {
                   onLongClickListener.onRoomLongClick(currentRoom,position)
                 }
+            }
+            delete.setOnClickListener {
+                onRoomDeleteClickListener.deleteRoom(currentRoom,position)
             }
         }
     }
@@ -118,5 +122,8 @@ class HomeRoomAdapter(
 
     class OnLongClickListener(private val longClickListener: (room: Room, position: Int) -> Boolean) {
         fun onRoomLongClick(room: Room, position: Int) = longClickListener(room, position)
+    }
+    class OnRoomDeleteClickListener(private val deleteClickListener: (room: Room, position: Int) -> Unit) {
+        fun deleteRoom(room: Room, position: Int) = deleteClickListener(room, position)
     }
 }
