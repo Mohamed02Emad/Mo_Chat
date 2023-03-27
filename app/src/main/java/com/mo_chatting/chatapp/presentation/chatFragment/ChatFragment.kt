@@ -3,16 +3,17 @@ package com.mo_chatting.chatapp.presentation.chatFragment
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
@@ -93,8 +94,7 @@ class ChatFragment : Fragment() {
             pushViewsToTopOfKeyBoard()
 
             btnRoomInfo.setOnClickListener {
-                val roomIdDialog = RoomIdDialog(thisRoom.roomId)
-                roomIdDialog.show(requireActivity().supportFragmentManager, null)
+                showMenu(it!!)
             }
         }
 
@@ -187,4 +187,31 @@ class ChatFragment : Fragment() {
     private fun showToast(string: String) {
         Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
     }
+
+    fun showMenu(view: View) {
+        val popup = PopupMenu(requireContext(), view)
+        val inflater: MenuInflater = popup.menuInflater
+        inflater.inflate(R.menu.room_option_menu, popup.menu)
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId) {
+                R.id.room_id -> {
+                    val roomIdDialog = RoomIdDialog(thisRoom.roomId)
+                    roomIdDialog.show(requireActivity().supportFragmentManager, null)
+                    true
+                }
+                R.id.change_background -> {
+
+                    true
+                }
+                R.id.show_room_members -> {
+
+                    true
+                }
+
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
 }
