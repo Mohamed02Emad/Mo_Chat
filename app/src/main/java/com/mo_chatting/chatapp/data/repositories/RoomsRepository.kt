@@ -32,7 +32,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
                 Message(
                     messageOwner = "Mo_Chat",
                     messageOwnerId = "firebase",
-                    messageText = firebaseAuth.currentUser!!.displayName.toString()+" Created this Room",
+                    messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
                     messageDateAndTime = "--/--/----  --:--"
                 )
             ).await()
@@ -78,17 +78,17 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
 
     suspend fun deleteRoom(room: Room) {
         val list = room.listOFUsers
-        if (list.size==1){
+        if (list.size == 1) {
             val roomQuery = allRoomsRef
                 .whereEqualTo("roomId", room.roomId)
                 .get()
                 .await()
 
-            for (i in roomQuery.documents){
+            for (i in roomQuery.documents) {
                 val docRef = allRoomsRef.document(i.id)
                 docRef.delete().await()
             }
-        }else {
+        } else {
             list.remove(firebaseAuth.currentUser!!.uid)
             room.listOFUsers = list
             updateRoom(room)
@@ -130,6 +130,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         map["hasPassword"] = room.hasPassword
         map["password"] = room.password
         map["listOFUsers"] = room.listOFUsers
+        map["roomBackgroundColor"] = room.roomBackgroundColor
         return map
     }
 

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -108,7 +107,7 @@ class ChatFragment : Fragment() {
                         viewModel.resetList(it)
                         withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
-                            scrollRV()
+                            smoothRefreshRV()
                         }
                     }
                 }
@@ -144,7 +143,7 @@ class ChatFragment : Fragment() {
 
                 } else {
                     viewModel.isKeyboard = true
-                    //scrollRV()
+                    smoothRefreshRV()
                 }
             } else {
                 viewModel.isKeyboard = false
@@ -163,11 +162,12 @@ class ChatFragment : Fragment() {
 
     private fun setViews() {
         binding.tvRoomName.text = thisRoom.roomName
+        setBackground(thisRoom.roomBackgroundColor)
+
     }
 
     private fun smoothRefreshRV() {
         try {
-            binding.rvChat.adapter!!.notifyItemInserted(viewModel.messageList.value!!.size)
             val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
             binding.rvChat.smoothScrollToPosition(lastPosition)
         } catch (e: Exception) {
@@ -200,7 +200,14 @@ class ChatFragment : Fragment() {
                     true
                 }
                 R.id.change_background -> {
-
+                    var x = thisRoom.roomBackgroundColor
+                    x++
+                    if (x > 7) x = 0
+                    setBackground(x)
+                    thisRoom.roomBackgroundColor = x
+                    CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.updateRoomBackground(thisRoom)
+                    }
                     true
                 }
                 R.id.show_room_members -> {
@@ -214,4 +221,33 @@ class ChatFragment : Fragment() {
         popup.show()
     }
 
+    private fun setBackground(background: Int) {
+        when (background) {
+            0 -> {
+                binding.backgroundImg.setImageResource(R.color.black)
+            }
+            1 -> {
+                binding.backgroundImg.setImageResource(R.color.blue_white)
+            }
+            2 -> {
+                binding.backgroundImg.setImageResource(R.color.grey)
+            }
+            3 -> {
+                binding.backgroundImg.setImageResource(R.color.dark_yellow)
+            }
+            4 -> {
+                binding.backgroundImg.setImageResource(R.color.red_background)
+            }
+            5 -> {
+                binding.backgroundImg.setImageResource(R.color.blue_50)
+            }
+            6 -> {
+                binding.backgroundImg.setImageResource(R.color.card_blue)
+            }
+            7 -> {
+                binding.backgroundImg.setImageResource(R.color.light_blue)
+            }
+        }
+
+    }
 }
