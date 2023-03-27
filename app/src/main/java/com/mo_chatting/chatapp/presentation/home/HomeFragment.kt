@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.Constants
 import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
@@ -67,26 +69,19 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
 
     private suspend fun setUserViews() {
 
-//        val name = viewModel.getUserName()
-//        if (name != "null") {
-//            withContext(Dispatchers.Main) {
-//                showToast("not null")
-//            }
-//            withContext(Dispatchers.Main) {
-//                binding.tvUserName.text = name
-//            }
-//        } else {
-//            withContext(Dispatchers.Main) {
-//                showToast("null")
-//            }
-//            viewModel.setUserName()
-//            withContext(Dispatchers.Main) {
-//                binding.tvUserName.text = viewModel.getUserName()
-//            }
-//        }
-        withContext(Dispatchers.Main) {
-            binding.tvUserName.text = "hhh"
+        val name = viewModel.getUserName()
+        if (name != "null" || name.isBlank()) {
+            withContext(Dispatchers.Main) {
+                Log.d(Constants.TAG, "setUserViews: safe" )
+                binding.tvUserName.text = name
+            }
+        } else {
+            viewModel.setUserName()
+            setUserViews()
+            Log.d(Constants.TAG, "setUserViews: ")
+            return
         }
+
 
         val img = viewModel.getUserImageFromDataStore()
         val uri = if (img != null) {
