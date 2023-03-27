@@ -11,11 +11,8 @@ import com.mo_chatting.chatapp.databinding.RoomCardBinding
 
 class HomeRoomAdapter(
     private val list: ArrayList<Room>,
-    val uId : String,
+    val uId: String,
     private val onClickListener: OnRoomClickListener,
-    private val onLongClickListener: OnLongClickListener,
-    private val onRoomDeleteClickListener: OnRoomDeleteClickListener,
-    private val onRoomEditClickListener: OnRoomEditClickListener
 ) :
     RecyclerView.Adapter<HomeRoomAdapter.HomeViewHolder>() {
 
@@ -44,8 +41,8 @@ class HomeRoomAdapter(
     private fun hideUnNecessaryItems(holder: HomeViewHolder, currentRoom: Room) {
         if (uId != currentRoom.roomOwnerId)
             holder.binding.apply {
-                edit.visibility= View.GONE
-                editIcon.visibility= View.GONE
+                edit.visibility = View.GONE
+                editIcon.visibility = View.GONE
             }
     }
 
@@ -57,19 +54,23 @@ class HomeRoomAdapter(
         holder.binding.apply {
             card.apply {
                 setOnClickListener {
-                    onClickListener.onRoomClick(currentRoom,position)
+                    onClickListener.onRoomClick(currentRoom, position)
                 }
 
                 setOnLongClickListener {
-                  onLongClickListener.onRoomLongClick(currentRoom,position)
+                    onClickListener.onRoomLongClick(currentRoom, position)
                 }
             }
             delete.setOnClickListener {
-                onRoomDeleteClickListener.deleteRoom(currentRoom,position)
+                onClickListener.deleteRoom(currentRoom, position)
             }
 
             edit.setOnClickListener {
-                onRoomEditClickListener.editRoom(currentRoom,position)
+                onClickListener.editRoom(currentRoom, position)
+            }
+
+            pin.setOnClickListener {
+                onClickListener.onPinRoom(currentRoom,position)
             }
         }
     }
@@ -121,6 +122,9 @@ class HomeRoomAdapter(
             5 -> {
                 R.drawable.ic_heart
             }
+            6 -> {
+                R.drawable.ic_games
+            }
             else -> {
                 R.drawable.ic_food
             }
@@ -132,19 +136,26 @@ class HomeRoomAdapter(
         return list.size
     }
 
-    class OnRoomClickListener(private val clickListener: (room: Room, position: Int) -> Unit) {
+    class OnRoomClickListener(
+        private val clickListener: (room: Room, position: Int) -> Unit,
+        private val longClickListener: (room: Room, position: Int) -> Boolean,
+        private val deleteClickListener: (room: Room, position: Int) -> Unit,
+        private val editClickListener: (room: Room, position: Int) -> Unit,
+        private val pinClickListener: (room: Room, position: Int) -> Unit
+
+    ) {
         fun onRoomClick(room: Room, position: Int) = clickListener(room, position)
-    }
 
-    class OnLongClickListener(private val longClickListener: (room: Room, position: Int) -> Boolean) {
         fun onRoomLongClick(room: Room, position: Int) = longClickListener(room, position)
-    }
-    class OnRoomDeleteClickListener(private val deleteClickListener: (room: Room, position: Int) -> Unit) {
+
         fun deleteRoom(room: Room, position: Int) = deleteClickListener(room, position)
+
+        fun editRoom(room: Room, position: Int) = editClickListener(room, position)
+
+        fun onPinRoom(room:Room,position: Int) = pinClickListener(room, position)
+
     }
 
-    class OnRoomEditClickListener(private val editClickListener : (room:Room , position:Int)->Unit){
-        fun editRoom(room: Room,position: Int) = editClickListener(room,position)
-    }
+
 
 }

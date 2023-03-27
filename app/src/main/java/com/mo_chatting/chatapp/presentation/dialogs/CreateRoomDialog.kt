@@ -105,11 +105,6 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
                 }
             }
 
-
-            btnRoomType.setOnClickListener {
-
-            }
-
             checkboxPassword.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (!isChecked){
                     binding.etPassword.setText("")
@@ -129,6 +124,7 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
 
     private fun changeRoomType() {
         roomType++
+        if (roomType>7) roomType=0
         setRoomType(roomType)
     }
 
@@ -152,6 +148,9 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
             }
             5 -> {
                 R.drawable.ic_heart
+            }
+            6 -> {
+                R.drawable.ic_games
             }
             else -> {
                 R.drawable.ic_food
