@@ -4,15 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:windowSoftInputMode="adjustResize"
     android:background="@color/black"
+    android:windowSoftInputMode="adjustResize"
     tools:context=".presentation.chatFragment.ChatFragment">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        />
 
     <TextView
         android:id="@+id/tv_room_name"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/dark_blue"
+        android:background="@color/dark_blue_top_bar"
         android:contentDescription="room name"
         android:elevation="16dp"
         android:gravity="center"
@@ -58,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="4dp"
-        android:paddingHorizontal="@dimen/corners_space"
+        android:paddingHorizontal="8dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/btn_send"
         app:layout_constraintTop_toBottomOf="@id/tv_room_name" />

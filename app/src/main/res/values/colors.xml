@@ -26,4 +26,5 @@
     <color name="grey_dark">#CBCBCB</color>
     <color name="gradient_dark_blue">#040C1F</color>
     <color name="gradient_light_blue">#223152</color>
+    <color name="their_message_color">#03164B</color>
 </resources>

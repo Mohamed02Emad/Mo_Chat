@@ -19,6 +19,7 @@ data class Message (
     var isDeleted: Boolean = false,
     val messageType: MessageType = MessageType.TEXT,
     var usersSeenInfoList : ArrayList<MessageSeenInfo> = ArrayList(),
+    val timeWithMillis :String = ""
     ): Parcelable
 
 enum class MessageState(){DELIVERED,SEEN,NOT_DELIVERED}

@@ -78,7 +78,8 @@ class ChatFragment : Fragment() {
                             binding.etMessage.text.toString().trimEnd(),
                             messageDateAndTime = viewModel.getDate(),
                             messageOwner = viewModel.getUserName(),
-                            viewModel.firebaseAuth.currentUser!!.displayName.toString()
+                            viewModel.firebaseAuth.currentUser!!.displayName.toString(),
+                            timeWithMillis = System.currentTimeMillis().toString()
                         ), room = thisRoom
                     )
                     withContext(Dispatchers.Main) {
@@ -87,7 +88,6 @@ class ChatFragment : Fragment() {
                         // scrollRV()
                     }
                 }
-
             }
 
             pushViewsToTopOfKeyBoard()

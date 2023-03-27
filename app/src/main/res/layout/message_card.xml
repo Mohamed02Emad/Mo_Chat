@@ -8,11 +8,10 @@
     android:paddingVertical="8dp">
 
     <View
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
         android:id="@+id/view1"
-        />
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/myParent"
@@ -26,18 +25,27 @@
 
         <TextView
             android:id="@+id/tv_message_owner"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/dark_blue"
-            tools:text="mohamed"
-            android:layout_marginTop="-4dp"
-            android:textSize="13sp"
             android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="-5dp"
+            android:textColor="@color/dark_blue"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            tools:text="mohamed" />
+
+        <View
+            android:id="@+id/linr"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:alpha="0.3"
+            android:background="#E0848181"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_message_owner" />
 
-            />
         <TextView
             android:id="@+id/message_body"
             android:layout_width="wrap_content"
@@ -54,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textColor="#6A6161"
-            android:textSize="9sp"
+            android:textSize="8sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/message_body"
             tools:text="20/5/2022 , 3:30" />
@@ -62,10 +70,9 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
         android:id="@+id/view2"
-        />
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
 </LinearLayout>
