@@ -30,9 +30,9 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
             msgRef.add(
                 Message(
-                    messageOwner = "firebase",
+                    messageOwner = "Mo_Chat",
                     messageOwnerId = "firebase",
-                    messageText = "start texting",
+                    messageText = firebaseAuth.currentUser!!.displayName.toString()+" Created this Room",
                     messageDateAndTime = "--/--/----  --:--"
                 )
             ).await()
@@ -77,11 +77,22 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
     }
 
     suspend fun deleteRoom(room: Room) {
-        // TODO: if the owner deleted it remove it from all users else remove from this exact user
-        var list = room.listOFUsers
-        list.remove(firebaseAuth.currentUser!!.uid)
-        room.listOFUsers = list
-        updateRoom(room)
+        val list = room.listOFUsers
+        if (list.size==1){
+            val roomQuery = allRoomsRef
+                .whereEqualTo("roomId", room.roomId)
+                .get()
+                .await()
+
+            for (i in roomQuery.documents){
+                val docRef = allRoomsRef.document(i.id)
+                docRef.delete().await()
+            }
+        }else {
+            list.remove(firebaseAuth.currentUser!!.uid)
+            room.listOFUsers = list
+            updateRoom(room)
+        }
 
     }
 

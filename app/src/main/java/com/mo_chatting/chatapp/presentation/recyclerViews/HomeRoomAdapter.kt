@@ -1,6 +1,7 @@
 package com.mo_chatting.chatapp.presentation.recyclerViews
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -10,9 +11,11 @@ import com.mo_chatting.chatapp.databinding.RoomCardBinding
 
 class HomeRoomAdapter(
     private val list: ArrayList<Room>,
+    val uId : String,
     private val onClickListener: OnRoomClickListener,
     private val onLongClickListener: OnLongClickListener,
-    private val onRoomDeleteClickListener: OnRoomDeleteClickListener
+    private val onRoomDeleteClickListener: OnRoomDeleteClickListener,
+    private val onRoomEditClickListener: OnRoomEditClickListener
 ) :
     RecyclerView.Adapter<HomeRoomAdapter.HomeViewHolder>() {
 
@@ -35,6 +38,15 @@ class HomeRoomAdapter(
         setRoomType(holder, currentRoom.roomTypeImage)
         setCardColors(holder, position)
         setCardOnClicks(holder, currentRoom, position)
+        hideUnNecessaryItems(holder, currentRoom)
+    }
+
+    private fun hideUnNecessaryItems(holder: HomeViewHolder, currentRoom: Room) {
+        if (uId != currentRoom.roomOwnerId)
+            holder.binding.apply {
+                edit.visibility= View.GONE
+                editIcon.visibility= View.GONE
+            }
     }
 
     private fun setCardOnClicks(
@@ -54,6 +66,10 @@ class HomeRoomAdapter(
             }
             delete.setOnClickListener {
                 onRoomDeleteClickListener.deleteRoom(currentRoom,position)
+            }
+
+            edit.setOnClickListener {
+                onRoomEditClickListener.editRoom(currentRoom,position)
             }
         }
     }
@@ -126,4 +142,9 @@ class HomeRoomAdapter(
     class OnRoomDeleteClickListener(private val deleteClickListener: (room: Room, position: Int) -> Unit) {
         fun deleteRoom(room: Room, position: Int) = deleteClickListener(room, position)
     }
+
+    class OnRoomEditClickListener(private val editClickListener : (room:Room , position:Int)->Unit){
+        fun editRoom(room: Room,position: Int) = editClickListener(room,position)
+    }
+
 }

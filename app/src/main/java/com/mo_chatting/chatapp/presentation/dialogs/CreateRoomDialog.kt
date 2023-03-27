@@ -15,12 +15,11 @@ import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentCreateRoomDialogBinding
 import com.mo_chatting.chatapp.presentation.home.HomeFragment
-import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CreateRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
+class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val room:Room? = null) : DialogFragment() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -40,8 +39,27 @@ class CreateRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setViews()
         setDimentions()
         setOnClicks()
+    }
+
+    private fun setViews() {
+        if (isEdit){
+            roomType=room!!.roomTypeImage
+            setRoomType(roomType)
+            binding.btnCreateNewRoom.text="Save"
+            binding.etRoomName.setText(room.roomName)
+            if (room.hasPassword){
+                binding.checkboxPassword.isChecked=true
+            }else{
+                binding.checkboxPassword.isChecked=false
+                binding.etPassword.visibility=View.GONE
+            }
+        }
+//        else{
+//            binding.btnCreateNewRoom.text="Create"
+//        }
     }
 
     private fun setOnClicks() {
@@ -52,19 +70,35 @@ class CreateRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
 
             btnCreateNewRoom.setOnClickListener {
                 if (binding.etRoomName.text.isNotEmpty()) {
+
                     if (binding.checkboxPassword.isChecked && etPassword.text.isEmpty()){
                         Toast.makeText(requireContext(),"Enter Password",Toast.LENGTH_LONG).show()
                         return@setOnClickListener
                     }
-                    listener?.onDataPassed(
-                        Room(
-                            roomName = binding.etRoomName.text.toString(),
-                            hasPassword = binding.checkboxPassword.isChecked,
-                            password = binding.etPassword.text.toString(),
-                            roomTypeImage = roomType,
+
+                    if (isEdit){
+                        room!!.apply {
+                            roomName=binding.etRoomName.text.toString()
+                            hasPassword=binding.checkboxPassword.isChecked
+                            password = binding.etPassword.text.toString()
+                            roomTypeImage = roomType
                             roomOwnerId = firebaseAuth.currentUser!!.uid
+                        }
+                        listener?.onRoomEditPassed(
+                           room
                         )
-                    )
+                    }else {
+                        listener?.onDataPassed(
+                            Room(
+                                roomName = binding.etRoomName.text.toString(),
+                                hasPassword = binding.checkboxPassword.isChecked,
+                                password = binding.etPassword.text.toString(),
+                                roomTypeImage = roomType,
+                                roomOwnerId = firebaseAuth.currentUser!!.uid
+                            )
+                        )
+                    }
+
                     this@CreateRoomDialog.dismiss()
                 }else{
                     Toast.makeText(requireContext(),"Enter Room name",Toast.LENGTH_LONG).show()
@@ -146,4 +180,5 @@ class CreateRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
 
 interface MyDialogListener {
     fun onDataPassed(room: Room)
+    fun onRoomEditPassed(room: Room)
 }

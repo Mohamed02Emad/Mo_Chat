@@ -1,6 +1,7 @@
 package com.mo_chatting.chatapp.presentation.home
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
@@ -112,6 +113,7 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
 
     private fun setupRecyclerView() {
         adapter = HomeRoomAdapter(viewModel.roomsList.value!!,
+            viewModel.firebaseAuth.currentUser!!.uid,
             HomeRoomAdapter.OnRoomClickListener { room, position ->
                 onRoomClick(room, position)
             },
@@ -121,16 +123,38 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
             },
             HomeRoomAdapter.OnRoomDeleteClickListener { room, position ->
                 deleteRoom(room)
+            },
+            HomeRoomAdapter.OnRoomEditClickListener{room, position ->
+                editRoom(room,position)
             }
         )
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireActivity())
     }
 
+    private fun editRoom(room: Room, position: Int) {
+        showEditRoomDialog(room,position)
+    }
+
+    private fun showEditRoomDialog(room: Room, position: Int) {
+        val editRoomDialog = CreateRoomDialog(this,true,room)
+        editRoomDialog.show(requireActivity().supportFragmentManager,null)
+    }
+
     private fun deleteRoom(room: Room) {
-        CoroutineScope(Dispatchers.IO).launch {
-            viewModel.deleteRoom(room)
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Do you want to leave?")
+        builder.setPositiveButton("Yes") { dialog, which ->
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.deleteRoom(room)
+                dialog.dismiss()
+            }
         }
+        builder.setNegativeButton("No") { dialog, which ->
+           dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun onRoomLongClick(room: Room, position: Int) {
@@ -250,6 +274,12 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
     override fun onDataPassed(room: Room) {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.createNewRoom(room)
+        }
+    }
+
+    override fun onRoomEditPassed(room: Room) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.updateRoom(room)
         }
     }
 
