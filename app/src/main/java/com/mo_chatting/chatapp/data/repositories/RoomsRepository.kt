@@ -1,6 +1,5 @@
 package com.mo_chatting.chatapp.data.repositories
 
-import android.os.Build.VERSION_CODES.Q
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -8,11 +7,9 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
-import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
 class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: FirebaseAuth) {
 
@@ -43,9 +40,9 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         }
     }
 
-    suspend fun joinRoom(room: Room){
+    suspend fun joinRoom(room: Room) {
         room.let {
-            if (it.listOFUsers.any { it == firebaseAuth.currentUser!!.uid })return
+            if (it.listOFUsers.any { it == firebaseAuth.currentUser!!.uid }) return
 
             it.listOFUsers.add(firebaseAuth.currentUser!!.uid)
             updateRoom(it)
@@ -54,8 +51,8 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
 
     suspend fun checkIfRoomExist(roomId: String): Room? {
         val list = getAllRooms()
-        for (i in list ){
-            if (i.roomId == roomId){
+        for (i in list) {
+            if (i.roomId == roomId) {
                 return i
             }
         }
@@ -66,20 +63,26 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         val map = mapMyRoom(room)
         try {
             val roomQuery = allRoomsRef
-                .whereEqualTo("roomId" , room.roomId)
+                .whereEqualTo("roomId", room.roomId)
                 .get()
                 .await()
-            if (roomQuery.documents.isNotEmpty()){
-                for (document in roomQuery){
+            if (roomQuery.documents.isNotEmpty()) {
+                for (document in roomQuery) {
                     allRoomsRef.document(document.id).set(map, SetOptions.merge())
                 }
             }
-        }catch (_:Exception){}
+        } catch (_: Exception) {
+        }
 
     }
 
-    fun deleteRoom(room: Room) {
+    suspend fun deleteRoom(room: Room) {
         // TODO: if the owner deleted it remove it from all users else remove from this exact user
+        var list = room.listOFUsers
+        list.remove(firebaseAuth.currentUser!!.uid)
+        room.listOFUsers = list
+        updateRoom(room)
+
     }
 
     fun getUserRooms(value: QuerySnapshot?): ArrayList<Room> {
@@ -106,16 +109,16 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         return arrayList
     }
 
-    private fun mapMyRoom(room: Room):Map<String,Any>{
-        val map = mutableMapOf<String,Any>()
-        map["roomName"]= room.roomName
+    private fun mapMyRoom(room: Room): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        map["roomName"] = room.roomName
         map["roomPinState"] = room.roomPinState
-        map["roomTypeImage"]= room.roomTypeImage
-        map["roomId"]= room.roomId
-        map["roomOwnerId"]= room.roomOwnerId
-        map["hasPassword"]= room.hasPassword
-        map["password"]= room.password
-        map["listOFUsers"]= room.listOFUsers
+        map["roomTypeImage"] = room.roomTypeImage
+        map["roomId"] = room.roomId
+        map["roomOwnerId"] = room.roomOwnerId
+        map["hasPassword"] = room.hasPassword
+        map["password"] = room.password
+        map["listOFUsers"] = room.listOFUsers
         return map
     }
 

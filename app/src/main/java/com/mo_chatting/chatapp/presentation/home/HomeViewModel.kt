@@ -156,4 +156,9 @@ class HomeViewModel @Inject constructor(
     suspend fun setUserImageAtDataStoreUri(uri: Uri) {
         dataStore.setUserImage(uri.toString())
     }
+
+    suspend fun deleteRoom(room:Room){
+        //this method just leave the room right now
+        repository.deleteRoom(room)
+    }
 }

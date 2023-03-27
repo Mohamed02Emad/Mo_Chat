@@ -72,7 +72,7 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
         val name = viewModel.getUserName()
         if (name != "null" || name.isBlank()) {
             withContext(Dispatchers.Main) {
-                Log.d(Constants.TAG, "setUserViews: safe" )
+                Log.d(Constants.TAG, "setUserViews: safe")
                 binding.tvUserName.text = name
             }
         } else {
@@ -118,10 +118,19 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
             HomeRoomAdapter.OnLongClickListener { room, position ->
                 onRoomLongClick(room, position)
                 false
+            },
+            HomeRoomAdapter.OnRoomDeleteClickListener { room, position ->
+                deleteRoom(room)
             }
         )
         binding.rvHome.adapter = adapter
         binding.rvHome.layoutManager = LinearLayoutManager(requireActivity())
+    }
+
+    private fun deleteRoom(room: Room) {
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.deleteRoom(room)
+        }
     }
 
     private fun onRoomLongClick(room: Room, position: Int) {
