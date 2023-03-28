@@ -302,6 +302,7 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
 
     override fun onDataPassedRename(name: String) {
         binding.tvUserName.text = name
+        viewModel.updateUSerName(name)
     }
 
     override fun onDataPassedJoinRoom(roomId: String) {

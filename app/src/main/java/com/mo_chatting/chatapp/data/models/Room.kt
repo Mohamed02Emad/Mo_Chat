@@ -13,5 +13,6 @@ data class Room (
     var roomOwnerId:String = "mohamed",
     var hasPassword :Boolean= false,
     var password:String="",
-    var listOFUsers :ArrayList<String> = ArrayList()
+    var listOFUsers :ArrayList<String> = ArrayList(),
+    var listOFUsersNames :ArrayList<String> = ArrayList()
         ): Parcelable
