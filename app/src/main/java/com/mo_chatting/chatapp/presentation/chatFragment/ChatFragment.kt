@@ -18,6 +18,7 @@ import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentChatBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RoomIdDialog
+import com.mo_chatting.chatapp.presentation.dialogs.UserImageDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -118,16 +119,22 @@ class ChatFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = ChatAdapter(
             viewModel.messageList.value!!,
-            ChatAdapter.OnChatClickListener { message, position ->
+            ChatAdapter.OnChatClickListener({ message, position ->
                 onChatClick(message, position)
-            },
-            ChatAdapter.OnChatLongClickListener { message, position ->
+            }, { message, position ->
                 onChatLongClick(message, position)
                 false
-            }, viewModel.getUserId()
+            }, { userId, userName ->
+                messageUserNameClicked(userId, userName)
+            }), viewModel.getUserId()
         )
         binding.rvChat.adapter = adapter
         binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
+    }
+
+    private fun messageUserNameClicked(userId: String, userName: String) {
+        val userImageDialog = UserImageDialog(userId, userName)
+        userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun pushViewsToTopOfKeyBoard() {

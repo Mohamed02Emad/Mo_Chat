@@ -83,7 +83,6 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun getUserImage(): String {
-        delay(100)
         var uriToReturn: String = "null"
         try {
             val storageRef = FirebaseStorage.getInstance()
