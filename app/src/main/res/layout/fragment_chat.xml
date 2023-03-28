@@ -95,11 +95,36 @@
         android:background="@drawable/send_edit_text"
         android:hint="@string/type_something"
         android:maxLines="6"
-        android:padding="10dp"
+        android:paddingVertical="10dp"
+        android:elevation="2dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="40dp"
         android:textColor="@color/black"
         android:textColorHint="@color/light_blue"
         android:textSize="14sp"
+        tools:text="fhjgkbkjhnhfhgvbknkvcfdcfuhjklhnkjkbnk.b"
         app:layout_constraintBottom_toBottomOf="@id/btn_send"
         app:layout_constraintEnd_toStartOf="@id/btn_send"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/clip_card"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:cardCornerRadius="25dp"
+        android:backgroundTint="@color/blue_white"
+        app:layout_constraintBottom_toBottomOf="@id/et_message"
+        app:layout_constraintEnd_toEndOf="@id/et_message"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="6dp"
+        >
+        <ImageView
+            android:id="@+id/clip"
+            android:layout_margin="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_clip"
+            android:scaleType="fitXY"
+            />
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

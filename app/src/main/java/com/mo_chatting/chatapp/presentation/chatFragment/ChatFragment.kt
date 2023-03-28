@@ -96,6 +96,10 @@ class ChatFragment : Fragment() {
             btnRoomInfo.setOnClickListener {
                 showMenu(it!!)
             }
+
+            clipCard.setOnClickListener {
+                showSendOptions()
+            }
         }
 
         firebaseStore.collection("${Constants.roomsChatCollection}${thisRoom.roomId}")
@@ -105,7 +109,7 @@ class ChatFragment : Fragment() {
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.resetList(it)
+                        viewModel.resetList(it,thisRoom)
                         withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
                             smoothRefreshRV()
@@ -113,6 +117,11 @@ class ChatFragment : Fragment() {
                     }
                 }
             }
+    }
+
+    private fun showSendOptions() {
+        //TODO("Not yet implemented")
+        showToast("soon")
     }
 
 
