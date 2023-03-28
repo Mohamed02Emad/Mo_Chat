@@ -78,7 +78,7 @@ class ChatFragmentViewModel @Inject constructor(
     }
 
     suspend fun updateRoomBackground(thisRoom: Room) {
-       roomsRepository.updateRoom(thisRoom)
+       roomsRepository.updateRoom(thisRoom,true)
     }
 
 

@@ -210,10 +210,10 @@ class ChatFragment : Fragment() {
                     }
                     true
                 }
-                R.id.show_room_members -> {
-
-                    true
-                }
+//                R.id.show_room_members -> {
+//
+//                    true
+//                }
 
                 else -> false
             }

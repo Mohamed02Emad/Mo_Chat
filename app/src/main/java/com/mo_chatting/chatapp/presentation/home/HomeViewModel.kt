@@ -163,6 +163,6 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun updateRoom(room: Room) {
-       repository.updateRoom(room)
+       repository.updateRoom(room,false)
     }
 }
