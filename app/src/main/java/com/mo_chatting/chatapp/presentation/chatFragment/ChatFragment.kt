@@ -1,11 +1,16 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
 
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
+import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.core.view.ViewCompat.setBackground
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -98,9 +103,15 @@ class ChatFragment : Fragment() {
             }
 
             clipCard.setOnClickListener {
-                showSendOptions()
+                showSendOptions(it)
+            }
+            binding.root.setOnClickListener {
+                if (binding.attachMenuFrame.isVisible) {
+                    binding.attachMenuFrame.visibility = View.GONE
+                }
             }
         }
+
 
         firebaseStore.collection("${Constants.roomsChatCollection}${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
@@ -119,9 +130,20 @@ class ChatFragment : Fragment() {
             }
     }
 
-    private fun showSendOptions() {
-        //TODO("Not yet implemented")
-        showToast("soon")
+    private fun showSendOptions(view: View) {
+//        val popupView = LayoutInflater.from(context).inflate(R.layout.attach_menu, null)
+//        val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+//        popupWindow.contentView = popupView
+//        popupWindow.isTouchable = true
+//        popupWindow.isFocusable = true
+//        popupWindow.height=600
+//        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+//        popupWindow.showAsDropDown(view, 0, -popupWindow.height)
+        if (binding.attachMenuFrame.isVisible){
+            binding.attachMenuFrame.visibility=View.GONE
+        }else{
+            binding.attachMenuFrame.visibility=View.VISIBLE
+        }
     }
 
 

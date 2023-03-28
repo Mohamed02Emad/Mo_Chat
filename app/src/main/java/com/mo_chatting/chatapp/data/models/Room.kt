@@ -9,7 +9,6 @@ data class Room (
     var roomPinState:Boolean=false,
     var roomTypeImage:Int = 0,
     var roomBackgroundColor:Int = 2,
-    //todo add it in viewModel
     var roomId:String = "123",
     var roomOwnerId:String = "mohamed",
     var hasPassword :Boolean= false,

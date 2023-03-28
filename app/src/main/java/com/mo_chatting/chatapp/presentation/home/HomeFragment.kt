@@ -103,6 +103,50 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
 
     }
 
+    private fun setOnClicks() {
+        binding.btnLogout.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.signOut()
+                withContext(Dispatchers.Main) {
+                    startActivity(Intent(requireActivity(), AuthActivity::class.java))
+                    requireActivity().finish()
+                }
+            }
+        }
+
+        binding.fabAdd.setOnClickListener {
+            showAddRoomDialog()
+        }
+
+        binding.tvEditImage.setOnClickListener {
+            showBottomSheet()
+        }
+
+        binding.btnEditName.setOnClickListener {
+            showNameDialog()
+        }
+
+        binding.btnSettings.setOnClickListener {
+            settingsClicked()
+        }
+
+        //firebase listener
+        firebaseStore.collection(roomsCollection).addSnapshotListener { value, error ->
+            error?.let {
+                return@addSnapshotListener
+            }
+            value?.let {
+                viewModel.resetList(value)
+            }
+        }
+
+    }
+
+    private fun settingsClicked() {
+        //TODO("Not yet implemented")
+        showToast("Soon")
+    }
+
     private fun oservers() {
         viewModel.roomsList.observe(viewLifecycleOwner) {
             try {
@@ -111,7 +155,6 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
             }
         }
     }
-
 
     private fun setupRecyclerView() {
 
@@ -172,41 +215,6 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
 
     private fun pinRoom(room: Room, position: Int) {
         showToast("not yet")
-    }
-
-    private fun setOnClicks() {
-        binding.btnLogout.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.signOut()
-                withContext(Dispatchers.Main) {
-                    startActivity(Intent(requireActivity(), AuthActivity::class.java))
-                    requireActivity().finish()
-                }
-            }
-        }
-
-        binding.fabAdd.setOnClickListener {
-            showAddRoomDialog()
-        }
-
-        binding.tvEditImage.setOnClickListener {
-            showBottomSheet()
-        }
-
-        binding.btnEditName.setOnClickListener {
-            showNameDialog()
-        }
-
-        //firebase listener
-        firebaseStore.collection(roomsCollection).addSnapshotListener { value, error ->
-            error?.let {
-                return@addSnapshotListener
-            }
-            value?.let {
-                viewModel.resetList(value)
-            }
-        }
-
     }
 
     private fun showAddRoomDialog() {

@@ -16,6 +16,16 @@
                 app:customColorValue="@color/blue_white" />
         </Constraint>
 
+        <Constraint
+            android:id="@+id/btn_settings"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:alpha="1"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            />
 
         <Constraint
             android:id="@+id/btn_edit_name"
@@ -75,6 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:elevation="20dp"
             android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toBottomOf="@id/btn_edit_name"
             app:layout_constraintStart_toEndOf="@id/btn_edit_name"
@@ -84,6 +95,17 @@
                 app:customColorValue="@color/dark_blue_top_bar" />
 
         </Constraint>
+
+        <Constraint
+            android:id="@+id/btn_settings"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:alpha="0"
+            android:layout_marginEnd="-80dp"
+            android:layout_marginTop="8dp"
+            />
 
         <Constraint
             android:id="@+id/btn_edit_name"
