@@ -30,7 +30,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
             msgRef.add(
                 Message(
-                    messageOwner = "Mo_Chat",
+                    messageOwner = "Mo Chat",
                     messageOwnerId = "firebase",
                     messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
                     messageDateAndTime = "--/--/----  --:--"
