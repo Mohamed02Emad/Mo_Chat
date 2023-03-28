@@ -31,4 +31,7 @@
     <string name="gallery">gallery</string>
     <string name="enter_new_name">Enter new Name</string>
     <string name="room_password">Room Password</string>
+    <string name="roomid">room ID</string>
+    <string name="change_background">change background</string>
+    <string name="show_room_members">show room members</string>
 </resources>

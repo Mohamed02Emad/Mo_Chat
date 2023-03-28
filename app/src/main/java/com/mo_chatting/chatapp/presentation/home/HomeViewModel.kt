@@ -161,4 +161,8 @@ class HomeViewModel @Inject constructor(
         //this method just leave the room right now
         repository.deleteRoom(room)
     }
+
+    suspend fun updateRoom(room: Room) {
+       repository.updateRoom(room,false)
+    }
 }

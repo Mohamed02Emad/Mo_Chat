@@ -1,13 +1,16 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
+import android.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
+import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
+import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
 import javax.inject.Inject
@@ -15,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatFragmentViewModel @Inject constructor(
     val firebaseAuth: FirebaseAuth,
-    val repository: MessagesRepository
+    val repository: MessagesRepository,
+    val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
     private var userId: String
@@ -72,4 +76,10 @@ class ChatFragmentViewModel @Inject constructor(
         }
         return "$day/$month/$year , $hour:$minute"
     }
+
+    suspend fun updateRoomBackground(thisRoom: Room) {
+       roomsRepository.updateRoom(thisRoom,true)
+    }
+
+
 }

@@ -42,7 +42,7 @@ class AddRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
             }
 
             btnCreateNewRoom.setOnClickListener {
-                val createRoomDialogBinding = CreateRoomDialog(homeFragment)
+                val createRoomDialogBinding = CreateRoomDialog(homeFragment,false)
                 createRoomDialogBinding.show(requireActivity().supportFragmentManager,null)
                 this@AddRoomDialog.dismiss()
             }

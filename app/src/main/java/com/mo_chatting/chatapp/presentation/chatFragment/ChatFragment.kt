@@ -3,9 +3,8 @@ package com.mo_chatting.chatapp.presentation.chatFragment
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
@@ -93,8 +93,7 @@ class ChatFragment : Fragment() {
             pushViewsToTopOfKeyBoard()
 
             btnRoomInfo.setOnClickListener {
-                val roomIdDialog = RoomIdDialog(thisRoom.roomId)
-                roomIdDialog.show(requireActivity().supportFragmentManager, null)
+                showMenu(it!!)
             }
         }
 
@@ -108,7 +107,7 @@ class ChatFragment : Fragment() {
                         viewModel.resetList(it)
                         withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
-                            scrollRV()
+                            smoothRefreshRV()
                         }
                     }
                 }
@@ -144,7 +143,7 @@ class ChatFragment : Fragment() {
 
                 } else {
                     viewModel.isKeyboard = true
-                    //scrollRV()
+                    smoothRefreshRV()
                 }
             } else {
                 viewModel.isKeyboard = false
@@ -163,11 +162,12 @@ class ChatFragment : Fragment() {
 
     private fun setViews() {
         binding.tvRoomName.text = thisRoom.roomName
+        setBackground(thisRoom.roomBackgroundColor)
+
     }
 
     private fun smoothRefreshRV() {
         try {
-            binding.rvChat.adapter!!.notifyItemInserted(viewModel.messageList.value!!.size)
             val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
             binding.rvChat.smoothScrollToPosition(lastPosition)
         } catch (e: Exception) {
@@ -186,5 +186,68 @@ class ChatFragment : Fragment() {
 
     private fun showToast(string: String) {
         Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+    }
+
+    fun showMenu(view: View) {
+        val popup = PopupMenu(requireContext(), view)
+        val inflater: MenuInflater = popup.menuInflater
+        inflater.inflate(R.menu.room_option_menu, popup.menu)
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId) {
+                R.id.room_id -> {
+                    val roomIdDialog = RoomIdDialog(thisRoom.roomId)
+                    roomIdDialog.show(requireActivity().supportFragmentManager, null)
+                    true
+                }
+                R.id.change_background -> {
+                    var x = thisRoom.roomBackgroundColor
+                    x++
+                    if (x > 7) x = 0
+                    setBackground(x)
+                    thisRoom.roomBackgroundColor = x
+                    CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.updateRoomBackground(thisRoom)
+                    }
+                    true
+                }
+//                R.id.show_room_members -> {
+//
+//                    true
+//                }
+
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
+    private fun setBackground(background: Int) {
+        when (background) {
+            0 -> {
+                binding.backgroundImg.setImageResource(R.color.black)
+            }
+            1 -> {
+                binding.backgroundImg.setImageResource(R.color.blue_white)
+            }
+            2 -> {
+                binding.backgroundImg.setImageResource(R.color.grey)
+            }
+            3 -> {
+                binding.backgroundImg.setImageResource(R.color.dark_yellow)
+            }
+            4 -> {
+                binding.backgroundImg.setImageResource(R.color.red_background)
+            }
+            5 -> {
+                binding.backgroundImg.setImageResource(R.color.blue_50)
+            }
+            6 -> {
+                binding.backgroundImg.setImageResource(R.color.card_blue)
+            }
+            7 -> {
+                binding.backgroundImg.setImageResource(R.color.light_blue)
+            }
+        }
+
     }
 }

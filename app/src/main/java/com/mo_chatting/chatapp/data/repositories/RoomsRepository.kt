@@ -30,9 +30,9 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
             msgRef.add(
                 Message(
-                    messageOwner = "firebase",
+                    messageOwner = "Mo_Chat",
                     messageOwnerId = "firebase",
-                    messageText = "start texting",
+                    messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
                     messageDateAndTime = "--/--/----  --:--"
                 )
             ).await()
@@ -45,7 +45,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
             if (it.listOFUsers.any { it == firebaseAuth.currentUser!!.uid }) return
 
             it.listOFUsers.add(firebaseAuth.currentUser!!.uid)
-            updateRoom(it)
+            updateRoom(it,false)
         }
     }
 
@@ -59,8 +59,8 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         return null
     }
 
-    suspend fun updateRoom(room: Room) {
-        val map = mapMyRoom(room)
+    suspend fun updateRoom(room: Room,fromChat: Boolean) {
+        val map = mapMyRoom(room,fromChat)
         try {
             val roomQuery = allRoomsRef
                 .whereEqualTo("roomId", room.roomId)
@@ -77,13 +77,38 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
     }
 
     suspend fun deleteRoom(room: Room) {
-        // TODO: if the owner deleted it remove it from all users else remove from this exact user
-        var list = room.listOFUsers
-        list.remove(firebaseAuth.currentUser!!.uid)
-        room.listOFUsers = list
-        updateRoom(room)
+        val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+        val list = room.listOFUsers
 
+        if (list.size == 1) {
+            try {
+                val roomQuery = allRoomsRef
+                    .whereEqualTo("roomId", room.roomId)
+                    .get()
+                    .await()
+
+                for (i in roomQuery.documents) {
+                    val docRef = allRoomsRef.document(i.id)
+                    docRef.delete().await()
+                }
+                msgRef.get().addOnSuccessListener { documents ->
+                    val batch = firebaseStore.batch()
+                    for (document in documents) {
+                        batch.delete(document.reference)
+                    }
+                    batch.commit()
+                }
+
+            } catch (_: Exception) {
+            }
+
+        } else {
+            list.remove(firebaseAuth.currentUser!!.uid)
+            room.listOFUsers = list
+            updateRoom(room,false)
+        }
     }
+
 
     fun getUserRooms(value: QuerySnapshot?): ArrayList<Room> {
         val userId = firebaseAuth.currentUser!!.uid
@@ -109,7 +134,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         return arrayList
     }
 
-    private fun mapMyRoom(room: Room): Map<String, Any> {
+    private fun mapMyRoom(room: Room, fromChat: Boolean): Map<String, Any> {
         val map = mutableMapOf<String, Any>()
         map["roomName"] = room.roomName
         map["roomPinState"] = room.roomPinState
@@ -118,7 +143,10 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         map["roomOwnerId"] = room.roomOwnerId
         map["hasPassword"] = room.hasPassword
         map["password"] = room.password
-        map["listOFUsers"] = room.listOFUsers
+        map["roomBackgroundColor"] = room.roomBackgroundColor
+        if (!fromChat) {
+            map["listOFUsers"] = room.listOFUsers
+        }
         return map
     }
 
