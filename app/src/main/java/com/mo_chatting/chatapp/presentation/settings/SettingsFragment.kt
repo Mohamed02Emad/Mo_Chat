@@ -5,14 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
     private lateinit var binding:FragmentSettingsBinding
+    private val viewModel : SettingsViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -23,9 +28,10 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setViews()
+        CoroutineScope(Dispatchers.Main).launch {
+            setViews()
+        }
         setOnClicks()
-        setObservers()
     }
 
     private fun setObservers() {
@@ -40,17 +46,24 @@ class SettingsFragment : Fragment() {
 
            btnDarkMode.setOnClickListener {
                binding.swDarkMode.isChecked=!binding.swDarkMode.isChecked
+               CoroutineScope(Dispatchers.IO).launch {
+                   viewModel.setDarkMode()
+               }
            }
 
            btnImgQuality.setOnClickListener {
                binding.swImgQuality.isChecked=!binding.swImgQuality.isChecked
+               CoroutineScope(Dispatchers.IO).launch {
+                   viewModel.setLowImageQuality()
+               }
            }
        }
     }
 
-    private fun setViews() {
+    private suspend fun setViews() {
        binding.apply {
-
+           swDarkMode.isChecked=viewModel.getDarkMode()
+           swImgQuality.isChecked = viewModel.getLowImageQuality()
        }
     }
 
