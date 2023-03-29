@@ -3,14 +3,20 @@ package com.mo_chatting.chatapp.presentation.chatFragment
 
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.PopupMenu
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,6 +29,7 @@ import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
+import com.mo_chatting.chatapp.databinding.AttachMenuBinding
 import com.mo_chatting.chatapp.databinding.FragmentChatBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RoomIdDialog
 import com.mo_chatting.chatapp.presentation.dialogs.RoomUsersDialog
@@ -111,26 +118,11 @@ class ChatFragment : Fragment() {
             }
 
             clipCard.setOnClickListener {
-                showSendOptions(it)
-            }
-
-            attachMenu.apply {
-                galleryItem.setOnClickListener {
-                 startGalleryIntent()
-                }
-
-                cameraItem.setOnClickListener {
-                    startCameraIntent()
-                }
-
-                recordItem.setOnClickListener {
-                    showToast("record")
-                }
-            }
-
-            binding.root.setOnClickListener {
-                if (binding.attachMenuFrame.isVisible) {
-                    binding.attachMenuFrame.visibility = View.GONE
+               // showSendOptions(it)
+                try {
+                    showPopUpWindow(it)
+                }catch (e:Exception){
+                    showToast(e.message.toString())
                 }
             }
         }
@@ -152,15 +144,6 @@ class ChatFragment : Fragment() {
                 }
             }
     }
-
-    private fun showSendOptions(view: View) {
-        if (binding.attachMenuFrame.isVisible){
-            binding.attachMenuFrame.visibility=View.GONE
-        }else{
-            binding.attachMenuFrame.visibility=View.VISIBLE
-        }
-    }
-
 
     private fun setupRecyclerView() {
         adapter = ChatAdapter(
@@ -374,4 +357,35 @@ class ChatFragment : Fragment() {
                 }
             }
         }
+
+    fun showPopUpWindow(view: View){
+        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+
+        val popupView = layoutInflater.inflate(R.layout.attach_menu, null)
+        val popupWindow = PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true)
+        popupWindow.animationStyle = R.style.AnimationPopup
+
+        val button1 = popupView.findViewById<LinearLayout>(R.id.gallery_item)
+        button1.setOnClickListener {
+            startGalleryIntent()
+            popupWindow.dismiss()
+        }
+
+        val button2 = popupView.findViewById<LinearLayout>(R.id.camera_item)
+        button2.setOnClickListener {
+            startCameraIntent()
+            popupWindow.dismiss()
+        }
+
+        val button3 = popupView.findViewById<LinearLayout>(R.id.record_item)
+        button3.setOnClickListener {
+            showToast("record")
+            popupWindow.dismiss()
+        }
+
+        popupWindow.showAsDropDown(binding.attachMenuView)
+
+
+    }
 }

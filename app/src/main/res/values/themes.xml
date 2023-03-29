@@ -27,4 +27,10 @@
     <item name="cornerSize">6%</item>
     </style>
 
+    <style name="AnimationPopup">
+        <item name="android:windowEnterAnimation">@anim/enter_animation</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+
+
 </resources>
