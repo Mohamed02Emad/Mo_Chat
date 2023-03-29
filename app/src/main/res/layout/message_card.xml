@@ -35,6 +35,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="mohamed" />
+        <ImageView
+            android:id="@+id/message_image"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_message_owner"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toTopOf="@id/tv_message_date"
+            android:visibility="gone"
+            />
 
         <View
             android:id="@+id/linr"
@@ -54,6 +67,8 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_message_owner"
+            app:layout_constraintBottom_toTopOf="@id/tv_message_date"
+            android:layout_marginBottom="4dp"
             tools:text="welcome here to my new HBD" />
 
         <TextView
@@ -64,7 +79,7 @@
             android:textColor="#6A6161"
             android:textSize="8sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/message_body"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="20/5/2022 , 3:30" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

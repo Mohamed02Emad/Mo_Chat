@@ -1,5 +1,6 @@
 package com.mo_chatting.chatapp.presentation.recyclerViews
 
+import android.net.Uri
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +8,17 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Message
+import com.mo_chatting.chatapp.data.models.MessageType
 import com.mo_chatting.chatapp.databinding.MessageCardBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class ChatAdapter(
     private val list: ArrayList<Message>,
@@ -33,11 +42,57 @@ class ChatAdapter(
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentMessage = list[position]
-        holder.binding.messageBody.text = currentMessage.messageText
+        if (currentMessage.messageType==MessageType.TEXT){
+            holder.binding.apply {
+                messageBody.text = currentMessage.messageText
+                messageBody.visibility=View.VISIBLE
+                messageImage.visibility=View.GONE
+            }
+        }else{
+            holder.binding.apply {
+                messageBody.visibility=View.GONE
+                messageImage.visibility=View.VISIBLE
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                Glide.with(holder.binding.messageImage)
+                    .load(getMessageImage(currentMessage.messageImage))
+                    .error(R.drawable.ic_profile)
+                    .override(500, 400)
+                    .into(holder.binding.messageImage)
+                onClickListener.onNewImageLoaded()
+            }
+
+        }
         holder.binding.tvMessageDate.text = currentMessage.messageDateAndTime
         holder.binding.tvMessageOwner.text = currentMessage.messageOwner
         setCardColors(holder, currentMessage, position)
         setCardOnClicks(holder, currentMessage, position)
+    }
+
+    private suspend fun getMessageImage(messageImage: String?): Uri? {
+        var uriToReturn: Uri? = null
+        var tries = 18
+        try {
+            val storageRef = FirebaseStorage.getInstance()
+                .getReference(messageImage.toString())
+            storageRef.downloadUrl.apply {
+                addOnSuccessListener { downloadUri ->
+                    uriToReturn = downloadUri
+                }
+                addOnFailureListener {
+                CoroutineScope(Dispatchers.IO).launch {
+                    tries--
+                    if (tries>0) {
+                        delay(70)
+                        getMessageImage(messageImage)
+                    }
+                }
+                }
+                await()
+            }
+        } catch (_: Exception) {
+        }
+        return uriToReturn
     }
 
     private fun setCardOnClicks(
@@ -139,12 +194,14 @@ class ChatAdapter(
     class OnChatClickListener(
         private val clickListener: (message: Message, position: Int) -> Unit,
         private val longClickListener: (message: Message, position: Int) -> Boolean,
-        private val userNameClickListener: (userId: String, userName: String) -> Unit
+        private val userNameClickListener: (userId: String, userName: String) -> Unit,
+        private val newImageLoaded : ()->Unit
     ) {
         fun onChatClick(message: Message, position: Int) = clickListener(message, position)
         fun onRoomLongClick(message: Message, position: Int) = longClickListener(message, position)
         fun onUserNameClicked(userId: String, userName: String) =
             userNameClickListener(userId, userName)
+        fun onNewImageLoaded() = newImageLoaded()
 
     }
 

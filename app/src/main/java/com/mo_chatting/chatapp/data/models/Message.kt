@@ -11,13 +11,13 @@ data class Message (
     val messageDateAndTime:String="",
     var messageOwner:String="",
     var likedEmoji : String? = null,
-    val messageImage:Uri?=null,
+    var messageImage:String?=null,
     var messageOwnerImage: Uri?=null,
     var isSelected:Boolean=false,
     var isStarMessage:Boolean=false,
     var isLiked:Boolean=false,
     var isDeleted: Boolean = false,
-    val messageType: MessageType = MessageType.TEXT,
+    var messageType: MessageType = MessageType.TEXT,
     var usersSeenInfoList : ArrayList<MessageSeenInfo> = ArrayList(),
     val timeWithMillis :String = ""
     ): Parcelable
