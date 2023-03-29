@@ -25,6 +25,7 @@ import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
+import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
 import com.mo_chatting.chatapp.presentation.dialogs.*
@@ -115,15 +116,29 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
         }
 
         binding.fabAdd.setOnClickListener {
-            showAddRoomDialog()
+            if (isInternetAvailable(requireContext())) {
+                showAddRoomDialog()
+            } else {
+                showToast("No Internet")
+            }
         }
 
+
+
         binding.tvEditImage.setOnClickListener {
-            showBottomSheet()
+            if(isInternetAvailable(requireContext())){
+                showBottomSheet()
+            }else{
+                showToast("No Internet")
+            }
         }
 
         binding.btnEditName.setOnClickListener {
-            showNameDialog()
+            if(isInternetAvailable(requireContext())){
+                showNameDialog()
+            }else{
+                showToast("No Internet")
+            }
         }
 
         binding.btnSettings.setOnClickListener {
@@ -185,11 +200,19 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
     }
 
     private fun showEditRoomDialog(room: Room, position: Int) {
+        if(!isInternetAvailable(requireContext())){
+            showToast("No Internet")
+            return
+        }
         val editRoomDialog = CreateRoomDialog(this, true, room)
         editRoomDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun deleteRoom(room: Room) {
+        if(!isInternetAvailable(requireContext())){
+            showToast("No Internet")
+            return
+        }
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Do you want to leave?")
         builder.setPositiveButton("Yes") { dialog, which ->
@@ -218,16 +241,28 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
     }
 
     private fun showAddRoomDialog() {
-        val addRoomDialog = AddRoomDialog(this)
-        addRoomDialog.show(requireActivity().supportFragmentManager, null)
+        if(isInternetAvailable(requireContext())){
+            val addRoomDialog = AddRoomDialog(this)
+            addRoomDialog.show(requireActivity().supportFragmentManager, null)
+        }else{
+            showToast("No Internet")
+        }
     }
 
     private fun showNameDialog() {
-        val dialogFragment = RenameDialog(this)
-        dialogFragment.show(requireActivity().supportFragmentManager, null)
+        if(isInternetAvailable(requireContext())){
+            val dialogFragment = RenameDialog(this)
+            dialogFragment.show(requireActivity().supportFragmentManager, null)
+        }else{
+            showToast("No Internet")
+        }
     }
 
     private fun showBottomSheet() {
+        if(!isInternetAvailable(requireContext())){
+        showToast("No Internet")
+            return
+    }
         val dialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.chose_edit_image, null)
         val btnCamera: LinearLayout = view.findViewById(R.id.camera_choice)
@@ -260,6 +295,7 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
     }
 
     private fun startGalleryIntent() {
+
         val i = Intent().apply {
             type = "image/*"
             action = Intent.ACTION_GET_CONTENT

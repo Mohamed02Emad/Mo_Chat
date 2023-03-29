@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -21,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants
+import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentChatBinding
@@ -76,15 +76,21 @@ class ChatFragment : Fragment() {
             }
 
             btnSend.setOnClickListener {
+                if(!isInternetAvailable(requireContext())){
+                    showToast("No Internet")
+                    return@setOnClickListener
+                }
                 if (binding.etMessage.text.isNullOrBlank()) return@setOnClickListener
+                val messageString = binding.etMessage.text.toString().trimEnd()
                 CoroutineScope(Dispatchers.IO).launch {
                     withContext(Dispatchers.Main) {
                         binding.btnSend.isClickable = false
+                        binding.etMessage.setText("")
                     }
                     viewModel.sendMessage(
                         Message(
                             viewModel.getUserId(),
-                            binding.etMessage.text.toString().trimEnd(),
+                            messageString,
                             messageDateAndTime = viewModel.getDate(),
                             messageOwner = viewModel.getUserName(),
                             viewModel.firebaseAuth.currentUser!!.displayName.toString(),
@@ -93,7 +99,6 @@ class ChatFragment : Fragment() {
                     )
                     withContext(Dispatchers.Main) {
                         binding.btnSend.isClickable = true
-                        binding.etMessage.setText("")
                         // scrollRV()
                     }
                 }
@@ -260,14 +265,7 @@ class ChatFragment : Fragment() {
                     true
                 }
                 R.id.change_background -> {
-                    var x = thisRoom.roomBackgroundColor
-                    x++
-                    if (x > 7) x = 0
-                    setBackground(x)
-                    thisRoom.roomBackgroundColor = x
-                    CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.updateRoomBackground(thisRoom)
-                    }
+                    changeBacgroundColor()
                     true
                 }
                 R.id.show_room_members -> {
@@ -279,6 +277,21 @@ class ChatFragment : Fragment() {
             }
         }
         popup.show()
+    }
+
+    private fun changeBacgroundColor() {
+        if(!isInternetAvailable(requireContext())){
+            showToast("No Internet")
+            return
+        }
+        var x = thisRoom.roomBackgroundColor
+        x++
+        if (x > 7) x = 0
+        setBackground(x)
+        thisRoom.roomBackgroundColor = x
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.updateRoomBackground(thisRoom)
+        }
     }
 
     private fun showRoomMembers() {
@@ -316,6 +329,10 @@ class ChatFragment : Fragment() {
     }
 
     private fun startCameraIntent() {
+        if(!isInternetAvailable(requireContext())){
+            showToast("No Internet")
+            return
+        }
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, "New Picture")
         values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
@@ -330,6 +347,10 @@ class ChatFragment : Fragment() {
     }
 
     private fun startGalleryIntent() {
+        if(!isInternetAvailable(requireContext())){
+            showToast("No Internet")
+            return
+        }
         val i = Intent().apply {
             type = "image/*"
             action = Intent.ACTION_GET_CONTENT
