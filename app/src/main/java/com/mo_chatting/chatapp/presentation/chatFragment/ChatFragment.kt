@@ -172,22 +172,17 @@ class ChatFragment : Fragment() {
                 false
             }, { userId, userName ->
                 messageUserNameClicked(userId, userName)
-            },{
-                newImageLoaded()
+            },{imageUri ->
+                ImageClicked(imageUri)
             }), viewModel.getUserId()
         )
         binding.rvChat.adapter = adapter
         binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
     }
 
-    private fun newImageLoaded() {
-        val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
-        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-        val totalItemCount = layoutManager.itemCount
-
-        if (lastVisibleItemPosition == totalItemCount - 1 && totalItemCount > 0) {
-            smoothRefreshRV()
-        }
+    private fun ImageClicked(imageUri: String?) {
+        val userImageDialog = UserImageDialog(userId="", userName="" , imageUri , true)
+        userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun messageUserNameClicked(userId: String, userName: String) {

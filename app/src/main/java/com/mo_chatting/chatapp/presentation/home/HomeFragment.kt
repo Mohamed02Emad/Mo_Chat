@@ -158,8 +158,7 @@ class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListene
     }
 
     private fun settingsClicked() {
-        //TODO("Not yet implemented")
-        showToast("Soon")
+       findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
     }
 
     private fun oservers() {

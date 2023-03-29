@@ -1,6 +1,7 @@
 package com.mo_chatting.chatapp.data.dataStore
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -25,6 +26,8 @@ class DataStoreImpl(
     companion object {
         const val USER_NAME = "userName"
         const val USER_IMAGE = "userImage"
+        const val IMAGE_IS_LOW = "lowQualityImages"
+        const val DARK_MODE = "darkMode"
     }
 
     override suspend fun clearAll() {
@@ -59,4 +62,35 @@ class DataStoreImpl(
             }
         }
     }
+
+    override suspend fun setLowImageQuality(isLow: Boolean) {
+        withContext(dispatcher) {
+            mDataStore.edit { settings ->
+                settings[booleanPreferencesKey(IMAGE_IS_LOW)] = isLow
+            }
+        }
+    }
+
+    override suspend fun getLowImageQuality(): Boolean = withContext(dispatcher) {
+        mDataStore.data.map { settings ->
+            settings[booleanPreferencesKey(IMAGE_IS_LOW)] ?: true
+        }.first()
+
+    }
+
+    override suspend fun getDarkMode(): Boolean = withContext(dispatcher) {
+        mDataStore.data.map { settings ->
+            settings[booleanPreferencesKey(DARK_MODE)] ?: true
+        }.first()
+    }
+
+    override suspend fun setDarkMode(isLow: Boolean) {
+        withContext(dispatcher) {
+            mDataStore.edit { settings ->
+                settings[booleanPreferencesKey(DARK_MODE)] = isLow
+            }
+        }
+    }
+
+
 }

@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Message
@@ -16,7 +17,6 @@ import com.mo_chatting.chatapp.data.models.MessageType
 import com.mo_chatting.chatapp.databinding.MessageCardBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -54,12 +54,10 @@ class ChatAdapter(
                 messageImage.visibility=View.VISIBLE
             }
             CoroutineScope(Dispatchers.Main).launch {
-                Glide.with(holder.binding.messageImage)
-                    .load(getMessageImage(currentMessage.messageImage))
-                    .error(R.drawable.ic_profile)
-                    .override(500, 400)
-                    .into(holder.binding.messageImage)
-                onClickListener.onNewImageLoaded()
+                    Glide.with(holder.binding.messageImage)
+                        .load(getMessageImage(currentMessage.messageImage))
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(holder.binding.messageImage)
             }
 
         }
@@ -71,22 +69,13 @@ class ChatAdapter(
 
     private suspend fun getMessageImage(messageImage: String?): Uri? {
         var uriToReturn: Uri? = null
-        var tries = 18
         try {
+
             val storageRef = FirebaseStorage.getInstance()
                 .getReference(messageImage.toString())
             storageRef.downloadUrl.apply {
                 addOnSuccessListener { downloadUri ->
                     uriToReturn = downloadUri
-                }
-                addOnFailureListener {
-                CoroutineScope(Dispatchers.IO).launch {
-                    tries--
-                    if (tries>0) {
-                        delay(70)
-                        getMessageImage(messageImage)
-                    }
-                }
                 }
                 await()
             }
@@ -120,6 +109,10 @@ class ChatAdapter(
                         currentMessage.messageOwner
                     )
                 }
+            }
+
+            messageImage.setOnClickListener {
+                onClickListener.onImageClicked(currentMessage.messageImage)
             }
         }
     }
@@ -195,13 +188,13 @@ class ChatAdapter(
         private val clickListener: (message: Message, position: Int) -> Unit,
         private val longClickListener: (message: Message, position: Int) -> Boolean,
         private val userNameClickListener: (userId: String, userName: String) -> Unit,
-        private val newImageLoaded : ()->Unit
+        private val ImageClicked : (messageImage:String?)->Unit
     ) {
         fun onChatClick(message: Message, position: Int) = clickListener(message, position)
         fun onRoomLongClick(message: Message, position: Int) = longClickListener(message, position)
         fun onUserNameClicked(userId: String, userName: String) =
             userNameClickListener(userId, userName)
-        fun onNewImageLoaded() = newImageLoaded()
+        fun onImageClicked(messageImage: String?) = ImageClicked(messageImage)
 
     }
 
