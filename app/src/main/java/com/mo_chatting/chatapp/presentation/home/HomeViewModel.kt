@@ -18,13 +18,13 @@ import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
-import java.net.URI
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateUserData(){
+    fun updateUserData() {
         val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
         val selectedImage = BitmapFactory.decodeStream(imageStream)
         val baos = ByteArrayOutputStream()
@@ -141,9 +141,9 @@ class HomeViewModel @Inject constructor(
 
     suspend fun getUserImageFromDataStore(): Uri? {
         val data = dataStore.getUserImage()
-        if (data == "null" || data.isBlank()){
+        if (data == "null" || data.isBlank()) {
             return null
-        }else{
+        } else {
             return Uri.parse(data)
         }
     }
@@ -151,17 +151,18 @@ class HomeViewModel @Inject constructor(
     suspend fun setUserImageAtDataStore() {
         dataStore.setUserImage(getUserImage())
     }
+
     suspend fun setUserImageAtDataStoreUri(uri: Uri) {
         dataStore.setUserImage(uri.toString())
     }
 
-    suspend fun deleteRoom(room:Room){
+    suspend fun deleteRoom(room: Room) {
         //this method just leave the room right now
         repository.deleteRoom(room)
     }
 
     suspend fun updateRoom(room: Room) {
-       repository.updateRoom(room,false)
+        repository.updateRoom(room, false)
     }
 
     fun updateUSerName(newName: String) {
@@ -173,7 +174,7 @@ class HomeViewModel @Inject constructor(
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     user.updateProfile(profileUpdates).await()
-                    updateRoomByName(newName,firebaseAuth.currentUser!!.uid)
+                    updateRoomByName(newName, firebaseAuth.currentUser!!.uid)
                     dataStore.setUserName(newName)
                 } catch (_: Exception) {
 
@@ -182,10 +183,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateRoomByName(newName: String,uid : String) {
-        val list = ArrayList<Room>().apply {addAll(_roomsList.value!!) }
-        for (room in list){
-            repository.updateRoomForUserName(room,newName,uid)
+    private suspend fun updateRoomByName(newName: String, uid: String) {
+        val list = ArrayList<Room>().apply { addAll(_roomsList.value!!) }
+        for (room in list) {
+            repository.updateRoomForUserName(room, newName, uid)
         }
     }
+
 }

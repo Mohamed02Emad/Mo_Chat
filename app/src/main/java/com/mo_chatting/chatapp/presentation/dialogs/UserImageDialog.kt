@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.R
@@ -22,7 +23,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UserImageDialog(val userId: String, val userName: String) : DialogFragment() {
+class UserImageDialog(val userId: String, val userName: String , val imageUri: String?=null , val isImageView : Boolean = false) : DialogFragment() {
     @Inject
     lateinit var firestore: FirebaseFirestore
 
@@ -44,15 +45,36 @@ class UserImageDialog(val userId: String, val userName: String) : DialogFragment
 
     private fun setViews() {
         CoroutineScope(Dispatchers.IO).launch {
-            val uri = getUserImage()
+            val uri =  if (isImageView){
+                getImage(imageUri)
+            }else {
+               getUserImage()
+            }
             withContext(Dispatchers.Main) {
                 Glide.with(requireContext())
                     .load(uri)
-                    .error(R.drawable.ic_profile)
-                    .override(500, 400)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(binding.ivUserImage)
             }
+
         }
+    }
+
+    private suspend fun getImage(messageImage: String?): Uri? {
+        var uriToReturn: Uri? = null
+        try {
+
+            val storageRef = FirebaseStorage.getInstance()
+                .getReference(messageImage.toString())
+            storageRef.downloadUrl.apply {
+                addOnSuccessListener { downloadUri ->
+                    uriToReturn = downloadUri
+                }
+                await()
+            }
+        } catch (_: Exception) {
+        }
+        return uriToReturn
     }
 
     private fun setDimentions() {

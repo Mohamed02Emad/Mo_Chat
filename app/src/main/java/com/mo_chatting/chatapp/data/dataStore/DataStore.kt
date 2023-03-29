@@ -8,6 +8,10 @@ interface DataStore {
     suspend fun getUserName():String
     suspend fun setUserName(userName:String)
 
+    suspend fun getLowImageQuality():Boolean
+    suspend fun setLowImageQuality(isLow:Boolean)
+    suspend fun getDarkMode():Boolean
+    suspend fun setDarkMode(isLow:Boolean)
     suspend fun clearAll()
 
 }
