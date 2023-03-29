@@ -96,25 +96,8 @@ class RenameDialog(val homeFragment: HomeFragment) : DialogFragment() {
             Toast.makeText(requireContext(), name.message, Toast.LENGTH_LONG).show()
             return
         }
-        firebaseAuth.currentUser?.let { user ->
-            val profileUpdates = UserProfileChangeRequest.Builder()
-                .setDisplayName(newName)
-                .build()
-
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    user.updateProfile(profileUpdates).await()
-                    dataStore.setUserName(newName)
-                    withContext(Dispatchers.Main) {
-                       listener!!.onDataPassedRename(newName)
-                        this@RenameDialog.dismiss()
-                    }
-                } catch (_: Exception) {
-
-                }
-            }
-        }
-
+        listener!!.onDataPassedRename(newName)
+        this@RenameDialog.dismiss()
     }
 
     override fun onAttach(context: Context) {

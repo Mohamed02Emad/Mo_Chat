@@ -8,14 +8,12 @@
     android:windowSoftInputMode="adjustResize"
     tools:context=".presentation.chatFragment.ChatFragment">
 
+
     <ImageView
         android:id="@+id/background_img"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_room_name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:scaleType="centerCrop"
-        />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/tv_room_name"
@@ -93,13 +91,56 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="6dp"
         android:background="@drawable/send_edit_text"
+        android:elevation="2dp"
         android:hint="@string/type_something"
         android:maxLines="6"
-        android:padding="10dp"
+        android:paddingVertical="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="40dp"
         android:textColor="@color/black"
         android:textColorHint="@color/light_blue"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@id/btn_send"
         app:layout_constraintEnd_toStartOf="@id/btn_send"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="fhjgkbkjhnhfhgvbknkvcfdcfuhjklhnkjkbnk.b" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/clip_card"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="6dp"
+        android:backgroundTint="@color/blue_white"
+        app:cardCornerRadius="25dp"
+        app:layout_constraintBottom_toBottomOf="@id/et_message"
+        app:layout_constraintEnd_toEndOf="@id/et_message">
+
+        <ImageView
+            android:id="@+id/clip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_clip" />
+    </androidx.cardview.widget.CardView>
+
+    <FrameLayout
+        android:id="@+id/attach_menu_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:elevation="6dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/clip_card"
+        app:layout_constraintEnd_toEndOf="@id/clip_card"
+        app:layout_constraintStart_toStartOf="@id/clip_card">
+
+        <include
+            android:id="@+id/attach_menu"
+            layout="@layout/attach_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

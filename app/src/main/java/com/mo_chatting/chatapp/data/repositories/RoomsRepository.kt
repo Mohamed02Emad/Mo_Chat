@@ -18,6 +18,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
     suspend fun createNewRoom(room: Room) {
         try {
             room.listOFUsers.add(firebaseAuth.currentUser!!.uid)
+            room.listOFUsersNames.add(firebaseAuth.currentUser!!.displayName.toString())
             allRoomsRef.add(room).await()
             createChatForRoom(room)
         } catch (_: Exception) {
@@ -25,12 +26,12 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         }
     }
 
-    suspend fun createChatForRoom(room: Room) {
+    private suspend fun createChatForRoom(room: Room) {
         try {
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
             msgRef.add(
                 Message(
-                    messageOwner = "Mo_Chat",
+                    messageOwner = "Mo Chat",
                     messageOwnerId = "firebase",
                     messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
                     messageDateAndTime = "--/--/----  --:--"
@@ -43,8 +44,8 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
     suspend fun joinRoom(room: Room) {
         room.let {
             if (it.listOFUsers.any { it == firebaseAuth.currentUser!!.uid }) return
-
             it.listOFUsers.add(firebaseAuth.currentUser!!.uid)
+            it.listOFUsersNames.add(firebaseAuth.currentUser!!.displayName.toString())
             updateRoom(it,false)
         }
     }
@@ -59,8 +60,8 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         return null
     }
 
-    suspend fun updateRoom(room: Room,fromChat: Boolean) {
-        val map = mapMyRoom(room,fromChat)
+    suspend fun updateRoom(room: Room, fromChat: Boolean) {
+        val map = mapMyRoom(room, fromChat)
         try {
             val roomQuery = allRoomsRef
                 .whereEqualTo("roomId", room.roomId)
@@ -79,6 +80,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
     suspend fun deleteRoom(room: Room) {
         val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
         val list = room.listOFUsers
+        val nameList = room.listOFUsersNames
 
         if (list.size == 1) {
             try {
@@ -104,11 +106,12 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
 
         } else {
             list.remove(firebaseAuth.currentUser!!.uid)
+            nameList.remove(firebaseAuth.currentUser!!.displayName.toString())
             room.listOFUsers = list
-            updateRoom(room,false)
+            room.listOFUsersNames = nameList
+            updateRoom(room, false)
         }
     }
-
 
     fun getUserRooms(value: QuerySnapshot?): ArrayList<Room> {
         val userId = firebaseAuth.currentUser!!.uid
@@ -146,8 +149,19 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
         map["roomBackgroundColor"] = room.roomBackgroundColor
         if (!fromChat) {
             map["listOFUsers"] = room.listOFUsers
+            map["listOFUsersNames"] = room.listOFUsersNames
         }
         return map
+    }
+
+    suspend fun updateRoomForUserName(room: Room, newName: String, uid: String) {
+        for ( i in 0 until room.listOFUsers.size){
+            if (room.listOFUsers[i] == uid){
+                room.listOFUsersNames[i] = newName
+                break
+            }
+        }
+        updateRoom(room, false)
     }
 
 }

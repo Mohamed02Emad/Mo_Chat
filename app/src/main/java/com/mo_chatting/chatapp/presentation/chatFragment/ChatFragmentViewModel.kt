@@ -39,11 +39,13 @@ class ChatFragmentViewModel @Inject constructor(
         return userId
     }
 
-    suspend fun resetList(value: QuerySnapshot) {
+    suspend fun resetList(value: QuerySnapshot,room: Room) {
         try {
-            val list = repository.getRoomMessages(value)
+                val list = repository.getRoomMessages(value)
+            list.addAll(_messageList.value!!)
             list.sortBy { it.timeWithMillis }
-            _messageList.value!!.addAll(list)
+            _messageList.value!!.clear()
+            _messageList.value!!.addAll(list.toSet())
         } catch (e: Exception) {
         }
     }
@@ -51,7 +53,9 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun getInitialData(room: Room) {
         try {
             val list = repository.getChatForRoom(room)
+            list.addAll(_messageList.value!!)
             list.sortBy { it.timeWithMillis }
+            _messageList.value!!.clear()
             _messageList.value!!.addAll(list.toSet())
         } catch (e: Exception) {
         }

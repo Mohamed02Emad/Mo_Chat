@@ -10,10 +10,10 @@
             android:checkable="false"
             android:title="@string/change_background" />
 
-<!--        <item-->
-<!--            android:id="@+id/show_room_members"-->
-<!--            android:checkable="false"-->
-<!--            android:title="@string/show_room_members"-->
-<!--            />-->
+        <item
+            android:id="@+id/show_room_members"
+            android:checkable="false"
+            android:title="@string/show_room_members"
+            />
     </group>
 </menu>

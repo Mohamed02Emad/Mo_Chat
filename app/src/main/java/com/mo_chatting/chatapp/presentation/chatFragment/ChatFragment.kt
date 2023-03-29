@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,6 +19,8 @@ import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentChatBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RoomIdDialog
+import com.mo_chatting.chatapp.presentation.dialogs.RoomUsersDialog
+import com.mo_chatting.chatapp.presentation.dialogs.UserImageDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -95,7 +98,17 @@ class ChatFragment : Fragment() {
             btnRoomInfo.setOnClickListener {
                 showMenu(it!!)
             }
+
+            clipCard.setOnClickListener {
+                showSendOptions(it)
+            }
+            binding.root.setOnClickListener {
+                if (binding.attachMenuFrame.isVisible) {
+                    binding.attachMenuFrame.visibility = View.GONE
+                }
+            }
         }
+
 
         firebaseStore.collection("${Constants.roomsChatCollection}${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
@@ -104,7 +117,7 @@ class ChatFragment : Fragment() {
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.resetList(it)
+                        viewModel.resetList(it,thisRoom)
                         withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
                             smoothRefreshRV()
@@ -114,20 +127,34 @@ class ChatFragment : Fragment() {
             }
     }
 
+    private fun showSendOptions(view: View) {
+        if (binding.attachMenuFrame.isVisible){
+            binding.attachMenuFrame.visibility=View.GONE
+        }else{
+            binding.attachMenuFrame.visibility=View.VISIBLE
+        }
+    }
+
 
     private fun setupRecyclerView() {
         adapter = ChatAdapter(
             viewModel.messageList.value!!,
-            ChatAdapter.OnChatClickListener { message, position ->
+            ChatAdapter.OnChatClickListener({ message, position ->
                 onChatClick(message, position)
-            },
-            ChatAdapter.OnChatLongClickListener { message, position ->
+            }, { message, position ->
                 onChatLongClick(message, position)
                 false
-            }, viewModel.getUserId()
+            }, { userId, userName ->
+                messageUserNameClicked(userId, userName)
+            }), viewModel.getUserId()
         )
         binding.rvChat.adapter = adapter
         binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
+    }
+
+    private fun messageUserNameClicked(userId: String, userName: String) {
+        val userImageDialog = UserImageDialog(userId, userName)
+        userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun pushViewsToTopOfKeyBoard() {
@@ -210,15 +237,20 @@ class ChatFragment : Fragment() {
                     }
                     true
                 }
-//                R.id.show_room_members -> {
-//
-//                    true
-//                }
+                R.id.show_room_members -> {
+                    showRoomMembers()
+                    true
+                }
 
                 else -> false
             }
         }
         popup.show()
+    }
+
+    private fun showRoomMembers() {
+        val usersDialog = RoomUsersDialog(thisRoom)
+        usersDialog.show(requireActivity().supportFragmentManager,null)
     }
 
     private fun setBackground(background: Int) {
