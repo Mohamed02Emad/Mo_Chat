@@ -1,15 +1,11 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
 
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.PopupWindow
 import android.widget.Toast
-import androidx.core.view.ViewCompat.setBackground
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,6 +19,7 @@ import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentChatBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RoomIdDialog
+import com.mo_chatting.chatapp.presentation.dialogs.RoomUsersDialog
 import com.mo_chatting.chatapp.presentation.dialogs.UserImageDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -131,14 +128,6 @@ class ChatFragment : Fragment() {
     }
 
     private fun showSendOptions(view: View) {
-//        val popupView = LayoutInflater.from(context).inflate(R.layout.attach_menu, null)
-//        val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
-//        popupWindow.contentView = popupView
-//        popupWindow.isTouchable = true
-//        popupWindow.isFocusable = true
-//        popupWindow.height=600
-//        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-//        popupWindow.showAsDropDown(view, 0, -popupWindow.height)
         if (binding.attachMenuFrame.isVisible){
             binding.attachMenuFrame.visibility=View.GONE
         }else{
@@ -248,15 +237,20 @@ class ChatFragment : Fragment() {
                     }
                     true
                 }
-//                R.id.show_room_members -> {
-//
-//                    true
-//                }
+                R.id.show_room_members -> {
+                    showRoomMembers()
+                    true
+                }
 
                 else -> false
             }
         }
         popup.show()
+    }
+
+    private fun showRoomMembers() {
+        val usersDialog = RoomUsersDialog(thisRoom)
+        usersDialog.show(requireActivity().supportFragmentManager,null)
     }
 
     private fun setBackground(background: Int) {
