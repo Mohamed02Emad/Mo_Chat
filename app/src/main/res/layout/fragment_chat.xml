@@ -125,22 +125,12 @@
             android:src="@drawable/ic_clip" />
     </androidx.cardview.widget.CardView>
 
-    <FrameLayout
-        android:id="@+id/attach_menu_frame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:elevation="6dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/clip_card"
-        app:layout_constraintEnd_toEndOf="@id/clip_card"
-        app:layout_constraintStart_toStartOf="@id/clip_card">
-
-        <include
-            android:id="@+id/attach_menu"
-            layout="@layout/attach_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
+    <View
+        android:id="@+id/attach_menu_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintBottom_toTopOf="@id/et_message"
+        android:layout_marginBottom="80dp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
