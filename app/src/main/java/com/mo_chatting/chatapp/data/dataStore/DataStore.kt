@@ -12,6 +12,8 @@ interface DataStore {
     suspend fun setLowImageQuality(isLow:Boolean)
     suspend fun getDarkMode():Boolean
     suspend fun setDarkMode(isLow:Boolean)
+    suspend fun getNotificationEnabled():Boolean
+    suspend fun setNotificationEnabled(isLow:Boolean)
     suspend fun clearAll()
 
 }
