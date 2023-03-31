@@ -28,6 +28,7 @@ class DataStoreImpl(
         const val USER_IMAGE = "userImage"
         const val IMAGE_IS_LOW = "lowQualityImages"
         const val DARK_MODE = "darkMode"
+        const val NOTIFICATIONS = "notifications"
     }
 
     override suspend fun clearAll() {
@@ -88,6 +89,19 @@ class DataStoreImpl(
         withContext(dispatcher) {
             mDataStore.edit { settings ->
                 settings[booleanPreferencesKey(DARK_MODE)] = isLow
+            }
+        }
+    }
+
+    override suspend fun getNotificationEnabled(): Boolean = withContext(dispatcher) {
+        mDataStore.data.map { settings ->
+            settings[booleanPreferencesKey(NOTIFICATIONS)] ?: true
+        }.first()
+    }
+    override suspend fun setNotificationEnabled(enable: Boolean) {
+        withContext(dispatcher) {
+            mDataStore.edit { settings ->
+                settings[booleanPreferencesKey(NOTIFICATIONS)] = enable
             }
         }
     }

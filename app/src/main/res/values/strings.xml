@@ -38,5 +38,6 @@
     <string name="dark_mode">dark mode</string>
     <string name="developed_by">Developed by</string>
     <string name="mohamed_emad">Mohamed Emad</string>
-    <string name="image_quality">low image quality</string>
+    <string name="image_quality">low quality image</string>
+    <string name="notifications">notifications</string>
 </resources>
