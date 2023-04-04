@@ -1,9 +1,13 @@
 package com.mo_chatting.chatapp.data.models
 
 import android.os.Parcelable
+import androidx.annotation.Keep
+import androidx.room.Entity
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Entity
+@Keep
 data class Room (
     var roomName:String="",
     var roomPinState:Boolean=false,
