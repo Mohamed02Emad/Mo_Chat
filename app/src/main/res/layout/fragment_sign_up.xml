@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:windowSoftInputMode="adjustResize"
     android:background="@drawable/black_blue_gradient"
+    android:windowSoftInputMode="adjustResize"
     tools:context=".presentation.signUp.SignUpFragment">
 
 
@@ -116,24 +116,34 @@
             app:layout_constraintTop_toBottomOf="@id/et_email" />
 
 
-        <EditText
-            android:id="@+id/et_password"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/corners_space"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/corners_space"
-            android:background="@drawable/app_edit_text"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="10dp"
-            android:textColor="@color/dark_blue"
-            android:textColorHint="@color/light_blue"
-            android:textSize="16sp"
+            app:boxBackgroundMode="none"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_password"
-            tools:text="password" />
+            app:passwordToggleEnabled="true">
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/app_edit_text"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="10dp"
+                android:textColor="@color/dark_blue"
+                android:textColorHint="@color/light_blue"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_password"
+                tools:text="password" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <TextView
             android:id="@+id/tv_confirm_password"
@@ -145,7 +155,7 @@
             android:textColor="@color/blue_white"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/et_password" />
+            app:layout_constraintTop_toBottomOf="@id/password_field" />
 
 
         <EditText

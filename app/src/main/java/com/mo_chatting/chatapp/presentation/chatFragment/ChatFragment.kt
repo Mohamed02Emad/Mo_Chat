@@ -127,7 +127,6 @@ class ChatFragment : Fragment() {
             }
         }
 
-
         firebaseStore.collection("${Constants.roomsChatCollection}${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
                 error?.let {
