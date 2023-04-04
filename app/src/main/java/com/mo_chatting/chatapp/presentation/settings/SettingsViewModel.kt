@@ -21,10 +21,15 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     private val _darkModeSwitch = MutableLiveData<Boolean?>(false)
     val darkModeSwitch :LiveData<Boolean?> = _darkModeSwitch
 
+
+    private val _notification = MutableLiveData<Boolean?>(false)
+    val notification :LiveData<Boolean?> = _notification
+
     init {
         CoroutineScope(Dispatchers.Main).launch {
             _imageQualitySwitch.postValue(getLowImageQuality())
             _darkModeSwitch.postValue(getDarkMode())
+            _notification.postValue(getNotificationEnabled())
         }
     }
 
@@ -34,6 +39,11 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
 
     suspend fun getLowImageQuality():Boolean = dataStore.getLowImageQuality()
     suspend fun setLowImageQuality()= dataStore.setLowImageQuality(!dataStore.getLowImageQuality())
+
+
+
+    suspend fun getNotificationEnabled():Boolean = dataStore.getNotificationEnabled()
+    suspend fun setNotificationEnabled()= dataStore.setNotificationEnabled(!dataStore.getNotificationEnabled())
 
 
 

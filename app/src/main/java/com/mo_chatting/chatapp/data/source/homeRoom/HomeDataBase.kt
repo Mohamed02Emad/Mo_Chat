@@ -1,4 +1,4 @@
-package com.example.paymentapp.data.source.homeDatabase
+package com.mo_chatting.chatapp.data.source.homeRoom
 
 import android.content.Context
 import androidx.room.Database
