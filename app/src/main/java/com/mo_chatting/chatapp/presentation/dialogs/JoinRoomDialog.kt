@@ -16,7 +16,7 @@ import com.mo_chatting.chatapp.presentation.home.HomeFragment
 class JoinRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
 
     private lateinit var binding:FragmentJoinRoomDialogBinding
-    private var listener: MyJoinRoomListener? = null
+    private var listener: DialogsInterface? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,8 +63,4 @@ class JoinRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
             throw ClassCastException("$context must implement MyDialogListener")
         }
     }
-}
-
-interface MyJoinRoomListener {
-    fun onDataPassedJoinRoom(roomId: String)
 }

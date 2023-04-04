@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 class EnterPasswordDialog(val homeFragment: HomeFragment,val room: Room) : DialogFragment() {
 
     private lateinit var binding: FragmentEnterPasswordDialogBinding
-    private var listener: MyEnterPasswordListener? = null
+    private var listener: DialogsInterface? = null
 
 
     override fun onCreateView(
@@ -73,10 +73,5 @@ class EnterPasswordDialog(val homeFragment: HomeFragment,val room: Room) : Dialo
             throw ClassCastException("$context must implement MyDialogListener")
         }
     }
-
-}
-
-interface MyEnterPasswordListener{
-    fun onPasswordReceive(room: Room)
 
 }

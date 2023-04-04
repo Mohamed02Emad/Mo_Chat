@@ -57,6 +57,17 @@ class SettingsFragment : Fragment() {
                    viewModel.setLowImageQuality()
                }
            }
+
+
+           btnNotifications.setOnClickListener {
+               binding.swNotifications.isChecked=!binding.swNotifications.isChecked
+               CoroutineScope(Dispatchers.IO).launch {
+                   viewModel.setNotificationEnabled()
+               }
+           }
+
+
+
        }
     }
 
@@ -64,6 +75,7 @@ class SettingsFragment : Fragment() {
        binding.apply {
            swDarkMode.isChecked=viewModel.getDarkMode()
            swImgQuality.isChecked = viewModel.getLowImageQuality()
+           swNotifications.isChecked=viewModel.getNotificationEnabled()
        }
     }
 
