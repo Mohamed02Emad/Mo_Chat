@@ -10,14 +10,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -29,7 +26,6 @@ import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
-import com.mo_chatting.chatapp.databinding.AttachMenuBinding
 import com.mo_chatting.chatapp.databinding.FragmentChatBinding
 import com.mo_chatting.chatapp.presentation.dialogs.RoomIdDialog
 import com.mo_chatting.chatapp.presentation.dialogs.RoomUsersDialog
@@ -83,7 +79,7 @@ class ChatFragment : Fragment() {
             }
 
             btnSend.setOnClickListener {
-                if(!isInternetAvailable(requireContext())){
+                if (!isInternetAvailable(requireContext())) {
                     showToast("No Internet")
                     return@setOnClickListener
                 }
@@ -118,10 +114,9 @@ class ChatFragment : Fragment() {
             }
 
             clipCard.setOnClickListener {
-               // showSendOptions(it)
                 try {
                     showPopUpWindow(it)
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     showToast(e.message.toString())
                 }
             }
@@ -134,7 +129,7 @@ class ChatFragment : Fragment() {
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.resetList(it,thisRoom)
+                        viewModel.resetList(it, thisRoom)
                         withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
                             smoothRefreshRV()
@@ -154,7 +149,7 @@ class ChatFragment : Fragment() {
                 false
             }, { userId, userName ->
                 messageUserNameClicked(userId, userName)
-            },{imageUri ->
+            }, { imageUri ->
                 ImageClicked(imageUri)
             }), viewModel.getUserId()
         )
@@ -163,7 +158,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun ImageClicked(imageUri: String?) {
-        val userImageDialog = UserImageDialog(userId="", userName="" , imageUri , true)
+        val userImageDialog = UserImageDialog(userId = "", userName = "", imageUri, true)
         userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
@@ -242,7 +237,7 @@ class ChatFragment : Fragment() {
                     true
                 }
                 R.id.change_background -> {
-                    changeBacgroundColor()
+                    changeBackgroundColor()
                     true
                 }
                 R.id.show_room_members -> {
@@ -256,24 +251,21 @@ class ChatFragment : Fragment() {
         popup.show()
     }
 
-    private fun changeBacgroundColor() {
-        if(!isInternetAvailable(requireContext())){
+    private fun changeBackgroundColor() {
+        if (!isInternetAvailable(requireContext())) {
             showToast("No Internet")
             return
         }
-        var x = thisRoom.roomBackgroundColor
-        x++
-        if (x > 7) x = 0
-        setBackground(x)
-        thisRoom.roomBackgroundColor = x
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.updateRoomBackground(thisRoom)
+            val room = viewModel.newColor(thisRoom)
+            viewModel.updateRoomBackground(room)
+            setBackground(room.roomBackgroundColor)
         }
     }
 
     private fun showRoomMembers() {
         val usersDialog = RoomUsersDialog(thisRoom)
-        usersDialog.show(requireActivity().supportFragmentManager,null)
+        usersDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun setBackground(background: Int) {
@@ -306,7 +298,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun startCameraIntent() {
-        if(!isInternetAvailable(requireContext())){
+        if (!isInternetAvailable(requireContext())) {
             showToast("No Internet")
             return
         }
@@ -324,7 +316,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun startGalleryIntent() {
-        if(!isInternetAvailable(requireContext())){
+        if (!isInternetAvailable(requireContext())) {
             showToast("No Internet")
             return
         }
@@ -357,12 +349,18 @@ class ChatFragment : Fragment() {
             }
         }
 
-    fun showPopUpWindow(view: View){
-        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    fun showPopUpWindow(view: View) {
+        val inputMethodManager =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
         val popupView = layoutInflater.inflate(R.layout.attach_menu, null)
-        val popupWindow = PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true)
+        val popupWindow = PopupWindow(
+            popupView,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
         popupWindow.animationStyle = R.style.AnimationPopup
 
         val button1 = popupView.findViewById<LinearLayout>(R.id.gallery_item)

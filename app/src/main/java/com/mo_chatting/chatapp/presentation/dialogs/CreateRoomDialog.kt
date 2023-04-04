@@ -27,7 +27,7 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
     private var roomType=0
 
     lateinit var binding: FragmentCreateRoomDialogBinding
-    private var listener: MyDialogListener? = null
+    private var listener: DialogsInterface? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -175,9 +175,4 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
             throw ClassCastException("$context must implement MyDialogListener")
         }
     }
-}
-
-interface MyDialogListener {
-    fun onDataPassed(room: Room)
-    fun onRoomEditPassed(room: Room)
 }

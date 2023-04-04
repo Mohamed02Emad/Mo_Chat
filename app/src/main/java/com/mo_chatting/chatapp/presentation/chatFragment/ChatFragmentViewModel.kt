@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
+import androidx.core.view.ViewCompat.setBackground
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -36,6 +37,7 @@ class ChatFragmentViewModel @Inject constructor(
     lateinit var dataStore: DataStoreImpl
 
     var uri = MutableLiveData<Uri?>(null)
+
     private var userId: String = firebaseAuth.currentUser!!.uid
     var isKeyboard = false
 
@@ -130,5 +132,13 @@ class ChatFragmentViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
         }
+    }
+
+    suspend fun newColor(thisRoom: Room): Room {
+        var x = thisRoom.roomBackgroundColor
+        x++
+        if (x > 7) x = 0
+        thisRoom.roomBackgroundColor = x
+        return thisRoom
     }
 }

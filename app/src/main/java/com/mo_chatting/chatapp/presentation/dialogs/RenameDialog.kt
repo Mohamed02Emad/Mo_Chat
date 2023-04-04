@@ -35,7 +35,7 @@ class RenameDialog(val homeFragment: HomeFragment) : DialogFragment() {
     private lateinit var binding: FragmentRenameDialogBinding
     private var newName = ""
     private lateinit var firebaseAuth: FirebaseAuth
-    private var listener: MyRenameDialogListener? = null
+    private var listener: DialogsInterface? = null
 
 
     override fun onCreateView(
@@ -108,8 +108,4 @@ class RenameDialog(val homeFragment: HomeFragment) : DialogFragment() {
             throw ClassCastException("$context must implement MyDialogListener")
         }
     }
-}
-
-interface MyRenameDialogListener {
-    fun onDataPassedRename(name:String )
 }

@@ -39,8 +39,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeFragment : MyFragmentParent(), MyDialogListener, MyRenameDialogListener,
-    MyJoinRoomListener, MyEnterPasswordListener {
+class HomeFragment : MyFragmentParent(), DialogsInterface{
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
