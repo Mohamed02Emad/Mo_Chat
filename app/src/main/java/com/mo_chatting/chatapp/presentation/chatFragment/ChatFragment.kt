@@ -92,11 +92,11 @@ class ChatFragment : Fragment() {
                     }
                     viewModel.sendMessage(
                         Message(
-                            viewModel.getUserId(),
-                            messageString,
+                            messageRoom = thisRoom.roomId,
+                            messageOwnerId = viewModel.getUserId(),
+                            messageText = messageString,
                             messageDateAndTime = viewModel.getDate(),
                             messageOwner = viewModel.getUserName(),
-                            viewModel.firebaseAuth.currentUser!!.displayName.toString(),
                             timeWithMillis = System.currentTimeMillis().toString()
                         ), room = thisRoom
                     )

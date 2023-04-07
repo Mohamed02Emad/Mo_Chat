@@ -101,7 +101,8 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun uploadImage(room: Room) {
         try {
             val message = Message(
-                getUserId(),
+                messageRoom=room.roomId,
+                messageOwnerId = getUserId(),
                 messageDateAndTime = getDate(),
                 messageOwner = getUserName(),
                 timeWithMillis = System.currentTimeMillis().toString(),

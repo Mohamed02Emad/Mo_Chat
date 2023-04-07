@@ -2,10 +2,13 @@ package com.mo_chatting.chatapp.data.models
 
 import android.net.Uri
 import android.os.Parcelable
+import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Message (
+    @PrimaryKey(autoGenerate = true) val messageId:Int=0,
+    val messageRoom:String="",
     val messageOwnerId:String="",
     val messageText:String="",
     val messageDateAndTime:String="",
