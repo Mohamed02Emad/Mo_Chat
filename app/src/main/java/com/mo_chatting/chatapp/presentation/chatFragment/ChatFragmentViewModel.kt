@@ -5,10 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
-import androidx.core.view.ViewCompat.setBackground
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
@@ -20,6 +20,8 @@ import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -52,27 +54,39 @@ class ChatFragmentViewModel @Inject constructor(
         return userId
     }
 
-    suspend fun resetList(value: QuerySnapshot, room: Room) {
+    suspend fun getNewMessages(value: QuerySnapshot, room: Room): ArrayList<Message>? =
         try {
-            val list = repository.getRoomMessages(value)
-            list.addAll(_messageList.value!!)
-            list.sortBy { it.timeWithMillis }
-            _messageList.value!!.clear()
-            _messageList.value!!.addAll(list.toSet())
+            val list = repository.getRoomNewMessages(value)
+            viewModelScope.launch(Dispatchers.IO) {
+                cacheMessages(list)
+            }
+            list
         } catch (e: Exception) {
+            null
+        }
+
+    private suspend fun cacheMessages(list: ArrayList<Message>) {
+        for (message in list) {
+            repository.db.myDao().insert(message)
         }
     }
 
-    suspend fun getInitialData(room: Room) {
+
+    //todo : get messeges from room where messageRoom = thisRoom.id and get new messages
+    suspend fun getInitialMessages(room: Room): Set<Message>? =
         try {
-            val list = repository.getChatForRoom(room)
-            list.addAll(_messageList.value!!)
-            list.sortBy { it.timeWithMillis }
-            _messageList.value!!.clear()
-            _messageList.value!!.addAll(list.toSet())
+            val cashedList = getCachedMessages(room)
+            val newList = repository.getChatForRoom(room)
+            newList.removeAll(cashedList.toSet())
+            val listToReturn = ArrayList<Message>()
+            listToReturn.addAll(cashedList)
+            listToReturn.addAll(newList)
+            listToReturn.sortBy { it.timeWithMillis }
+            listToReturn.toSet()
         } catch (e: Exception) {
+            null
         }
-    }
+
 
     fun getUserName(): String {
         return firebaseAuth.currentUser!!.displayName.toString()
@@ -101,7 +115,7 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun uploadImage(room: Room) {
         try {
             val message = Message(
-                messageRoom=room.roomId,
+                messageRoom = room.roomId,
                 messageOwnerId = getUserId(),
                 messageDateAndTime = getDate(),
                 messageOwner = getUserName(),
@@ -141,5 +155,17 @@ class ChatFragmentViewModel @Inject constructor(
         if (x > 7) x = 0
         thisRoom.roomBackgroundColor = x
         return thisRoom
+    }
+
+    suspend fun getCachedMessages(room: Room): ArrayList<Message> {
+        return repository.db.myDao().getMessagesByRoomID(room.roomId) as ArrayList<Message>
+    }
+
+    suspend fun addToMessageList(arrayList: ArrayList<Message>) {
+        val oldList = ArrayList<Message>()
+        oldList.addAll(_messageList.value!!)
+        oldList.addAll(arrayList)
+        _messageList.value!!.clear()
+        _messageList.value!!.addAll(oldList.toSet())
     }
 }

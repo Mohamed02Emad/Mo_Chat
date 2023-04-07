@@ -36,6 +36,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.ArrayList
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -63,7 +64,11 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setViews()
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.getInitialData(thisRoom)
+            val messages = viewModel.getInitialMessages(thisRoom)
+            try {
+                viewModel.addToMessageList(messages!!.toList() as ArrayList<Message>)
+            } catch (_: java.lang.Exception) {
+            }
             withContext(Dispatchers.Main) {
                 setupRecyclerView()
                 setOnClicks()
@@ -129,7 +134,8 @@ class ChatFragment : Fragment() {
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.resetList(it, thisRoom)
+                        val newMessages = viewModel.getNewMessages(it, thisRoom)
+                        viewModel.addToMessageList(newMessages!!)
                         withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
                             smoothRefreshRV()

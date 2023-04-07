@@ -1,5 +1,6 @@
 package com.mo_chatting.chatapp.data.repositories
 
+import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -9,11 +10,18 @@ import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
+import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
 import kotlinx.coroutines.tasks.await
 
-class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: FirebaseAuth) {
+class RoomsRepository(
+    val firebaseStore: FirebaseFirestore,
+    val firebaseAuth: FirebaseAuth,
+    val application: Context
+) {
 
     val allRoomsRef = firebaseStore.collection("$roomsCollection")
+    val db = MessagesDataBase.getInstance(application)
+
 
     suspend fun createNewRoom(room: Room) {
         try {
@@ -33,6 +41,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
                 Message(
                     messageOwner = "Mo Chat",
                     messageOwnerId = "firebase",
+                    messageRoom = room.roomId,
                     messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
                     messageDateAndTime = "--/--/----  --:--"
                 )
@@ -46,7 +55,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
             if (it.listOFUsers.any { it == firebaseAuth.currentUser!!.uid }) return
             it.listOFUsers.add(firebaseAuth.currentUser!!.uid)
             it.listOFUsersNames.add(firebaseAuth.currentUser!!.displayName.toString())
-            updateRoom(it,false)
+            updateRoom(it, false)
         }
     }
 
@@ -79,6 +88,7 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
 
     suspend fun deleteRoom(room: Room) {
         val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+        deleteCachedMessages(room.roomId)
         val list = room.listOFUsers
         val nameList = room.listOFUsersNames
 
@@ -155,13 +165,15 @@ class RoomsRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: Fi
     }
 
     suspend fun updateRoomForUserName(room: Room, newName: String, uid: String) {
-        for ( i in 0 until room.listOFUsers.size){
-            if (room.listOFUsers[i] == uid){
+        for (i in 0 until room.listOFUsers.size) {
+            if (room.listOFUsers[i] == uid) {
                 room.listOFUsersNames[i] = newName
                 break
             }
         }
         updateRoom(room, false)
     }
+
+    suspend fun deleteCachedMessages(roomId: String) = db.myDao().deleteAll(roomId)
 
 }
