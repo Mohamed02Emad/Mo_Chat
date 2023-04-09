@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,11 +33,8 @@ import com.mo_chatting.chatapp.presentation.dialogs.RoomUsersDialog
 import com.mo_chatting.chatapp.presentation.dialogs.UserImageDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -67,7 +65,7 @@ class ChatFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             val messages = ArrayList<Message>()
             val list = viewModel.getInitialMessages(thisRoom)
-            messages.addAll(list?: emptyList())
+            messages.addAll(list ?: emptyList())
             viewModel.showNewMessages(messages)
             //  viewModel.addToMessageList(messages!!.toList() as ArrayList<Message>)
 
@@ -138,17 +136,16 @@ class ChatFragment : Fragment() {
                     CoroutineScope(Dispatchers.IO).launch {
                         val newMessages = viewModel.getNewMessages(it, thisRoom)
                         viewModel.showNewMessages(newMessages!!)
-                        checkIfToScroll()
                     }
                 }
             }
     }
 
-    private fun checkIfToScroll() {
+    private suspend fun checkIfToScroll() {
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
         val lowerScreenItemPosition = layoutManager.findFirstVisibleItemPosition()
         if (lowerScreenItemPosition<3){
-            smoothRefreshRV()
+                smoothRefreshRV()
         }
     }
 
@@ -168,17 +165,14 @@ class ChatFragment : Fragment() {
         binding.rvChat.adapter = adapter
         binding.rvChat.layoutManager = LinearLayoutManager(requireActivity()).apply {
             reverseLayout = true
-          //  stackFromEnd = true
         }
 
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.items.collectLatest { data ->
                 adapter.submitData(data)
-                //showToast(adapter.itemCount.toString())
+                checkIfToScroll()
             }
         }
-
-        smoothRefreshRV()
     }
 
     private fun ImageClicked(imageUri: String?) {
@@ -193,7 +187,6 @@ class ChatFragment : Fragment() {
 
     private fun pushViewsToTopOfKeyBoard() {
         val rootView = binding.root
-
         rootView.viewTreeObserver.addOnGlobalLayoutListener {
             val screenHeight = resources.displayMetrics.heightPixels
             val rect = Rect()
@@ -230,9 +223,7 @@ class ChatFragment : Fragment() {
     private fun smoothRefreshRV() {
         try {
             binding.rvChat.smoothScrollToPosition(0)
-        } catch (e: Exception) {
-            //showToast(e.message.toString())
-        }
+        } catch (_: Exception) {}
     }
 
     private fun showToast(string: String) {
