@@ -34,6 +34,7 @@ import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -55,6 +56,7 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         thisRoom = args.room
+        viewModel.thisRoom = thisRoom
         binding = FragmentChatBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -63,7 +65,12 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setViews()
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.getInitialData(thisRoom)
+            val messages = ArrayList<Message>()
+            val list = viewModel.getInitialMessages(thisRoom)
+            messages.addAll(list?: emptyList())
+            viewModel.showNewMessages(messages)
+            //  viewModel.addToMessageList(messages!!.toList() as ArrayList<Message>)
+
             withContext(Dispatchers.Main) {
                 setupRecyclerView()
                 setOnClicks()
@@ -92,11 +99,11 @@ class ChatFragment : Fragment() {
                     }
                     viewModel.sendMessage(
                         Message(
-                            viewModel.getUserId(),
-                            messageString,
+                            messageRoom = thisRoom.roomId,
+                            messageOwnerId = viewModel.getUserId(),
+                            messageText = messageString,
                             messageDateAndTime = viewModel.getDate(),
                             messageOwner = viewModel.getUserName(),
-                            viewModel.firebaseAuth.currentUser!!.displayName.toString(),
                             timeWithMillis = System.currentTimeMillis().toString()
                         ), room = thisRoom
                     )
@@ -117,7 +124,7 @@ class ChatFragment : Fragment() {
                 try {
                     showPopUpWindow(it)
                 } catch (e: Exception) {
-                    showToast(e.message.toString())
+                    //showToast(e.message.toString())
                 }
             }
         }
@@ -129,19 +136,24 @@ class ChatFragment : Fragment() {
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.resetList(it, thisRoom)
-                        withContext(Dispatchers.Main) {
-                            binding.rvChat.adapter!!.notifyDataSetChanged()
-                            smoothRefreshRV()
-                        }
+                        val newMessages = viewModel.getNewMessages(it, thisRoom)
+                        viewModel.showNewMessages(newMessages!!)
+                        checkIfToScroll()
                     }
                 }
             }
     }
 
-    private fun setupRecyclerView() {
+    private fun checkIfToScroll() {
+        val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
+        val lowerScreenItemPosition = layoutManager.findFirstVisibleItemPosition()
+        if (lowerScreenItemPosition<3){
+            smoothRefreshRV()
+        }
+    }
+
+    private suspend fun setupRecyclerView() {
         adapter = ChatAdapter(
-            viewModel.messageList.value!!,
             ChatAdapter.OnChatClickListener({ message, position ->
                 onChatClick(message, position)
             }, { message, position ->
@@ -154,7 +166,19 @@ class ChatFragment : Fragment() {
             }), viewModel.getUserId()
         )
         binding.rvChat.adapter = adapter
-        binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
+        binding.rvChat.layoutManager = LinearLayoutManager(requireActivity()).apply {
+            reverseLayout = true
+          //  stackFromEnd = true
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.items.collectLatest { data ->
+                adapter.submitData(data)
+                //showToast(adapter.itemCount.toString())
+            }
+        }
+
+        smoothRefreshRV()
     }
 
     private fun ImageClicked(imageUri: String?) {
@@ -205,24 +229,16 @@ class ChatFragment : Fragment() {
 
     private fun smoothRefreshRV() {
         try {
-            val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
-            binding.rvChat.smoothScrollToPosition(lastPosition)
+            binding.rvChat.smoothScrollToPosition(0)
         } catch (e: Exception) {
-            showToast(e.message.toString())
-        }
-    }
-
-    private fun scrollRV() {
-        try {
-            val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
-            binding.rvChat.scrollToPosition(lastPosition)
-        } catch (e: Exception) {
-            showToast(e.message.toString())
+            //showToast(e.message.toString())
         }
     }
 
     private fun showToast(string: String) {
-        Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+        CoroutineScope(Dispatchers.Main).launch {
+            Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+        }
     }
 
     fun showMenu(view: View) {

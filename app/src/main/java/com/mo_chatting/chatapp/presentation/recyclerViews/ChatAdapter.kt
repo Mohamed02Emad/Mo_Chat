@@ -1,3 +1,5 @@
+
+
 package com.mo_chatting.chatapp.presentation.recyclerViews
 
 import android.net.Uri
@@ -7,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -21,11 +25,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class ChatAdapter(
-    private val list: ArrayList<Message>,
     private val onClickListener: OnChatClickListener,
     private val userId: String
 ) :
-    RecyclerView.Adapter<ChatAdapter.HomeViewHolder>() {
+    PagingDataAdapter<Message, ChatAdapter.HomeViewHolder>(Companion) {
 
     inner class HomeViewHolder(val binding: MessageCardBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -41,7 +44,7 @@ class ChatAdapter(
     }
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
-        val currentMessage = list[position]
+        val currentMessage = getItem(position)!!
         if (currentMessage.messageType==MessageType.TEXT){
             holder.binding.apply {
                 messageBody.text = currentMessage.messageText
@@ -54,10 +57,10 @@ class ChatAdapter(
                 messageImage.visibility=View.VISIBLE
             }
             CoroutineScope(Dispatchers.Main).launch {
-                    Glide.with(holder.binding.messageImage)
-                        .load(getMessageImage(currentMessage.messageImage))
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(holder.binding.messageImage)
+                Glide.with(holder.binding.messageImage)
+                    .load(getMessageImage(currentMessage.messageImage))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.binding.messageImage)
             }
 
         }
@@ -179,11 +182,6 @@ class ChatAdapter(
 
     }
 
-
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
     class OnChatClickListener(
         private val clickListener: (message: Message, position: Int) -> Unit,
         private val longClickListener: (message: Message, position: Int) -> Boolean,
@@ -198,4 +196,15 @@ class ChatAdapter(
 
     }
 
+    companion object : DiffUtil.ItemCallback<Message>() {
+        override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
+            return (oldItem.timeWithMillis == newItem.timeWithMillis)&&(oldItem.messageOwnerId == newItem.messageOwnerId)
+        }
+
+        override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
+
+

@@ -1,5 +1,6 @@
 package com.mo_chatting.chatapp.di
 
+import android.app.Application
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,11 +27,14 @@ object module {
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
     @Singleton
     @Provides
-    fun provideRoomsRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth): RoomsRepository = RoomsRepository(firebaseFireStore, firebaseAuth)
+    fun provideRoomsRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth,@ApplicationContext appContext: Context): RoomsRepository = RoomsRepository(firebaseFireStore, firebaseAuth,
+       appContext )
 
     @Singleton
     @Provides
-    fun provideChatRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth): MessagesRepository = MessagesRepository(firebaseFireStore, firebaseAuth)
+    fun provideChatRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth
+                              ,@ApplicationContext appContext: Context): MessagesRepository =
+        MessagesRepository(firebaseFireStore, firebaseAuth,appContext)
 
     @Singleton
     @Provides

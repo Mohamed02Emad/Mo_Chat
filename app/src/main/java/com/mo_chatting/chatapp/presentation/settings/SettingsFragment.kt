@@ -66,8 +66,6 @@ class SettingsFragment : Fragment() {
                }
            }
 
-
-
        }
     }
 
