@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat.setBackground
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -139,10 +140,6 @@ class ChatFragment : Fragment() {
                     CoroutineScope(Dispatchers.IO).launch {
                         val newMessages = viewModel.getNewMessages(it, thisRoom)
                         viewModel.cacheMessages(newMessages!!)
-                        withContext(Dispatchers.Main) {
-                            binding.rvChat.adapter!!.notifyDataSetChanged()
-                            smoothRefreshRV()
-                        }
                     }
                 }
             }
@@ -162,7 +159,10 @@ class ChatFragment : Fragment() {
             }), viewModel.getUserId()
         )
         binding.rvChat.adapter = adapter
-        binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
+        binding.rvChat.layoutManager = LinearLayoutManager(requireActivity()).apply {
+            reverseLayout = true
+          //  stackFromEnd = true
+        }
 
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.items.collectLatest { data ->
@@ -171,6 +171,7 @@ class ChatFragment : Fragment() {
             }
         }
 
+        smoothRefreshRV()
     }
 
     private fun ImageClicked(imageUri: String?) {
@@ -220,18 +221,8 @@ class ChatFragment : Fragment() {
     }
 
     private fun smoothRefreshRV() {
-//        try {
-//            val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
-//            binding.rvChat.smoothScrollToPosition(lastPosition)
-//        } catch (e: Exception) {
-//            showToast(e.message.toString())
-//        }
-    }
-
-    private fun scrollRV() {
         try {
-            val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
-            binding.rvChat.scrollToPosition(lastPosition)
+            binding.rvChat.smoothScrollToPosition(0)
         } catch (e: Exception) {
             showToast(e.message.toString())
         }

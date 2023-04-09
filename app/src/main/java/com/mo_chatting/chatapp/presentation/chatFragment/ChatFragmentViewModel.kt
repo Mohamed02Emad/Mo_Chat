@@ -5,11 +5,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Config
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
@@ -45,13 +43,13 @@ class ChatFragmentViewModel @Inject constructor(
 
     lateinit var thisRoom: Room
 
-    val items = Pager( PagingConfig(pageSize = 30,enablePlaceholders = false)){
-        MessagePagingSource(repository.getDao(),thisRoom.roomId)
-    }.flow.cachedIn(viewModelScope)
-
-
-
-
+    val items =
+        Pager(PagingConfig(pageSize = 30,
+            enablePlaceholders = false,
+            prefetchDistance = 1
+        )) {
+            MessagePagingSource(repository.getDao(), thisRoom.roomId)
+        }.flow.cachedIn(viewModelScope)
 
 
     var uri = MutableLiveData<Uri?>(null)
