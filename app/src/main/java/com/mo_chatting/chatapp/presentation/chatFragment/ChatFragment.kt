@@ -138,9 +138,18 @@ class ChatFragment : Fragment() {
                     CoroutineScope(Dispatchers.IO).launch {
                         val newMessages = viewModel.getNewMessages(it, thisRoom)
                         viewModel.showNewMessages(newMessages!!)
+                        checkIfToScroll()
                     }
                 }
             }
+    }
+
+    private fun checkIfToScroll() {
+        val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
+        val lowerScreenItemPosition = layoutManager.findFirstVisibleItemPosition()
+        if (lowerScreenItemPosition<3){
+            smoothRefreshRV()
+        }
     }
 
     private suspend fun setupRecyclerView() {
