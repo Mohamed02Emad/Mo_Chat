@@ -11,14 +11,13 @@ import kotlinx.coroutines.withContext
 class MessagePagingSource(private val dao: MessageDao, private val roomId: String) :
     PagingSource<Int, Message>() {
     override fun getRefreshKey(state: PagingState<Int, Message>): Int? {
-        return state.firstItemOrNull()?.timeWithMillis!!.toInt()
+        return 0
     }
 
     override suspend fun load(params: LoadParams<Int>): PagingSource.LoadResult<Int, Message> = withContext(
         Dispatchers.IO
     ) {
         val page = params.key ?: 0
-        Log.d("mohamed", "page $page")
         val pageSize = 50 //params.loadSize
         val offset = page * pageSize
         val messages = dao.getMessages(pageSize, offset, roomId)

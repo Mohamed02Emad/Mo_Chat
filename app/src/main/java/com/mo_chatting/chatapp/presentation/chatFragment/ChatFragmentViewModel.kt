@@ -29,6 +29,7 @@ import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @HiltViewModel
 class ChatFragmentViewModel @Inject constructor(
@@ -43,14 +44,20 @@ class ChatFragmentViewModel @Inject constructor(
 
     lateinit var thisRoom: Room
 
+    lateinit var pagingSource: MessagePagingSource
+
     val items =
         Pager(PagingConfig(pageSize = 30,
             enablePlaceholders = false,
             prefetchDistance = 1
         )) {
-            MessagePagingSource(repository.getDao(), thisRoom.roomId)
+            provideMessagePagingSource()
         }.flow.cachedIn(viewModelScope)
 
+    private fun provideMessagePagingSource():MessagePagingSource{
+        pagingSource = MessagePagingSource(repository.getDao(), thisRoom.roomId)
+        return pagingSource
+    }
 
     var uri = MutableLiveData<Uri?>(null)
 
@@ -72,21 +79,27 @@ class ChatFragmentViewModel @Inject constructor(
         try {
             val list = repository.getRoomNewMessages(value)
             viewModelScope.launch(Dispatchers.IO) {
-                cacheMessages(list)
+                showNewMessages(list)
             }
             list
         } catch (e: Exception) {
             null
         }
 
-    suspend fun cacheMessages(list: ArrayList<Message>) {
+    suspend fun showNewMessages(list: ArrayList<Message>) {
+       cacheNewMessages(list)
+        try {
+            pagingSource.invalidate()
+        }catch (_:Exception){
+        }
+    }
+
+    suspend fun cacheNewMessages(list : ArrayList<Message>){
         for (message in list) {
             repository.db.myDao().insert(message)
         }
     }
 
-
-    //todo : get messeges from room where messageRoom = thisRoom.id and get new messages
     suspend fun getInitialMessages(room: Room): Set<Message>? =
         try {
             val cashedList = getCachedMessages(room)

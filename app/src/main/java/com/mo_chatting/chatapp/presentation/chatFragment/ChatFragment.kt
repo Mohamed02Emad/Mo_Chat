@@ -15,10 +15,8 @@ import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.ViewCompat.setBackground
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -70,7 +68,7 @@ class ChatFragment : Fragment() {
             val messages = ArrayList<Message>()
             val list = viewModel.getInitialMessages(thisRoom)
             messages.addAll(list?: emptyList())
-            viewModel.cacheMessages(messages)
+            viewModel.showNewMessages(messages)
             //  viewModel.addToMessageList(messages!!.toList() as ArrayList<Message>)
 
             withContext(Dispatchers.Main) {
@@ -126,7 +124,7 @@ class ChatFragment : Fragment() {
                 try {
                     showPopUpWindow(it)
                 } catch (e: Exception) {
-                    showToast(e.message.toString())
+                    //showToast(e.message.toString())
                 }
             }
         }
@@ -139,7 +137,7 @@ class ChatFragment : Fragment() {
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
                         val newMessages = viewModel.getNewMessages(it, thisRoom)
-                        viewModel.cacheMessages(newMessages!!)
+                        viewModel.showNewMessages(newMessages!!)
                     }
                 }
             }
@@ -167,7 +165,7 @@ class ChatFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.items.collectLatest { data ->
                 adapter.submitData(data)
-                showToast(adapter.itemCount.toString())
+                //showToast(adapter.itemCount.toString())
             }
         }
 
@@ -224,7 +222,7 @@ class ChatFragment : Fragment() {
         try {
             binding.rvChat.smoothScrollToPosition(0)
         } catch (e: Exception) {
-            showToast(e.message.toString())
+            //showToast(e.message.toString())
         }
     }
 
