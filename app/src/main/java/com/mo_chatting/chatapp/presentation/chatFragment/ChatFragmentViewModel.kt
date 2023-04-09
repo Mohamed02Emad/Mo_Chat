@@ -9,6 +9,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Config
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
@@ -17,6 +21,7 @@ import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.MessageType
 import com.mo_chatting.chatapp.data.models.Room
+import com.mo_chatting.chatapp.data.pagingSource.MessagePagingSource
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,13 +43,24 @@ class ChatFragmentViewModel @Inject constructor(
     @Inject
     lateinit var dataStore: DataStoreImpl
 
+    lateinit var thisRoom: Room
+
+    val items = Pager( PagingConfig(pageSize = 30,enablePlaceholders = false)){
+        MessagePagingSource(repository.getDao(),thisRoom.roomId)
+    }.flow.cachedIn(viewModelScope)
+
+
+
+
+
+
     var uri = MutableLiveData<Uri?>(null)
 
     private var userId: String = firebaseAuth.currentUser!!.uid
     var isKeyboard = false
 
-    private val _messageList = MutableLiveData<ArrayList<Message>>(ArrayList())
-    val messageList: LiveData<ArrayList<Message>> = _messageList
+//    private val _messageList = MutableLiveData<ArrayList<Message>>(ArrayList())
+//    val messageList: LiveData<ArrayList<Message>> = _messageList
 
     suspend fun sendMessage(message: Message, room: Room) {
         repository.addMesssgeToChat(message = message, room = room)
@@ -65,7 +81,7 @@ class ChatFragmentViewModel @Inject constructor(
             null
         }
 
-    private suspend fun cacheMessages(list: ArrayList<Message>) {
+    suspend fun cacheMessages(list: ArrayList<Message>) {
         for (message in list) {
             repository.db.myDao().insert(message)
         }
@@ -78,11 +94,12 @@ class ChatFragmentViewModel @Inject constructor(
             val cashedList = getCachedMessages(room)
             val newList = repository.getChatForRoom(room)
             newList.removeAll(cashedList.toSet())
-            val listToReturn = ArrayList<Message>()
-            listToReturn.addAll(cashedList)
-            listToReturn.addAll(newList)
-            listToReturn.sortBy { it.timeWithMillis }
-            listToReturn.toSet()
+//            val listToReturn = ArrayList<Message>()
+//            listToReturn.addAll(cashedList)
+//            listToReturn.addAll(newList)
+//            listToReturn.sortBy { it.timeWithMillis }
+//            listToReturn.toSet()
+            newList.toSet()
         } catch (e: Exception) {
             null
         }
@@ -161,11 +178,11 @@ class ChatFragmentViewModel @Inject constructor(
         return repository.db.myDao().getMessagesByRoomID(room.roomId) as ArrayList<Message>
     }
 
-    suspend fun addToMessageList(arrayList: ArrayList<Message>) {
-        val oldList = ArrayList<Message>()
-        oldList.addAll(_messageList.value!!)
-        oldList.addAll(arrayList)
-        _messageList.value!!.clear()
-        _messageList.value!!.addAll(oldList.toSet())
-    }
+//    suspend fun addToMessageList(arrayList: ArrayList<Message>) {
+//        val oldList = ArrayList<Message>()
+//        oldList.addAll(_messageList.value!!)
+//        oldList.addAll(arrayList)
+//        _messageList.value!!.clear()
+//        _messageList.value!!.addAll(oldList.toSet())
+//    }
 }

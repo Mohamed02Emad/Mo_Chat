@@ -11,6 +11,8 @@ import kotlinx.parcelize.Parcelize
 @Entity
 @Keep
 data class Message (
+    var messageid : Long =0,
+    var pageNumber : Long =1,
     val messageRoom:String="",
     val messageOwnerId:String="",
     val messageText:String="",

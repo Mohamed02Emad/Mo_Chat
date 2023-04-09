@@ -8,6 +8,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
+import com.mo_chatting.chatapp.data.source.messagesRoom.MessageDao
 import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
 import kotlinx.coroutines.tasks.await
 
@@ -16,6 +17,7 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
 
     val db = MessagesDataBase.getInstance(application)
 
+    fun getDao():MessageDao = db.myDao()
     suspend fun addMesssgeToChat(room: Room, message: Message) {
         try {
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")

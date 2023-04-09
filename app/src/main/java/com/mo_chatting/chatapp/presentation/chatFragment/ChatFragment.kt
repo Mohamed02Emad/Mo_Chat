@@ -15,6 +15,7 @@ import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.ViewCompat.setBackground
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -34,9 +35,9 @@ import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.ArrayList
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,6 +57,7 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         thisRoom = args.room
+        viewModel.thisRoom = thisRoom
         binding = FragmentChatBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -64,11 +66,12 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setViews()
         CoroutineScope(Dispatchers.IO).launch {
-            val messages = viewModel.getInitialMessages(thisRoom)
-            try {
-                viewModel.addToMessageList(messages!!.toList() as ArrayList<Message>)
-            } catch (_: java.lang.Exception) {
-            }
+            val messages = ArrayList<Message>()
+            val list = viewModel.getInitialMessages(thisRoom)
+            messages.addAll(list?: emptyList())
+            viewModel.cacheMessages(messages)
+            //  viewModel.addToMessageList(messages!!.toList() as ArrayList<Message>)
+
             withContext(Dispatchers.Main) {
                 setupRecyclerView()
                 setOnClicks()
@@ -135,7 +138,7 @@ class ChatFragment : Fragment() {
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
                         val newMessages = viewModel.getNewMessages(it, thisRoom)
-                        viewModel.addToMessageList(newMessages!!)
+                        viewModel.cacheMessages(newMessages!!)
                         withContext(Dispatchers.Main) {
                             binding.rvChat.adapter!!.notifyDataSetChanged()
                             smoothRefreshRV()
@@ -145,9 +148,8 @@ class ChatFragment : Fragment() {
             }
     }
 
-    private fun setupRecyclerView() {
+    private suspend fun setupRecyclerView() {
         adapter = ChatAdapter(
-            viewModel.messageList.value!!,
             ChatAdapter.OnChatClickListener({ message, position ->
                 onChatClick(message, position)
             }, { message, position ->
@@ -161,6 +163,14 @@ class ChatFragment : Fragment() {
         )
         binding.rvChat.adapter = adapter
         binding.rvChat.layoutManager = LinearLayoutManager(requireActivity())
+
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.items.collectLatest { data ->
+                adapter.submitData(data)
+                showToast(adapter.itemCount.toString())
+            }
+        }
+
     }
 
     private fun ImageClicked(imageUri: String?) {
@@ -210,12 +220,12 @@ class ChatFragment : Fragment() {
     }
 
     private fun smoothRefreshRV() {
-        try {
-            val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
-            binding.rvChat.smoothScrollToPosition(lastPosition)
-        } catch (e: Exception) {
-            showToast(e.message.toString())
-        }
+//        try {
+//            val lastPosition = binding.rvChat.adapter?.itemCount?.minus(1) ?: 0
+//            binding.rvChat.smoothScrollToPosition(lastPosition)
+//        } catch (e: Exception) {
+//            showToast(e.message.toString())
+//        }
     }
 
     private fun scrollRV() {
@@ -228,7 +238,9 @@ class ChatFragment : Fragment() {
     }
 
     private fun showToast(string: String) {
-        Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+        CoroutineScope(Dispatchers.Main).launch {
+            Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+        }
     }
 
     fun showMenu(view: View) {
