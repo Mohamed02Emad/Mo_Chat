@@ -23,12 +23,14 @@ import com.mo_chatting.chatapp.data.pagingSource.MessagePagingSource
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.log
 
 @HiltViewModel
 class ChatFragmentViewModel @Inject constructor(
@@ -47,6 +49,7 @@ class ChatFragmentViewModel @Inject constructor(
 
     lateinit var pagingSource: MessagePagingSource
 
+    lateinit var pagingAdapterList : List<Message>
     val messages =
         Pager(
             PagingConfig(
@@ -153,10 +156,8 @@ class ChatFragmentViewModel @Inject constructor(
     }
 
     suspend fun sendMessage(message: Message, room: Room) {
+        cacheNewMessageSent(message)
         repository.addMesssageToChat(message = message, room = room)
-        val messages = ArrayList<Message>()
-        messages.add(message)
-        cacheNewMessages(messages)
     }
 
     suspend fun showNewMessages(list: ArrayList<Message>) {
@@ -166,11 +167,23 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun cacheNewMessages(list: ArrayList<Message>) {
         if (list.isEmpty())return
         for (message in list) {
-            if (repository.messageDoesNotExist(message)) {
-                repository.db.myDao().insert(message)
-            }
+           repository.db.myDao().insert(message)
         }
         pagingSource.invalidate()
+    }
+
+    suspend fun cacheNewMessageSent(message: Message){
+        CoroutineScope(Dispatchers.IO).launch {
+            if (checkIfMessageISNotCachedInLastPage(message)) {
+                repository.insertMessageToDatabase(message)
+                pagingSource.invalidate()
+            }
+        }
+    }
+
+    //return true if message is not cached
+    private suspend fun checkIfMessageISNotCachedInLastPage(message: Message): Boolean {
+        return !pagingAdapterList.any{it == message}
     }
 
     suspend fun getCachedMessages(room: Room): ArrayList<Message> {

@@ -114,11 +114,11 @@ class ChatFragment : Fragment() {
         binding.rvChat.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 lifecycleScope.launch(Dispatchers.Main) {
                     if (viewModel.itemInserted.value == true) {
                         checkIfToScroll()
                         viewModel.itemInserted.value = false
+                        viewModel.pagingAdapterList = adapter.getMessagesList()
                     }
                 }
             }

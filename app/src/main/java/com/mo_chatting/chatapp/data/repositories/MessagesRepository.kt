@@ -17,12 +17,20 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
 
     val db = MessagesDataBase.getInstance(application)
 
+    suspend fun insertMessageToDatabase(message: Message){
+        db.myDao().insert(message)
+    }
+
+    suspend fun deleteMessageFromDatabase(message: Message){
+        db.myDao().delete(message)
+    }
     fun getDao():MessageDao = db.myDao()
     suspend fun addMesssageToChat(room: Room, message: Message) {
         try {
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
             msgRef.add(message).await()
         } catch (_: Exception) {
+            deleteMessageFromDatabase(message)
         }
     }
 
