@@ -39,6 +39,8 @@ class ChatFragmentViewModel @Inject constructor(
     val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
+    var firstTime: Boolean = true
+
     @Inject
     lateinit var dataStore: DataStoreImpl
 
@@ -56,6 +58,9 @@ class ChatFragmentViewModel @Inject constructor(
 
 
     var uri = MutableLiveData<Uri?>(null)
+    val itemInserted = MutableLiveData(false)
+    val oldItemCount = MutableLiveData(0)
+
 
     private var userId: String = firebaseAuth.currentUser!!.uid
     var isKeyboard = false

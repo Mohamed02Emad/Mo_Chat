@@ -17,9 +17,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants
@@ -32,8 +34,11 @@ import com.mo_chatting.chatapp.presentation.dialogs.RoomUsersDialog
 import com.mo_chatting.chatapp.presentation.dialogs.UserImageDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.ChatAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -66,13 +71,10 @@ class ChatFragment : Fragment() {
             val list = viewModel.getInitialMessages(thisRoom)
             messages.addAll(list ?: emptyList())
             viewModel.showNewMessages(messages)
-            //  viewModel.addToMessageList(messages!!.toList() as ArrayList<Message>)
-
             withContext(Dispatchers.Main) {
                 setupRecyclerView()
                 setOnClicks()
             }
-            binding.rvChat.scrollToPosition(binding.rvChat.adapter!!.itemCount - 1)
         }
     }
 
@@ -101,11 +103,27 @@ class ChatFragment : Fragment() {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
+
             viewModel.messages.collectLatest { data ->
+                withContext(Dispatchers.Main) {
+                    viewModel.itemInserted.value = true
+                }
                 adapter.submitData(data)
-                checkIfToScroll()
+
             }
         }
+        binding.rvChat.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    if (viewModel.itemInserted.value == true) {
+                        checkIfToScroll()
+                        viewModel.itemInserted.value = false
+                    }
+                }
+            }
+        })
     }
 
     private fun setOnClicks() {
@@ -138,7 +156,6 @@ class ChatFragment : Fragment() {
                     )
                     withContext(Dispatchers.Main) {
                         binding.btnSend.isClickable = true
-                        // scrollRV()
                     }
                 }
             }
@@ -187,13 +204,15 @@ class ChatFragment : Fragment() {
     }
 
     private fun onChatClick(message: Message, position: Int) {
-
+//        val index = adapter.getMessageIndex(message)
+//        val messageAtZero = adapter.getMessageAt(0)!!.messageText
+//        showToast("index = $index, message at Zero = $messageAtZero")
     }
 
-    private  fun checkIfToScroll() {
+    private suspend fun checkIfToScroll() {
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
         val lowerScreenItemPosition = layoutManager.findFirstVisibleItemPosition()
-        if (lowerScreenItemPosition<3){
+        if (lowerScreenItemPosition < 3) {
             smoothRefreshRV()
         }
     }
@@ -201,7 +220,8 @@ class ChatFragment : Fragment() {
     private fun smoothRefreshRV() {
         try {
             binding.rvChat.smoothScrollToPosition(0)
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
     }
 
     private fun showMenu(view: View) {
@@ -338,7 +358,9 @@ class ChatFragment : Fragment() {
             if (keyboardHeight > screenHeight * 0.15) {
                 if (!viewModel.isKeyboard) {
                     viewModel.isKeyboard = true
-                    smoothRefreshRV()
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        checkIfToScroll()
+                    }
                 }
             } else {
                 viewModel.isKeyboard = false

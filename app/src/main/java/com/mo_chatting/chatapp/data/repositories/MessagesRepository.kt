@@ -18,15 +18,15 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
     val db = MessagesDataBase.getInstance(application)
 
     fun getDao():MessageDao = db.myDao()
-    suspend fun addMesssgeToChat(room: Room, message: Message) {
+    suspend fun addMesssageToChat(room: Room, message: Message) {
         try {
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
             msgRef.add(message).await()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 
-    suspend fun getChatForRoom(room: Room): ArrayList<Message> {
+    suspend fun getServerAllMessagesForThisRoom(room: Room): ArrayList<Message> {
         val arrayList = ArrayList<Message>()
         try {
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
@@ -34,12 +34,12 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
             for (i in result.documents)
                 arrayList.add(i.toObject<Message>()!!)
 
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
         return arrayList
     }
 
-    fun getRoomNewMessages(value: QuerySnapshot?): ArrayList<Message> {
+    fun getServerNewMessagesForThisRoom(value: QuerySnapshot?): ArrayList<Message> {
         val arrayList = ArrayList<Message>()
         for (i in value!!.documents) {
             arrayList.add(i.toObject<Message>()!!)
