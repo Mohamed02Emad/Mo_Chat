@@ -103,7 +103,6 @@ class ChatFragment : Fragment() {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-
             viewModel.messages.collectLatest { data ->
                 withContext(Dispatchers.Main) {
                     viewModel.itemInserted.value = true
@@ -182,8 +181,7 @@ class ChatFragment : Fragment() {
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        val newMessages = viewModel.getNewMessages(it, thisRoom)
-                        viewModel.showNewMessages(newMessages!!)
+                        viewModel.getNewMessages(it, thisRoom)
                     }
                 }
             }

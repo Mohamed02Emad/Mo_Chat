@@ -29,7 +29,6 @@ import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @HiltViewModel
 class ChatFragmentViewModel @Inject constructor(
@@ -49,17 +48,19 @@ class ChatFragmentViewModel @Inject constructor(
     lateinit var pagingSource: MessagePagingSource
 
     val messages =
-        Pager(PagingConfig(pageSize = 30,
-            enablePlaceholders = false,
-            prefetchDistance = 1
-        )) {
+        Pager(
+            PagingConfig(
+                pageSize = 30,
+                enablePlaceholders = false,
+                prefetchDistance = 1
+            )
+        ) {
             provideMessagePagingSource()
         }.flow.cachedIn(viewModelScope)
 
 
     var uri = MutableLiveData<Uri?>(null)
     val itemInserted = MutableLiveData(false)
-    val oldItemCount = MutableLiveData(0)
 
 
     private var userId: String = firebaseAuth.currentUser!!.uid
@@ -75,18 +76,17 @@ class ChatFragmentViewModel @Inject constructor(
             null
         }
 
-    suspend fun getNewMessages(value: QuerySnapshot, room: Room): ArrayList<Message>? =
+    suspend fun getNewMessages(value: QuerySnapshot, room: Room) =
         try {
             val list = repository.getServerNewMessagesForThisRoom(value)
             viewModelScope.launch(Dispatchers.IO) {
                 showNewMessages(list)
             }
-            list
         } catch (e: Exception) {
             null
         }
 
-    private fun provideMessagePagingSource():MessagePagingSource{
+    private fun provideMessagePagingSource(): MessagePagingSource {
         pagingSource = MessagePagingSource(repository.getDao(), thisRoom.roomId)
         return pagingSource
     }
@@ -102,7 +102,7 @@ class ChatFragmentViewModel @Inject constructor(
     fun getCurrentDate(): String {
         val calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)+1
+        val month = calendar.get(Calendar.MONTH) + 1
         val year = calendar.get(Calendar.YEAR)
         var hour = calendar.get(Calendar.HOUR_OF_DAY).toString()
         var minute: String = calendar.get(Calendar.MINUTE).toString()
@@ -154,20 +154,23 @@ class ChatFragmentViewModel @Inject constructor(
 
     suspend fun sendMessage(message: Message, room: Room) {
         repository.addMesssageToChat(message = message, room = room)
+        val messages = ArrayList<Message>()
+        messages.add(message)
+        cacheNewMessages(messages)
     }
 
     suspend fun showNewMessages(list: ArrayList<Message>) {
-       cacheNewMessages(list)
-        try {
-            pagingSource.invalidate()
-        }catch (_:Exception){
-        }
+        cacheNewMessages(list)
     }
 
-    suspend fun cacheNewMessages(list : ArrayList<Message>){
+    suspend fun cacheNewMessages(list: ArrayList<Message>) {
+        if (list.isEmpty())return
         for (message in list) {
-            repository.db.myDao().insert(message)
+            if (repository.messageDoesNotExist(message)) {
+                repository.db.myDao().insert(message)
+            }
         }
+        pagingSource.invalidate()
     }
 
     suspend fun getCachedMessages(room: Room): ArrayList<Message> {

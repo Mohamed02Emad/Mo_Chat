@@ -11,11 +11,10 @@ interface MessageDao {
 
     @Query("SELECT * FROM Message where messageRoom == :roomId ORDER BY timeWithMillis DESC LIMIT :limit OFFSET :offset")
     fun getMessages(limit: Int, offset: Int , roomId: String): List<Message>
-
     @Query("SELECT * FROM Message where messageRoom == :roomId ORDER BY timeWithMillis")
     fun getMessagesByRoomID(roomId: String): List<Message>
-    @Query("SELECT * FROM Message ")
-    fun getMessagesByRoomID(): List<Message>
+    @Query("SELECT * FROM Message where (messageRoom == :roomId)&(messageOwnerId == :userId)&(timeWithMillis==:timeInMillis) ")
+    fun getExactMessage(roomId: String,userId:String,timeInMillis : String): List<Message>
     @Query("SELECT * FROM Message where (messageRoom == :roomId )ORDER BY timeWithMillis")
     fun getMessagesPagingData(roomId: String): PagingSource<Int,Message>
 
