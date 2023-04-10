@@ -182,6 +182,33 @@ class ChatAdapter(
 
     }
 
+    fun getMessageAt(position: Int):Message? {
+        return try {
+             getItem(position)
+        }catch (_:Exception){
+            null
+        }
+    }
+
+    fun getMessagesList():List<Message>{
+        val size = itemCount
+        if (size == 0) return emptyList()
+        val list = ArrayList<Message>(size)
+        for (i in 0 until size){
+            list.add(getItem(i)!!)
+        }
+        return list
+    }
+
+    fun getMessageIndex(message: Message):Int {
+        val size = itemCount
+        if (size == 0) return -1
+        for (i in 0 until size){
+            if (getItem(i) == message) return i
+        }
+        return -1
+    }
+
     class OnChatClickListener(
         private val clickListener: (message: Message, position: Int) -> Unit,
         private val longClickListener: (message: Message, position: Int) -> Boolean,

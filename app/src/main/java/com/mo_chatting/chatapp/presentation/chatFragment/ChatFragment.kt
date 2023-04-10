@@ -17,9 +17,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants
@@ -67,16 +69,60 @@ class ChatFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             val messages = ArrayList<Message>()
             val list = viewModel.getInitialMessages(thisRoom)
-            messages.addAll(list?: emptyList())
+            messages.addAll(list ?: emptyList())
             viewModel.showNewMessages(messages)
-            //  viewModel.addToMessageList(messages!!.toList() as ArrayList<Message>)
-
             withContext(Dispatchers.Main) {
                 setupRecyclerView()
                 setOnClicks()
             }
-            binding.rvChat.scrollToPosition(binding.rvChat.adapter!!.itemCount - 1)
         }
+    }
+
+    private fun setViews() {
+        binding.tvRoomName.text = thisRoom.roomName
+        setBackground(thisRoom.roomBackgroundColor)
+
+    }
+
+    private suspend fun setupRecyclerView() {
+        adapter = ChatAdapter(
+            ChatAdapter.OnChatClickListener({ message, position ->
+                onChatClick(message, position)
+            }, { message, position ->
+                onChatLongClick(message, position)
+                false
+            }, { userId, userName ->
+                messageUserNameClicked(userId, userName)
+            }, { imageUri ->
+                messageImageClicked(imageUri)
+            }), viewModel.getUserId()
+        )
+        binding.rvChat.adapter = adapter
+        binding.rvChat.layoutManager = LinearLayoutManager(requireActivity()).apply {
+            reverseLayout = true
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.messages.collectLatest { data ->
+                withContext(Dispatchers.Main) {
+                    viewModel.itemInserted.value = true
+                }
+                adapter.submitData(data)
+
+            }
+        }
+        binding.rvChat.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    if (viewModel.itemInserted.value == true) {
+                        checkIfToScroll()
+                        viewModel.itemInserted.value = false
+                        viewModel.pagingAdapterList = adapter.getMessagesList()
+                    }
+                }
+            }
+        })
     }
 
     private fun setOnClicks() {
@@ -102,14 +148,13 @@ class ChatFragment : Fragment() {
                             messageRoom = thisRoom.roomId,
                             messageOwnerId = viewModel.getUserId(),
                             messageText = messageString,
-                            messageDateAndTime = viewModel.getDate(),
+                            messageDateAndTime = viewModel.getCurrentDate(),
                             messageOwner = viewModel.getUserName(),
                             timeWithMillis = System.currentTimeMillis().toString()
                         ), room = thisRoom
                     )
                     withContext(Dispatchers.Main) {
                         binding.btnSend.isClickable = true
-                        // scrollRV()
                     }
                 }
             }
@@ -136,52 +181,13 @@ class ChatFragment : Fragment() {
                 }
                 value?.let {
                     CoroutineScope(Dispatchers.IO).launch {
-                        val newMessages = viewModel.getNewMessages(it, thisRoom)
-                        viewModel.showNewMessages(newMessages!!)
-                        checkIfToScroll()
+                        viewModel.getNewMessages(it, thisRoom)
                     }
                 }
             }
     }
 
-    private fun checkIfToScroll() {
-        val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
-        val lowerScreenItemPosition = layoutManager.findFirstVisibleItemPosition()
-        if (lowerScreenItemPosition<3){
-            smoothRefreshRV()
-        }
-    }
-
-    private suspend fun setupRecyclerView() {
-        adapter = ChatAdapter(
-            ChatAdapter.OnChatClickListener({ message, position ->
-                onChatClick(message, position)
-            }, { message, position ->
-                onChatLongClick(message, position)
-                false
-            }, { userId, userName ->
-                messageUserNameClicked(userId, userName)
-            }, { imageUri ->
-                ImageClicked(imageUri)
-            }), viewModel.getUserId()
-        )
-        binding.rvChat.adapter = adapter
-        binding.rvChat.layoutManager = LinearLayoutManager(requireActivity()).apply {
-            reverseLayout = true
-          //  stackFromEnd = true
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            viewModel.items.collectLatest { data ->
-                adapter.submitData(data)
-                //showToast(adapter.itemCount.toString())
-            }
-        }
-
-        smoothRefreshRV()
-    }
-
-    private fun ImageClicked(imageUri: String?) {
+    private fun messageImageClicked(imageUri: String?) {
         val userImageDialog = UserImageDialog(userId = "", userName = "", imageUri, true)
         userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
@@ -191,57 +197,32 @@ class ChatFragment : Fragment() {
         userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
-    private fun pushViewsToTopOfKeyBoard() {
-        val rootView = binding.root
-
-        rootView.viewTreeObserver.addOnGlobalLayoutListener {
-            val screenHeight = resources.displayMetrics.heightPixels
-            val rect = Rect()
-            rootView.getWindowVisibleDisplayFrame(rect)
-            val keyboardHeight = screenHeight - rect.bottom
-            if (keyboardHeight > screenHeight * 0.15) {
-                if (viewModel.isKeyboard) {
-
-                } else {
-                    viewModel.isKeyboard = true
-                    smoothRefreshRV()
-                }
-            } else {
-                viewModel.isKeyboard = false
-            }
-
-        }
-    }
-
     private fun onChatLongClick(message: Message, position: Int) {
 
     }
 
     private fun onChatClick(message: Message, position: Int) {
-
+//        val index = adapter.getMessageIndex(message)
+//        val messageAtZero = adapter.getMessageAt(0)!!.messageText
+//        showToast("index = $index, message at Zero = $messageAtZero")
     }
 
-    private fun setViews() {
-        binding.tvRoomName.text = thisRoom.roomName
-        setBackground(thisRoom.roomBackgroundColor)
-
+    private suspend fun checkIfToScroll() {
+        val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
+        val lowerScreenItemPosition = layoutManager.findFirstVisibleItemPosition()
+        if (lowerScreenItemPosition < 3) {
+            smoothRefreshRV()
+        }
     }
 
     private fun smoothRefreshRV() {
         try {
             binding.rvChat.smoothScrollToPosition(0)
-        } catch (e: Exception) {
-            //showToast(e.message.toString())
+        } catch (_: Exception) {
         }
     }
 
-    private fun showToast(string: String) {
-        CoroutineScope(Dispatchers.Main).launch {
-            Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    fun showMenu(view: View) {
+    private fun showMenu(view: View) {
         val popup = PopupMenu(requireContext(), view)
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.room_option_menu, popup.menu)
@@ -267,21 +248,21 @@ class ChatFragment : Fragment() {
         popup.show()
     }
 
+    private fun showRoomMembers() {
+        val usersDialog = RoomUsersDialog(thisRoom)
+        usersDialog.show(requireActivity().supportFragmentManager, null)
+    }
+
     private fun changeBackgroundColor() {
         if (!isInternetAvailable(requireContext())) {
             showToast("No Internet")
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-            val room = viewModel.newColor(thisRoom)
+            val room = viewModel.changeRoomBackgroundColor(thisRoom)
             viewModel.updateRoomBackground(room)
             setBackground(room.roomBackgroundColor)
         }
-    }
-
-    private fun showRoomMembers() {
-        val usersDialog = RoomUsersDialog(thisRoom)
-        usersDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun setBackground(background: Int) {
@@ -365,7 +346,28 @@ class ChatFragment : Fragment() {
             }
         }
 
-    fun showPopUpWindow(view: View) {
+    private fun pushViewsToTopOfKeyBoard() {
+        val rootView = binding.root
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val screenHeight = resources.displayMetrics.heightPixels
+            val rect = Rect()
+            rootView.getWindowVisibleDisplayFrame(rect)
+            val keyboardHeight = screenHeight - rect.bottom
+            if (keyboardHeight > screenHeight * 0.15) {
+                if (!viewModel.isKeyboard) {
+                    viewModel.isKeyboard = true
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        checkIfToScroll()
+                    }
+                }
+            } else {
+                viewModel.isKeyboard = false
+            }
+
+        }
+    }
+
+    private fun showPopUpWindow(view: View) {
         val inputMethodManager =
             requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
@@ -401,4 +403,11 @@ class ChatFragment : Fragment() {
 
 
     }
+
+    private fun showToast(string: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+        }
+    }
+
 }

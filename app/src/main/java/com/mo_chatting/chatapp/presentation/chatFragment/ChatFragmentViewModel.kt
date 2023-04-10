@@ -23,13 +23,14 @@ import com.mo_chatting.chatapp.data.pagingSource.MessagePagingSource
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
+import kotlin.math.log
 
 @HiltViewModel
 class ChatFragmentViewModel @Inject constructor(
@@ -39,6 +40,8 @@ class ChatFragmentViewModel @Inject constructor(
     val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
+    var firstTime: Boolean = true
+
     @Inject
     lateinit var dataStore: DataStoreImpl
 
@@ -46,84 +49,63 @@ class ChatFragmentViewModel @Inject constructor(
 
     lateinit var pagingSource: MessagePagingSource
 
-    val items =
-        Pager(PagingConfig(pageSize = 30,
-            enablePlaceholders = false,
-            prefetchDistance = 1
-        )) {
+    lateinit var pagingAdapterList : List<Message>
+    val messages =
+        Pager(
+            PagingConfig(
+                pageSize = 30,
+                enablePlaceholders = false,
+                prefetchDistance = 1
+            )
+        ) {
             provideMessagePagingSource()
         }.flow.cachedIn(viewModelScope)
 
-    private fun provideMessagePagingSource():MessagePagingSource{
-        pagingSource = MessagePagingSource(repository.getDao(), thisRoom.roomId)
-        return pagingSource
-    }
 
     var uri = MutableLiveData<Uri?>(null)
+    val itemInserted = MutableLiveData(false)
+
 
     private var userId: String = firebaseAuth.currentUser!!.uid
     var isKeyboard = false
 
-//    private val _messageList = MutableLiveData<ArrayList<Message>>(ArrayList())
-//    val messageList: LiveData<ArrayList<Message>> = _messageList
+    suspend fun getInitialMessages(room: Room): Set<Message>? =
+        try {
+            val cashedList = getCachedMessages(room)
+            val newList = repository.getServerAllMessagesForThisRoom(room)
+            newList.removeAll(cashedList.toSet())
+            newList.toSet()
+        } catch (e: Exception) {
+            null
+        }
 
-    suspend fun sendMessage(message: Message, room: Room) {
-        repository.addMesssgeToChat(message = message, room = room)
+    suspend fun getNewMessages(value: QuerySnapshot, room: Room) =
+        try {
+            val list = repository.getServerNewMessagesForThisRoom(value)
+            viewModelScope.launch(Dispatchers.IO) {
+                showNewMessages(list)
+            }
+        } catch (e: Exception) {
+            null
+        }
+
+    private fun provideMessagePagingSource(): MessagePagingSource {
+        pagingSource = MessagePagingSource(repository.getDao(), thisRoom.roomId)
+        return pagingSource
     }
 
     fun getUserId(): String {
         return userId
     }
 
-    suspend fun getNewMessages(value: QuerySnapshot, room: Room): ArrayList<Message>? =
-        try {
-            val list = repository.getRoomNewMessages(value)
-            viewModelScope.launch(Dispatchers.IO) {
-                showNewMessages(list)
-            }
-            list
-        } catch (e: Exception) {
-            null
-        }
-
-    suspend fun showNewMessages(list: ArrayList<Message>) {
-       cacheNewMessages(list)
-        try {
-            pagingSource.invalidate()
-        }catch (_:Exception){
-        }
-    }
-
-    suspend fun cacheNewMessages(list : ArrayList<Message>){
-        for (message in list) {
-            repository.db.myDao().insert(message)
-        }
-    }
-
-    suspend fun getInitialMessages(room: Room): Set<Message>? =
-        try {
-            val cashedList = getCachedMessages(room)
-            val newList = repository.getChatForRoom(room)
-            newList.removeAll(cashedList.toSet())
-//            val listToReturn = ArrayList<Message>()
-//            listToReturn.addAll(cashedList)
-//            listToReturn.addAll(newList)
-//            listToReturn.sortBy { it.timeWithMillis }
-//            listToReturn.toSet()
-            newList.toSet()
-        } catch (e: Exception) {
-            null
-        }
-
-
     fun getUserName(): String {
         return firebaseAuth.currentUser!!.displayName.toString()
     }
 
-    fun getDate(): String {
+    fun getCurrentDate(): String {
         val calendar = Calendar.getInstance()
         val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH)
+        val month = calendar.get(Calendar.MONTH) + 1
         val year = calendar.get(Calendar.YEAR)
         var hour = calendar.get(Calendar.HOUR_OF_DAY).toString()
         var minute: String = calendar.get(Calendar.MINUTE).toString()
@@ -136,16 +118,12 @@ class ChatFragmentViewModel @Inject constructor(
         return "$day/$month/$year , $hour:$minute"
     }
 
-    suspend fun updateRoomBackground(thisRoom: Room) {
-        roomsRepository.updateRoom(thisRoom, true)
-    }
-
     suspend fun uploadImage(room: Room) {
         try {
             val message = Message(
                 messageRoom = room.roomId,
                 messageOwnerId = getUserId(),
-                messageDateAndTime = getDate(),
+                messageDateAndTime = getCurrentDate(),
                 messageOwner = getUserName(),
                 timeWithMillis = System.currentTimeMillis().toString(),
                 messageType = MessageType.IMAGE,
@@ -171,13 +149,52 @@ class ChatFragmentViewModel @Inject constructor(
             val storageRef = FirebaseStorage.getInstance()
                 .getReference("chat_images_${room.roomId}/${message.timeWithMillis}")
             storageRef.putBytes(data).await()
-            repository.addMesssgeToChat(room, message)
+            repository.addMesssageToChat(room, message)
         } catch (e: Exception) {
             Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
         }
     }
 
-    suspend fun newColor(thisRoom: Room): Room {
+    suspend fun sendMessage(message: Message, room: Room) {
+        cacheNewMessageSent(message)
+        repository.addMesssageToChat(message = message, room = room)
+    }
+
+    suspend fun showNewMessages(list: ArrayList<Message>) {
+        cacheNewMessages(list)
+    }
+
+    suspend fun cacheNewMessages(list: ArrayList<Message>) {
+        if (list.isEmpty())return
+        for (message in list) {
+           repository.db.myDao().insert(message)
+        }
+        pagingSource.invalidate()
+    }
+
+    suspend fun cacheNewMessageSent(message: Message){
+        CoroutineScope(Dispatchers.IO).launch {
+            if (checkIfMessageISNotCachedInLastPage(message)) {
+                repository.insertMessageToDatabase(message)
+                pagingSource.invalidate()
+            }
+        }
+    }
+
+    //return true if message is not cached
+    private suspend fun checkIfMessageISNotCachedInLastPage(message: Message): Boolean {
+        return !pagingAdapterList.any{it == message}
+    }
+
+    suspend fun getCachedMessages(room: Room): ArrayList<Message> {
+        return repository.db.myDao().getMessagesByRoomID(room.roomId) as ArrayList<Message>
+    }
+
+    suspend fun updateRoomBackground(thisRoom: Room) {
+        roomsRepository.updateRoom(thisRoom, true)
+    }
+
+    suspend fun changeRoomBackgroundColor(thisRoom: Room): Room {
         var x = thisRoom.roomBackgroundColor
         x++
         if (x > 7) x = 0
@@ -185,15 +202,4 @@ class ChatFragmentViewModel @Inject constructor(
         return thisRoom
     }
 
-    suspend fun getCachedMessages(room: Room): ArrayList<Message> {
-        return repository.db.myDao().getMessagesByRoomID(room.roomId) as ArrayList<Message>
-    }
-
-//    suspend fun addToMessageList(arrayList: ArrayList<Message>) {
-//        val oldList = ArrayList<Message>()
-//        oldList.addAll(_messageList.value!!)
-//        oldList.addAll(arrayList)
-//        _messageList.value!!.clear()
-//        _messageList.value!!.addAll(oldList.toSet())
-//    }
 }
