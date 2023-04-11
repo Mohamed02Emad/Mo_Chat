@@ -154,7 +154,7 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="700">
+        motion:duration="400">
         <KeyFrameSet></KeyFrameSet>
         <OnSwipe
             app:touchRegionId="@id/anchor_view"

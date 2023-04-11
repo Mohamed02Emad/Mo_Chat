@@ -289,7 +289,7 @@ class ChatFragment : Fragment() {
                 binding.backgroundImg.setImageResource(R.color.card_blue)
             }
             7 -> {
-                binding.backgroundImg.setImageResource(R.color.light_blue)
+                binding.backgroundImg.setImageResource(R.color.main_color)
             }
         }
     }

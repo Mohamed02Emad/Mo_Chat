@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/blue_white"
     tools:context=".presentation.home.HomeFragment">
 
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/anchor_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gradient_dark_blue"
+        android:background="@color/main_color"
         app:layoutDescription="@xml/fragment_home_scene"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -20,6 +20,7 @@
             android:id="@+id/btn_settings"
             android:layout_width="35dp"
             android:elevation="1dp"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
             android:layout_height="35dp"
             android:src="@drawable/ic_settings" />
 
@@ -95,12 +96,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="25dp"
-        android:backgroundTint="@color/gradient_light_blue"
+        android:backgroundTint="@color/main_color"
         android:contentDescription="@string/add_new_chat"
         android:src="@drawable/ic_add_chat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="@color/gradient_dark_blue"
+        app:rippleColor="@color/card_blue"
         app:tint="@color/blue_white" />
 
     <androidx.recyclerview.widget.RecyclerView
