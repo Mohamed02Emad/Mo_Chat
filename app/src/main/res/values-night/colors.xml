@@ -42,6 +42,12 @@
 
     <color name="special_text">#5679D6</color>
 
+    <color name="my_message">#F0D1DDFC</color>
+    <color name="their_message">#EB021C63</color>
+
+
+    <color name="attach_menu">#D90B2058</color>
+
 
 
 
