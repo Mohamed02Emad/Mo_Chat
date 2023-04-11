@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.MessageType
@@ -53,10 +52,10 @@ class ChatAdapter(
                 }
             }
 
-            binding.tvMessageDate.text = currentMessage.messageDateAndTime
-            binding.tvMessageOwner.text = currentMessage.messageOwner
 
             binding.apply {
+                tvMessageDate.text = currentMessage.messageDateAndTime
+                tvMessageOwner.text = currentMessage.messageOwner
                 myParent.apply {
                     setOnClickListener {
                         onClickListener.onChatClick(currentMessage, position)
@@ -68,14 +67,13 @@ class ChatAdapter(
                 }
 
                 tvMessageOwner.setOnClickListener {
-                    if (currentMessage.messageOwnerId != "firebase"){
+                    if (currentMessage.messageOwnerId != "firebase") {
                         onClickListener.onUserNameClicked(
                             currentMessage.messageOwnerId,
                             currentMessage.messageOwner
                         )
                     }
                 }
-
                 messageImage.setOnClickListener {
                     onClickListener.onImageClicked(currentMessage.messageImage)
                 }
@@ -85,7 +83,7 @@ class ChatAdapter(
 
     inner class TheirMessageViewHolder(val binding: TheirMessageCardBinding) :
         BaseViewHolder(binding.root) {
-        override fun bind(currentMessage: Message ,  position: Int) {
+        override fun bind(currentMessage: Message, position: Int) {
 
             if (currentMessage.messageType == MessageType.TEXT) {
                 binding.apply {
@@ -106,10 +104,10 @@ class ChatAdapter(
                 }
             }
 
-            binding.tvMessageDate.text = currentMessage.messageDateAndTime
-            binding.tvMessageOwner.text = currentMessage.messageOwner
+            binding.apply {
+                tvMessageDate.text = currentMessage.messageDateAndTime
+                tvMessageOwner.text = currentMessage.messageOwner
 
-                binding.apply {
                 myParent.apply {
                     setOnClickListener {
                         onClickListener.onChatClick(currentMessage, position)
@@ -121,7 +119,7 @@ class ChatAdapter(
                 }
 
                 tvMessageOwner.setOnClickListener {
-                    if (currentMessage.messageOwnerId != "firebase"){
+                    if (currentMessage.messageOwnerId != "firebase") {
                         onClickListener.onUserNameClicked(
                             currentMessage.messageOwnerId,
                             currentMessage.messageOwner
@@ -138,7 +136,7 @@ class ChatAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatAdapter.BaseViewHolder {
-        return if (viewType == 0){
+        return if (viewType == 0) {
             MyMessageViewHolder(
                 MyMessageCardBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -146,7 +144,7 @@ class ChatAdapter(
                     false
                 )
             )
-        }else{
+        } else {
             TheirMessageViewHolder(
                 TheirMessageCardBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -158,10 +156,9 @@ class ChatAdapter(
 
     }
 
-    override fun onBindViewHolder(holder: ChatAdapter.BaseViewHolder, position: Int) {
-        holder.bind(getItem(position)!!,position)
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        holder.bind(getItem(position)!!, position)
     }
-
 
 
     private suspend fun getMessageImage(messageImage: String?): Uri? {
@@ -180,7 +177,6 @@ class ChatAdapter(
         }
         return uriToReturn
     }
-
 
 
     fun getMessageAt(position: Int): Message? {

@@ -169,7 +169,10 @@ class ChatFragmentViewModel @Inject constructor(
         for (message in list) {
            repository.db.myDao().insert(message)
         }
-        pagingSource.invalidate()
+        try {
+            pagingSource.invalidate()
+        }catch (_:Exception){
+        }
     }
 
     suspend fun cacheNewMessageSent(message: Message){
