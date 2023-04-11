@@ -15,6 +15,7 @@
     <color name="blue_50">#860A279A</color>
     <color name="gradient_light_blue">#223152</color>
     <color name="dark_blue">#133388</color>
+    <color name="light_blue">#507BEE</color>
     <color name="card_blue">#5679D6</color>
 
     <color name="red_50">#6E650606</color>
@@ -36,6 +37,8 @@
     <color name="main_background">#3E62C4</color>
     <color name="home_background">#CFDCFF</color>
 
+
+    <color name="settings_item">#CFDCFF</color>
 
     <color name="secondary_text">#223152</color>
 
