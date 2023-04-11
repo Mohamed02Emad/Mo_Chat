@@ -160,4 +160,6 @@
             app:touchRegionId="@id/anchor_view"
             motion:dragDirection="dragDown" />
     </Transition>
+
+
 </MotionScene>

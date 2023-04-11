@@ -17,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -122,8 +123,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
             }
         }
 
-
-
         binding.tvEditImage.setOnClickListener {
             if(isInternetAvailable(requireContext())){
                 showBottomSheet()
@@ -142,6 +141,12 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
 
         binding.btnSettings.setOnClickListener {
             settingsClicked()
+        }
+
+        binding.tvUserName.setOnClickListener{
+            if (binding.anchorView.progress == 0.0f){
+             binding.anchorView.transitionToState(R.id.end)
+            }
         }
 
         //firebase listener
