@@ -20,6 +20,8 @@
         android:layout_gravity="end"
         android:background="@drawable/my_message"
         android:padding="8dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -29,10 +31,10 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="-5dp"
-            android:textColor="@color/dark_blue"
+            android:textColor="@color/their_message_color"
             android:textSize="13sp"
+            android:layout_marginEnd="4dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="mohamed" />
         <ImageView
@@ -50,7 +52,7 @@
             />
 
         <View
-            android:id="@+id/linr"
+            android:id="@+id/line"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:alpha="0.3"
@@ -84,10 +86,5 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:id="@+id/view2"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
 
 </LinearLayout>
