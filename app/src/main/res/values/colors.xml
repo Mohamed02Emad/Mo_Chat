@@ -28,7 +28,14 @@
     <color name="blue_white">#CFDCFF</color>
 
     <color name="main_color">#507BEE</color>
+    <color name="main_drawer">#CFDCFF</color>
+    <color name="main_text">#5679D6</color>
     <color name="main_background">#3E62C4</color>
+
+
+    <color name="secondary_text">#223152</color>
+
+    <color name="special_text">#0C2159</color>
 
 
 </resources>
