@@ -12,7 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/main_color</item>
         <!-- Customize your theme here. -->
-        <item name="android:navigationBarColor">@color/blue_white</item>
+        <item name="android:navigationBarColor">@color/main_color</item>
 
     </style>
 
