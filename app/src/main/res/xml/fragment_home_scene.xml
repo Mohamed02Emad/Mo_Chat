@@ -8,7 +8,7 @@
         <Constraint
             android:id="@+id/tv_user_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="@id/profile_card"
             app:layout_constraintTop_toTopOf="@id/profile_card">
             <CustomAttribute
@@ -154,10 +154,12 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="700">
+        motion:duration="400">
         <KeyFrameSet></KeyFrameSet>
         <OnSwipe
             app:touchRegionId="@id/anchor_view"
             motion:dragDirection="dragDown" />
     </Transition>
+
+
 </MotionScene>

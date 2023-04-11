@@ -4,13 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/black_blue_gradient"
+    android:background="@color/blue_white"
     android:windowSoftInputMode="adjustResize"
     tools:context=".presentation.login.LoginFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/main_color"
+        >
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="-20dp"
+            app:layout_constraintTop_toTopOf="@id/tv_email"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/auth_background_view"
+            />
 
         <TextView
             android:id="@+id/tv_welcome"
@@ -30,9 +41,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/corners_space"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="70dp"
             android:text="@string/e_mail"
-            android:textColor="@color/blue_white"
+            android:textColor="@color/card_blue"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
@@ -46,11 +57,12 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/corners_space"
             android:background="@drawable/app_edit_text"
+            android:backgroundTint="#80507BEE"
             android:maxLines="1"
             android:paddingHorizontal="14dp"
             android:paddingVertical="10dp"
-            android:textColor="@color/dark_blue"
-            android:textColorHint="@color/light_blue"
+            android:textColor="@color/gradient_light_blue"
+            android:textColorHint="@color/main_color"
             android:textSize="16sp"
             android:textCursorDrawable="@drawable/cursur"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +76,7 @@
             android:layout_marginStart="@dimen/corners_space"
             android:layout_marginTop="10dp"
             android:text="@string/password"
-            android:textColor="@color/blue_white"
+            android:textColor="@color/card_blue"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_email" />
@@ -79,7 +91,9 @@
             app:boxBackgroundMode="none"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_password"
-            app:passwordToggleEnabled="true">
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/dark_blue"
+            >
 
             <EditText
                 android:id="@+id/et_password"
@@ -87,10 +101,11 @@
                 android:layout_height="50dp"
                 android:background="@drawable/app_edit_text"
                 android:inputType="textPassword"
+                android:backgroundTint="#80507BEE"
                 android:maxLines="1"
                 android:paddingVertical="10dp"
-                android:textColor="@color/dark_blue"
-                android:textColorHint="@color/light_blue"
+                android:textColor="@color/gradient_light_blue"
+                android:textColorHint="@color/main_color"
                 android:textCursorDrawable="@drawable/cursur"
                 android:textSize="16sp"
                 tools:text="password" />
@@ -105,7 +120,7 @@
             android:paddingVertical="4dp"
             android:paddingEnd="8dp"
             android:text="forgot password!"
-            android:textColor="@color/blue_white"
+            android:textColor="@color/card_blue"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@id/password_field"
             app:layout_constraintTop_toBottomOf="@id/password_field" />
@@ -137,7 +152,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_forgot_password"
-            app:spinning_bar_color="@color/light_blue"
+            app:spinning_bar_color="@color/main_color"
             app:spinning_bar_padding="2dp"
             app:spinning_bar_width="40dp" />
 
@@ -148,7 +163,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:text="@string/or_login_with"
-            android:textColor="@color/blue_white"
+            android:textColor="@color/card_blue"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -201,7 +216,7 @@
                 android:paddingVertical="4dp"
                 android:paddingStart="4dp"
                 android:text="@string/have_no_account"
-                android:textColor="@color/blue_white"
+                android:textColor="@color/card_blue"
                 android:textSize="16sp" />
 
             <TextView
@@ -210,7 +225,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:text="@string/sign_up"
-                android:textColor="@color/light_blue"
+                android:textColor="@color/dark_blue_top_bar"
                 android:textSize="18sp" />
 
         </LinearLayout>

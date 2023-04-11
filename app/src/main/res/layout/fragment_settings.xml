@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/black"
+    android:background="@color/main_background"
     android:orientation="vertical"
     tools:context=".presentation.settings.SettingsFragment">
     <com.google.android.material.imageview.ShapeableImageView
@@ -23,7 +23,7 @@
         android:layout_height="51dp"
         android:textColor="@color/blue_white"
         android:text="@string/settings"
-        android:background="@color/dark_blue_top_bar"
+        android:background="@color/main_color"
         android:textSize="18sp"
         android:layout_marginTop="-43dp"
         android:gravity="center"
@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/blue_white"
+            android:textColor="@color/gradient_light_blue"
             android:text="@string/dark_mode"
             android:textSize="18sp"
             android:layout_marginStart="16sp"
@@ -79,7 +79,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/blue_white"
+            android:textColor="@color/gradient_light_blue"
             android:text="@string/image_quality"
             android:textSize="18sp"
             android:layout_marginStart="16sp"
@@ -117,7 +117,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/blue_white"
+            android:textColor="@color/gradient_light_blue"
             android:text="@string/notifications"
             android:textSize="18sp"
             android:layout_marginStart="16sp"
