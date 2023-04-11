@@ -15,15 +15,18 @@
     <color name="blue_50">#860A279A</color>
     <color name="gradient_light_blue">#B9C2D7</color>
     <color name="dark_blue">#133388</color>
-    <color name="card_blue">#5679D6</color>
+    <color name="card_blue">#4764B4</color>
+
     <color name="red_50">#6E650606</color>
-    <color name="red">#8F2F2F</color>
+    <color name="red">#822A2A</color>
     <color name="red_background">#FFB7B7</color>
+
     <color name="yellow_50">#73B57016</color>
-    <color name="yellow">#9489811A</color>
-    <color name="yellow2">#AEA524</color>
+    <color name="yellow">#94766F17</color>
+    <color name="yellow2">#8E861D</color>
     <color name="dark_yellow">#7A720C</color>
     <color name="grey">#E0CBCBCB</color>
+
     <color name="grey_dark">#CBCBCB</color>
     <color name="blue_white">#CFDCFF</color>
 
@@ -31,6 +34,7 @@
     <color name="main_drawer">#3F4E77</color>
     <color name="main_text">#CFDCFF</color>
     <color name="main_background">#03164B</color>
+    <color name="home_background">#01081B</color>
 
 
     <color name="secondary_text">#E5EBF7</color>
