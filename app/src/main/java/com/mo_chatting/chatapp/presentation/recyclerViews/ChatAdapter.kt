@@ -45,7 +45,6 @@ class ChatAdapter(
                     messageImage.visibility = View.VISIBLE
                 }
                 CoroutineScope(Dispatchers.Main).launch {
-//                    val imageUri = getMessageImage(currentMessage.messageImage)
                     Glide.with(binding.messageImage)
                         .load(currentMessage.messageImage)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -159,28 +158,6 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         holder.bind(getItem(position)!!, position)
     }
-
-
-    private suspend fun getMessageImage(messageImage: String?): Uri? {
-
-    //todo remove this logic and get the uri from message
-
-        var uriToReturn: Uri? = null
-        try {
-            val storageRef = FirebaseStorage.getInstance()
-                .getReference(messageImage.toString())
-
-            storageRef.downloadUrl.apply {
-                addOnSuccessListener { downloadUri ->
-                    uriToReturn = downloadUri
-                }
-                await()
-            }
-        } catch (_: Exception) {
-        }
-        return uriToReturn
-    }
-
 
     fun getMessageAt(position: Int): Message? {
         return try {

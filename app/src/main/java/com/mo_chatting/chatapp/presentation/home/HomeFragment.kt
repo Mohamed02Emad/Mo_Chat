@@ -92,14 +92,14 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
                 viewModel.getUserImageFromDataStore()
             }
             try {
-            Glide.with(requireContext())
-                .load(uri)
-                //  .error(R.drawable.ic_profile)
-                .override(500, 400)
-                .into(binding.profile)
-        }catch (e: Exception) {
-            showToast(e.message.toString())
-        }
+                Glide.with(requireContext())
+                    .load(uri)
+                    //  .error(R.drawable.ic_profile)
+                    .override(500, 400)
+                    .into(binding.profile)
+            } catch (e: Exception) {
+                showToast(e.message.toString())
+            }
         }
 
     }
@@ -125,11 +125,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
         binding.tvEditImage.setOnClickListener {
             if (isInternetAvailable(requireContext())) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                    startPhotoPicker()
-                } else {
-                    showBottomSheet()
-                }
+                showBottomSheet()
             } else {
                 showToast("No Internet")
             }
@@ -293,7 +289,11 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         }
         val btnGallery: LinearLayout = view.findViewById(R.id.gallery_choice)
         btnGallery.setOnClickListener {
-            startGalleryIntent()
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                startPhotoPicker()
+            } else {
+                startGalleryIntent()
+            }
             dialog.dismiss()
         }
         dialog.setCancelable(true)
