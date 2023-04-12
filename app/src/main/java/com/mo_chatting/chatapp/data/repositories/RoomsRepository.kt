@@ -6,11 +6,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class RoomsRepository(
@@ -94,6 +98,7 @@ class RoomsRepository(
 
         if (list.size == 1) {
             try {
+                deleteRoomImages(room)
                 val roomQuery = allRoomsRef
                     .whereEqualTo("roomId", room.roomId)
                     .get()
@@ -120,6 +125,17 @@ class RoomsRepository(
             room.listOFUsers = list
             room.listOFUsersNames = nameList
             updateRoom(room, false)
+        }
+    }
+
+    private fun deleteRoomImages(room:Room){
+        val storageRef = FirebaseStorage.getInstance().getReference("chat_images_${room.roomId}")
+        CoroutineScope(Dispatchers.IO).launch {
+            storageRef.listAll().addOnSuccessListener { listResult ->
+                listResult.items.forEach { item ->
+                    item.delete()
+                }
+            }
         }
     }
 

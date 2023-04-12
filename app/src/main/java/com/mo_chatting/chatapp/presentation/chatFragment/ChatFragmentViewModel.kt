@@ -121,7 +121,7 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun uploadImage(room: Room) {
         try {
             val messageTimeInMillis = System.currentTimeMillis().toString()
-            var imageUrl = " "
+            var imageUrl :String?= null
 
             val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
             val selectedImage = BitmapFactory.decodeStream(imageStream)
@@ -148,6 +148,10 @@ class ChatFragmentViewModel @Inject constructor(
                     imageUrl = downloadUri.toString()
                 }
                 await()
+            }
+            if (imageUrl == null) {
+                uploadImage(room)
+                return
             }
             val message = Message(
                 messageRoom = room.roomId,
