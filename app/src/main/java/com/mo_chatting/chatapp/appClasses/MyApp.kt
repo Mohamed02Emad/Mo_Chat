@@ -11,18 +11,4 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
-class MyApp : Application(){
-    @Inject
-    lateinit var dataStoreImpl: DataStoreImpl
-
-    override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base)
-        CoroutineScope(Dispatchers.Main).launch {
-            if (dataStoreImpl.getDarkMode()){
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }else{
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
-    }
-}
+class MyApp : Application()

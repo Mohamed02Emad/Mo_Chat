@@ -5,7 +5,7 @@ import com.mo_chatting.chatapp.data.models.Room
 interface DialogsInterface {
 
     // creatteRoomDialog
-    fun onDataPassed(room: Room)
+    fun onDataPassedCreateRoom(room: Room)
     fun onRoomEditPassed(room: Room)
 
     //EnterPasswordDialog

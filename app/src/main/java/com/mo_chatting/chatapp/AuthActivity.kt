@@ -6,11 +6,20 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import com.facebook.FacebookSdk
+import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var dataStoreImpl: DataStoreImpl
 
     private val pushPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -21,9 +30,20 @@ class AuthActivity : AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkDarkMode()
         checkCameraPermission()
         setContentView(R.layout.activity_auth)
         requestForPermission()
+    }
+
+    private fun checkDarkMode() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (dataStoreImpl.getDarkMode()){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }else{
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
     }
 
 

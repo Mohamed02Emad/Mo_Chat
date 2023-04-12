@@ -6,22 +6,20 @@ import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.messaging.Constants
 import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
@@ -40,7 +38,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeFragment : MyFragmentParent(), DialogsInterface{
+class HomeFragment : MyFragmentParent(), DialogsInterface {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -61,7 +59,8 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        while (viewModel.firebaseAuth.currentUser==null){}
+        while (viewModel.firebaseAuth.currentUser == null) {
+        }
         CoroutineScope(Dispatchers.IO).launch {
             setUserViews()
         }
@@ -75,31 +74,32 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
         val name = viewModel.getUserName()
         if (name != "null" || name.isBlank()) {
             withContext(Dispatchers.Main) {
-                Log.d(Constants.TAG, "setUserViews: safe")
                 binding.tvUserName.text = name
             }
         } else {
             viewModel.setUserName()
             setUserViews()
-            Log.d(Constants.TAG, "setUserViews: ")
             return
         }
 
-
-        val img = viewModel.getUserImageFromDataStore()
-        val uri = if (img != null) {
-            img
-        } else {
-            viewModel.setUserImageAtDataStore()
-            viewModel.getUserImageFromDataStore()
-        }
-
         withContext(Dispatchers.Main) {
+            val img = viewModel.getUserImageFromDataStore()
+            val uri = if (img != null) {
+                img
+            } else {
+                //todo : need improves
+                viewModel.setUserImageAtDataStore()
+                viewModel.getUserImageFromDataStore()
+            }
+            try {
             Glide.with(requireContext())
                 .load(uri)
-                .error(R.drawable.ic_profile)
+                //  .error(R.drawable.ic_profile)
                 .override(500, 400)
                 .into(binding.profile)
+        }catch (e: Exception) {
+            showToast(e.message.toString())
+        }
         }
 
     }
@@ -124,17 +124,21 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
         }
 
         binding.tvEditImage.setOnClickListener {
-            if(isInternetAvailable(requireContext())){
-                showBottomSheet()
-            }else{
+            if (isInternetAvailable(requireContext())) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                    startPhotoPicker()
+                } else {
+                    showBottomSheet()
+                }
+            } else {
                 showToast("No Internet")
             }
         }
 
         binding.btnEditName.setOnClickListener {
-            if(isInternetAvailable(requireContext())){
+            if (isInternetAvailable(requireContext())) {
                 showNameDialog()
-            }else{
+            } else {
                 showToast("No Internet")
             }
         }
@@ -143,9 +147,9 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
             settingsClicked()
         }
 
-        binding.tvUserName.setOnClickListener{
-            if (binding.anchorView.progress == 0.0f){
-             binding.anchorView.transitionToState(R.id.end)
+        binding.tvUserName.setOnClickListener {
+            if (binding.anchorView.progress == 0.0f) {
+                binding.anchorView.transitionToState(R.id.end)
             }
         }
 
@@ -161,8 +165,21 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
 
     }
 
+    private fun startPhotoPicker() {
+        singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    val singlePhotoPicker =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                viewModel.uri.value = uri
+                binding.profile.setImageURI(viewModel.uri.value)
+                viewModel.updateUserData()
+            }
+        }
+
     private fun settingsClicked() {
-       findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
     }
 
     private fun oservers() {
@@ -176,25 +193,25 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
 
     private fun setupRecyclerView() {
 
-            adapter = HomeRoomAdapter(
-                viewModel.roomsList.value!!,
-                viewModel.firebaseAuth.currentUser!!.uid,
-                HomeRoomAdapter.OnRoomClickListener({ room, position ->
-                    onRoomClick(room, position)
-                }, { room, position ->
-                    onRoomLongClick(room, position)
-                    false
-                }, { room, position ->
-                    deleteRoom(room)
-                }, { room, position ->
-                    editRoom(room, position)
-                }, { room, position ->
-                    pinRoom(room, position)
-                }
-                )
+        adapter = HomeRoomAdapter(
+            viewModel.roomsList.value!!,
+            viewModel.firebaseAuth.currentUser!!.uid,
+            HomeRoomAdapter.OnRoomClickListener({ room, position ->
+                onRoomClick(room, position)
+            }, { room, position ->
+                onRoomLongClick(room, position)
+                false
+            }, { room, position ->
+                deleteRoom(room)
+            }, { room, position ->
+                editRoom(room, position)
+            }, { room, position ->
+                pinRoom(room, position)
+            }
             )
-            binding.rvHome.adapter = adapter
-            binding.rvHome.layoutManager = LinearLayoutManager(requireActivity())
+        )
+        binding.rvHome.adapter = adapter
+        binding.rvHome.layoutManager = LinearLayoutManager(requireActivity())
 
     }
 
@@ -203,7 +220,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
     }
 
     private fun showEditRoomDialog(room: Room, position: Int) {
-        if(!isInternetAvailable(requireContext())){
+        if (!isInternetAvailable(requireContext())) {
             showToast("No Internet")
             return
         }
@@ -212,7 +229,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
     }
 
     private fun deleteRoom(room: Room) {
-        if(!isInternetAvailable(requireContext())){
+        if (!isInternetAvailable(requireContext())) {
             showToast("No Internet")
             return
         }
@@ -244,28 +261,29 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
     }
 
     private fun showAddRoomDialog() {
-        if(isInternetAvailable(requireContext())){
+        if (isInternetAvailable(requireContext())) {
             val addRoomDialog = AddRoomDialog(this)
             addRoomDialog.show(requireActivity().supportFragmentManager, null)
-        }else{
+        } else {
             showToast("No Internet")
         }
     }
 
     private fun showNameDialog() {
-        if(isInternetAvailable(requireContext())){
+        if (isInternetAvailable(requireContext())) {
             val dialogFragment = RenameDialog(this)
             dialogFragment.show(requireActivity().supportFragmentManager, null)
-        }else{
+        } else {
             showToast("No Internet")
         }
     }
 
+
     private fun showBottomSheet() {
-        if(!isInternetAvailable(requireContext())){
-        showToast("No Internet")
+        if (!isInternetAvailable(requireContext())) {
+            showToast("No Internet")
             return
-    }
+        }
         val dialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.chose_edit_image, null)
         val btnCamera: LinearLayout = view.findViewById(R.id.camera_choice)
@@ -327,7 +345,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface{
             }
         }
 
-    override fun onDataPassed(room: Room) {
+    override fun onDataPassedCreateRoom(room: Room) {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.createNewRoom(room)
         }
