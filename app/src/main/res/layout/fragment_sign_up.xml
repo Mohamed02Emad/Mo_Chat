@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_white"
+    android:background="@color/main_drawer"
     android:windowSoftInputMode="adjustResize"
     tools:context=".presentation.signUp.SignUpFragment">
 
@@ -55,7 +55,7 @@
             android:layout_marginStart="@dimen/corners_space"
             android:layout_marginTop="70dp"
             android:text="@string/user_name"
-            android:textColor="@color/card_blue"
+            android:textColor="@color/main_text"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_welcome" />
@@ -73,7 +73,7 @@
             android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
-            android:textColor="@color/gradient_light_blue"
+            android:textColor="@color/secondary_text"
             android:textColorHint="@color/main_color"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +88,7 @@
             android:layout_marginStart="@dimen/corners_space"
             android:layout_marginTop="10dp"
             android:text="@string/e_mail"
-            android:textColor="@color/card_blue"
+            android:textColor="@color/main_text"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_user_name" />
@@ -106,7 +106,7 @@
             android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
-            android:textColor="@color/gradient_light_blue"
+            android:textColor="@color/secondary_text"
             android:textColorHint="@color/main_color"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -121,7 +121,7 @@
             android:layout_marginStart="@dimen/corners_space"
             android:layout_marginTop="10dp"
             android:text="@string/password"
-            android:textColor="@color/card_blue"
+            android:textColor="@color/main_text"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_email" />
@@ -137,7 +137,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_password"
             app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/dark_blue">
+            app:passwordToggleTint="@color/secondary_text">
 
             <EditText
                 android:id="@+id/et_password"
@@ -149,7 +149,7 @@
                 android:maxLines="1"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="10dp"
-                android:textColor="@color/gradient_light_blue"
+                android:textColor="@color/secondary_text"
                 android:textColorHint="@color/main_color"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -165,7 +165,7 @@
             android:layout_marginStart="@dimen/corners_space"
             android:layout_marginTop="10dp"
             android:text="@string/confirm_password"
-            android:textColor="@color/card_blue"
+            android:textColor="@color/main_text"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/password_field" />
@@ -184,7 +184,7 @@
             android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="10dp"
-            android:textColor="@color/gradient_light_blue"
+            android:textColor="@color/secondary_text"
             android:textColorHint="@color/main_color"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -197,7 +197,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:elevation="20dp"
-            android:indeterminateTint="@color/black"
+            android:indeterminateTint="@color/blue_white"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/btn_sign_up"
             app:layout_constraintEnd_toEndOf="@id/btn_sign_up"
@@ -280,7 +280,7 @@
                 android:paddingVertical="4dp"
                 android:paddingStart="4dp"
                 android:text="@string/have_account"
-                android:textColor="@color/card_blue"
+                android:textColor="@color/main_text"
                 android:textSize="16sp" />
 
             <TextView
@@ -289,7 +289,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:text="@string/login"
-                android:textColor="@color/dark_blue_top_bar"
+                android:textColor="@color/special_text"
                 android:textSize="18sp" />
 
         </LinearLayout>

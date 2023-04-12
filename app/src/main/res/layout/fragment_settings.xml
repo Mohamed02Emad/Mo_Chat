@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gradient_light_blue"
+            android:textColor="@color/secondary_text"
             android:text="@string/dark_mode"
             android:textSize="18sp"
             android:layout_marginStart="16sp"
@@ -79,7 +79,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gradient_light_blue"
+            android:textColor="@color/secondary_text"
             android:text="@string/image_quality"
             android:textSize="18sp"
             android:layout_marginStart="16sp"
@@ -117,7 +117,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/gradient_light_blue"
+            android:textColor="@color/secondary_text"
             android:text="@string/notifications"
             android:textSize="18sp"
             android:layout_marginStart="16sp"

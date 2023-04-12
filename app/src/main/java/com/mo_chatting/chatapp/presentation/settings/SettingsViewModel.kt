@@ -3,6 +3,7 @@ package com.mo_chatting.chatapp.presentation.settings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +36,13 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
 
 
     suspend fun getDarkMode():Boolean = dataStore.getDarkMode()
-    suspend fun setDarkMode()=dataStore.setDarkMode(!dataStore.getDarkMode())
+    suspend fun setDarkMode(){
+        val newValue = !dataStore.getDarkMode()
+        viewModelScope.launch(Dispatchers.Main) {
+            _darkModeSwitch.value= newValue
+        }
+        dataStore.setDarkMode(newValue)
+    }
 
     suspend fun getLowImageQuality():Boolean = dataStore.getLowImageQuality()
     suspend fun setLowImageQuality()= dataStore.setLowImageQuality(!dataStore.getLowImageQuality())
