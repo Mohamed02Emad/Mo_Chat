@@ -1,9 +1,11 @@
 package com.mo_chatting.chatapp.data.source.messagesRoom
 
+import android.media.Image
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.room.*
 import com.mo_chatting.chatapp.data.models.Message
+import com.mo_chatting.chatapp.data.models.MessageType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,7 +20,6 @@ interface MessageDao {
     @Query("SELECT * FROM Message where (messageRoom == :roomId )ORDER BY timeWithMillis")
     fun getMessagesPagingData(roomId: String): PagingSource<Int,Message>
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert( messages: Message)
 
@@ -30,5 +31,6 @@ interface MessageDao {
 
     @Update
     fun update(message: Message)
+
 
 }

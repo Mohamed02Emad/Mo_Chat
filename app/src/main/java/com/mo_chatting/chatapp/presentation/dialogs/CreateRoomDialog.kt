@@ -88,7 +88,7 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
                            room
                         )
                     }else {
-                        listener?.onDataPassed(
+                        listener?.onDataPassedCreateRoom(
                             Room(
                                 roomName = binding.etRoomName.text.toString(),
                                 hasPassword = binding.checkboxPassword.isChecked,
