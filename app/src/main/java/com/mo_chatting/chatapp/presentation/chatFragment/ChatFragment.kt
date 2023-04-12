@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -345,6 +346,19 @@ class ChatFragment : Fragment() {
                 }
             }
         }
+    private fun startPhotoPicker() {
+        singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    val singlePhotoPicker =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewModel.uri.value = uri
+                    viewModel.uploadImage(thisRoom)
+                }
+            }
+        }
 
     private fun pushViewsToTopOfKeyBoard() {
         val rootView = binding.root
@@ -383,7 +397,11 @@ class ChatFragment : Fragment() {
 
         val button1 = popupView.findViewById<LinearLayout>(R.id.gallery_item)
         button1.setOnClickListener {
-            startGalleryIntent()
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                startPhotoPicker()
+            } else {
+                startGalleryIntent()
+            }
             popupWindow.dismiss()
         }
 
@@ -400,9 +418,9 @@ class ChatFragment : Fragment() {
         }
 
         popupWindow.showAsDropDown(binding.attachMenuView)
-
-
     }
+
+
 
     private fun showToast(string: String) {
         CoroutineScope(Dispatchers.Main).launch {
