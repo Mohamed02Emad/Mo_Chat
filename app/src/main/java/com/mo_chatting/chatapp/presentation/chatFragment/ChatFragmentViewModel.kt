@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.google.android.gms.tasks.Tasks.await
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
@@ -40,7 +39,6 @@ class ChatFragmentViewModel @Inject constructor(
     val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
-    var firstTime: Boolean = true
 
     @Inject
     lateinit var dataStore: DataStoreImpl
@@ -121,7 +119,7 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun uploadImage(room: Room) {
         try {
             val messageTimeInMillis = System.currentTimeMillis().toString()
-            var imageUrl :String?= null
+            var imageUrl: String? = null
 
             val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
             val selectedImage = BitmapFactory.decodeStream(imageStream)

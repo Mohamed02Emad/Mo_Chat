@@ -7,20 +7,26 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.R
+import com.mo_chatting.chatapp.data.models.PushNotification
 import com.mo_chatting.chatapp.data.models.Room
+import com.mo_chatting.chatapp.data.retrofit.RetrofitInstance
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-private fun showNotification(
+fun showLocalNotification(
     context: Context,
-    roomName: String?,
-    message: String?,
-    room: Room,
+    title: String?,
+    body: String?,
+    userName: String?,
+    roomId: String?,
 ) {
 
     val intent = Intent(context, MainActivity::class.java)
-    intent.putExtra("FRAGMENT_TO_OPEN",room.roomName )
     val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE)
     } else {
@@ -31,13 +37,12 @@ private fun showNotification(
             PendingIntent.FLAG_ONE_SHOT
         )
     }
-
     val CHANNEL_ID = "Rooms Chanel"
     val notificationBuilder: NotificationCompat.Builder =
         NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.baseline_message_24)
-            .setContentTitle(roomName)
-            .setContentText(message)
+            .setContentTitle(title)
+            .setContentText("$userName : $body")
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
@@ -48,7 +53,19 @@ private fun showNotification(
     val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
     notificationManager.createNotificationChannel(mChannel)
     notificationManager.notify(
-        room.roomId.toInt(16),
+        roomId!!.toInt(16),
         notificationBuilder.build()
     )
+}
+
+fun sendFireBaseNotification(notification: PushNotification)=CoroutineScope(Dispatchers.IO).launch {
+    try {
+      val response =RetrofitInstance.apiService.sendNotification(notification)
+        if (response.isSuccessful) {
+            Log.d("mohamed", "sendFireBaseNotification: " + notification.to)
+        }else {
+            Log.d("mohamed", "failed: " + response.errorBody()?.string())
+        }
+    }catch (e: Exception) {
+    }
 }

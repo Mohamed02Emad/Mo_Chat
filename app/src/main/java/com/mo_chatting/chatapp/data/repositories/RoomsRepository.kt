@@ -1,11 +1,14 @@
 package com.mo_chatting.chatapp.data.repositories
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
@@ -33,6 +36,7 @@ class RoomsRepository(
             room.listOFUsersNames.add(firebaseAuth.currentUser!!.displayName.toString())
             allRoomsRef.add(room).await()
             createChatForRoom(room)
+            joinRoomNotifications(roomId = room.roomId)
         } catch (_: Exception) {
             // Log.d(TAG, "createNewRoom: " + e.message.toString())
         }
@@ -61,6 +65,19 @@ class RoomsRepository(
             it.listOFUsersNames.add(firebaseAuth.currentUser!!.displayName.toString())
             updateRoom(it, false)
         }
+        joinRoomNotifications(roomId = room.roomId)
+    }
+
+    private fun joinRoomNotifications(roomId: String){
+        Firebase.messaging.subscribeToTopic(roomId)
+            .addOnCompleteListener { task ->
+                var msg = "Subscribed"
+                if (!task.isSuccessful) {
+                    msg = "Subscribe failed"
+                }
+                Log.d("mohamed", msg)
+                // Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+            }
     }
 
     suspend fun checkIfRoomExist(roomId: String): Room? {
