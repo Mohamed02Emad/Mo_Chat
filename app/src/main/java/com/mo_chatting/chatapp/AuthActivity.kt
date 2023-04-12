@@ -1,12 +1,18 @@
 package com.mo_chatting.chatapp
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import com.facebook.FacebookSdk
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,15 +31,15 @@ class AuthActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) {
-            //Toast.makeText(this, "granted", Toast.LENGTH_SHORT).show()
+          //  Toast.makeText(this, "granted", Toast.LENGTH_SHORT).show()
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkDarkMode()
+        requestForPermission()
         checkCameraPermission()
         setContentView(R.layout.activity_auth)
-        requestForPermission()
+        checkDarkMode()
     }
 
     private fun checkDarkMode() {
@@ -51,6 +57,7 @@ class AuthActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             pushPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
+
     }
 
     private fun checkCameraPermission() {

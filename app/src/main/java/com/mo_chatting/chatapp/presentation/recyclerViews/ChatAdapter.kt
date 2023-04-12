@@ -45,13 +45,13 @@ class ChatAdapter(
                     messageImage.visibility = View.VISIBLE
                 }
                 CoroutineScope(Dispatchers.Main).launch {
+//                    val imageUri = getMessageImage(currentMessage.messageImage)
                     Glide.with(binding.messageImage)
-                        .load(getMessageImage(currentMessage.messageImage))
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .load(currentMessage.messageImage)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(binding.messageImage)
                 }
             }
-
 
             binding.apply {
                 tvMessageDate.text = currentMessage.messageDateAndTime
@@ -98,8 +98,8 @@ class ChatAdapter(
                 }
                 CoroutineScope(Dispatchers.Main).launch {
                     Glide.with(binding.messageImage)
-                        .load(getMessageImage(currentMessage.messageImage))
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .load(currentMessage.messageImage)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .into(binding.messageImage)
                 }
             }
@@ -162,11 +162,14 @@ class ChatAdapter(
 
 
     private suspend fun getMessageImage(messageImage: String?): Uri? {
+
+    //todo remove this logic and get the uri from message
+
         var uriToReturn: Uri? = null
         try {
-
             val storageRef = FirebaseStorage.getInstance()
                 .getReference(messageImage.toString())
+
             storageRef.downloadUrl.apply {
                 addOnSuccessListener { downloadUri ->
                     uriToReturn = downloadUri
@@ -206,15 +209,6 @@ class ChatAdapter(
         return -1
     }
 
-    override fun getItemViewType(position: Int): Int {
-        // return 0 for my message and 1 for their message
-        return when (getItem(position)!!.messageOwnerId) {
-            userId -> 0
-            else -> 1
-        }
-    }
-
-
     class OnChatClickListener(
         private val clickListener: (message: Message, position: Int) -> Unit,
         private val longClickListener: (message: Message, position: Int) -> Boolean,
@@ -227,8 +221,16 @@ class ChatAdapter(
             userNameClickListener(userId, userName)
 
         fun onImageClicked(messageImage: String?) = ImageClicked(messageImage)
-
     }
+
+    override fun getItemViewType(position: Int): Int {
+        // return 0 for my message and 1 for their message
+        return when (getItem(position)!!.messageOwnerId) {
+            userId -> 0
+            else -> 1
+        }
+    }
+
 
     companion object : DiffUtil.ItemCallback<Message>() {
         override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {

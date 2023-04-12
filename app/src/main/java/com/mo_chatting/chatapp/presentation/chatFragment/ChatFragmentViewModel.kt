@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.google.android.gms.tasks.Tasks.await
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
@@ -30,7 +31,6 @@ import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class ChatFragmentViewModel @Inject constructor(
@@ -49,7 +49,7 @@ class ChatFragmentViewModel @Inject constructor(
 
     lateinit var pagingSource: MessagePagingSource
 
-    lateinit var pagingAdapterList : List<Message>
+    lateinit var pagingAdapterList: List<Message>
     val messages =
         Pager(
             PagingConfig(
@@ -120,15 +120,8 @@ class ChatFragmentViewModel @Inject constructor(
 
     suspend fun uploadImage(room: Room) {
         try {
-            val message = Message(
-                messageRoom = room.roomId,
-                messageOwnerId = getUserId(),
-                messageDateAndTime = getCurrentDate(),
-                messageOwner = getUserName(),
-                timeWithMillis = System.currentTimeMillis().toString(),
-                messageType = MessageType.IMAGE,
-                messageImage = "chat_images_${room.roomId}/${System.currentTimeMillis()}"
-            )
+            val messageTimeInMillis = System.currentTimeMillis().toString()
+            var imageUrl = " "
 
             val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
             val selectedImage = BitmapFactory.decodeStream(imageStream)
@@ -145,10 +138,27 @@ class ChatFragmentViewModel @Inject constructor(
             }
 
             val data = baos.toByteArray()
-
             val storageRef = FirebaseStorage.getInstance()
-                .getReference("chat_images_${room.roomId}/${message.timeWithMillis}")
+
+                .getReference("chat_images_${room.roomId}/${messageTimeInMillis}")
             storageRef.putBytes(data).await()
+
+            storageRef.downloadUrl.apply {
+                addOnSuccessListener { downloadUri ->
+                    imageUrl = downloadUri.toString()
+                }
+                await()
+            }
+            val message = Message(
+                messageRoom = room.roomId,
+                messageOwnerId = getUserId(),
+                messageDateAndTime = getCurrentDate(),
+                messageOwner = getUserName(),
+                timeWithMillis = messageTimeInMillis,
+                messageType = MessageType.IMAGE,
+                messageImage = imageUrl
+            )
+
             repository.addMesssageToChat(room, message)
         } catch (e: Exception) {
             Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
@@ -165,17 +175,17 @@ class ChatFragmentViewModel @Inject constructor(
     }
 
     suspend fun cacheNewMessages(list: ArrayList<Message>) {
-        if (list.isEmpty())return
+        if (list.isEmpty()) return
         for (message in list) {
-           repository.db.myDao().insert(message)
+            repository.db.myDao().insert(message)
         }
         try {
             pagingSource.invalidate()
-        }catch (_:Exception){
+        } catch (_: Exception) {
         }
     }
 
-    suspend fun cacheNewMessageSent(message: Message){
+    suspend fun cacheNewMessageSent(message: Message) {
         CoroutineScope(Dispatchers.IO).launch {
             if (checkIfMessageISNotCachedInLastPage(message)) {
                 repository.insertMessageToDatabase(message)
@@ -186,7 +196,7 @@ class ChatFragmentViewModel @Inject constructor(
 
     //return true if message is not cached
     private suspend fun checkIfMessageISNotCachedInLastPage(message: Message): Boolean {
-        return !pagingAdapterList.any{it == message}
+        return !pagingAdapterList.any { it == message }
     }
 
     suspend fun getCachedMessages(room: Room): ArrayList<Message> {
