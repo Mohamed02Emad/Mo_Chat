@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -23,7 +24,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
-import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
 import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
@@ -149,16 +149,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             }
         }
 
-        //firebase listener
-        firebaseStore.collection(roomsCollection).addSnapshotListener { value, error ->
-            error?.let {
-                return@addSnapshotListener
-            }
-            value?.let {
-                viewModel.resetList(value)
-            }
-        }
-
     }
 
     private fun startPhotoPicker() {
@@ -183,6 +173,12 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             try {
                 setupRecyclerView()
             } catch (_: Exception) {
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.roomsFlow.collect() {
+              viewModel.addNewRoomsFromFireBaseToRoomList(it)
             }
         }
     }

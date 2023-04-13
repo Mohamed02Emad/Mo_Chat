@@ -4,8 +4,6 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,8 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Room
@@ -24,6 +21,7 @@ import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
@@ -34,7 +32,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     val appContext: Application,
     val firebaseAuth: FirebaseAuth,
-    val repository: RoomsRepository
+    private val repository: RoomsRepository
 ) : ViewModel() {
 
     @Inject
@@ -43,11 +41,19 @@ class HomeViewModel @Inject constructor(
     private val _roomsList = MutableLiveData<ArrayList<Room>>(ArrayList())
     val roomsList: LiveData<ArrayList<Room>> = _roomsList
 
+    val roomsFlow: Flow<QuerySnapshot> = repository.getUserRoomsFlow()
+
     var uri = MutableLiveData<Uri?>(null)
 
-    fun resetList(value: QuerySnapshot?) {
+    fun addNewRoomsFromFireBaseToRoomList(newRooms: QuerySnapshot?) {
         try {
-            val arrayList = repository.getUserRooms(value)
+            val userId = firebaseAuth.currentUser!!.uid
+            val arrayList = ArrayList<Room>()
+            for (i in newRooms!!.documents) {
+                if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
+                    arrayList.add(i.toObject<Room>()!!)
+                }
+            }
             _roomsList.postValue(arrayList)
         } catch (_: Exception) {
         }
@@ -62,7 +68,7 @@ class HomeViewModel @Inject constructor(
 
         val storageRef = FirebaseStorage.getInstance()
             .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
-        storageRef.putBytes(data).addOnSuccessListener { taskSnapshot ->
+        storageRef.putBytes(data).addOnSuccessListener {
             storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                 val userRef = FirebaseDatabase.getInstance().getReference("users")
                     .child(firebaseAuth.currentUser!!.uid)
@@ -85,7 +91,7 @@ class HomeViewModel @Inject constructor(
         dataStore.clearAll()
     }
 
-    suspend fun getUserImage(): String {
+    private suspend fun getUserImage(): String {
         var uriToReturn: String = "null"
         try {
             val storageRef = FirebaseStorage.getInstance()
@@ -117,13 +123,13 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun getNewRoomId(): String {
-        val numchars = 8
+        val numChars = 8
         val r = Random()
         val sb = StringBuffer()
-        while (sb.length < numchars) {
+        while (sb.length < numChars) {
             sb.append(Integer.toHexString(r.nextInt()))
         }
-        return sb.toString().substring(0, numchars)
+        return sb.toString().substring(0, numChars)
     }
 
     suspend fun checkIfRoomExist(roomId: String): Room? {
@@ -145,10 +151,10 @@ class HomeViewModel @Inject constructor(
 
     suspend fun getUserImageFromDataStore(): Uri? {
         val data = dataStore.getUserImage()
-        if (data == "null" || data.isBlank()) {
-            return null
+        return if (data == "null" || data.isBlank()) {
+            null
         } else {
-            return Uri.parse(data)
+            Uri.parse(data)
         }
     }
 
@@ -156,7 +162,7 @@ class HomeViewModel @Inject constructor(
         dataStore.setUserImage(getUserImage())
     }
 
-    suspend fun setUserImageAtDataStoreUri(uri: Uri) {
+    private suspend fun setUserImageAtDataStoreUri(uri: Uri) {
         dataStore.setUserImage(uri.toString())
     }
 

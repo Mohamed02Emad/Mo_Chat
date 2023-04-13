@@ -1,6 +1,5 @@
 package com.mo_chatting.chatapp.di
 
-import android.app.Application
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -8,6 +7,7 @@ import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
+import com.mo_chatting.chatapp.data.fireBaseDataSource.FireBaseRoomsDataSource
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.Module
@@ -25,19 +25,41 @@ object module {
     @Singleton
     @Provides
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-    @Singleton
-    @Provides
-    fun provideRoomsRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth,@ApplicationContext appContext: Context): RoomsRepository = RoomsRepository(firebaseFireStore, firebaseAuth,
-       appContext )
 
     @Singleton
     @Provides
-    fun provideChatRepository(firebaseFireStore:FirebaseFirestore , firebaseAuth: FirebaseAuth
-                              ,@ApplicationContext appContext: Context): MessagesRepository =
-        MessagesRepository(firebaseFireStore, firebaseAuth,appContext)
+    fun provideRoomsRepository(
+        firebaseFireStore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth,
+        @ApplicationContext appContext: Context,
+        fireBaseRoomsDataSource: FireBaseRoomsDataSource
+    ): RoomsRepository = RoomsRepository(
+        firebaseFireStore, firebaseAuth,
+        appContext,
+        fireBaseRoomsDataSource
+    )
 
     @Singleton
     @Provides
+    fun provideChatRepository(
+        firebaseFireStore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth,
+        @ApplicationContext appContext: Context
+    ): MessagesRepository =
+        MessagesRepository(firebaseFireStore, firebaseAuth, appContext)
+
+    @Singleton
+    @Provides
+    fun provideFireBaseDataSource(
+        firebaseAuth: FirebaseAuth,
+        firebaseFirestore: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage,
+        @ApplicationContext appContext: Context
+    ):FireBaseRoomsDataSource = FireBaseRoomsDataSource(firebaseAuth, firebaseFirestore, firebaseStorage, appContext)
+
+    @Singleton
+    @Provides
+
     fun provideFirebaseFireStore(): FirebaseFirestore = FirebaseFirestore.getInstance().also {
         val settings = firestoreSettings {
             isPersistenceEnabled = true

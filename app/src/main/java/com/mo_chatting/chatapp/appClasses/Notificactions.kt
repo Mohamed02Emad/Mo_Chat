@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat
 import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.PushNotification
-import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.retrofit.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,19 +52,24 @@ fun showLocalNotification(
     val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
     notificationManager.createNotificationChannel(mChannel)
     notificationManager.notify(
-        roomId!!.toInt(16),
+        123,
+        //roomId!!.toInt(16),
         notificationBuilder.build()
     )
 }
 
-fun sendFireBaseNotification(notification: PushNotification)=CoroutineScope(Dispatchers.IO).launch {
-    try {
-      val response =RetrofitInstance.apiService.sendNotification(notification)
-        if (response.isSuccessful) {
-            Log.d("mohamed", "sendFireBaseNotification: " + notification.to)
-        }else {
-            Log.d("mohamed", "failed: " + response.errorBody()?.string())
+fun sendFireBaseNotification(notification: PushNotification) =
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val response = RetrofitInstance
+                .apiService
+                .sendNotification(notification)
+
+            if (response.isSuccessful) {
+                Log.d("mohamed", "sendFireBaseNotification: " + notification.to)
+            } else {
+                Log.d("mohamed", "failed: " + response.errorBody()?.string())
+            }
+        } catch (e: Exception) {
         }
-    }catch (e: Exception) {
     }
-}

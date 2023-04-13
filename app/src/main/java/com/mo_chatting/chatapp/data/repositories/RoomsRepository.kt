@@ -12,22 +12,25 @@ import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
+import com.mo_chatting.chatapp.data.fireBaseDataSource.FireBaseRoomsDataSource
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class RoomsRepository(
-    val firebaseStore: FirebaseFirestore,
-    val firebaseAuth: FirebaseAuth,
-    val application: Context
+    private val firebaseStore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth,
+    private val application: Context,
+    private val fireBaseRoomsDataSource: FireBaseRoomsDataSource
 ) {
 
-    val allRoomsRef = firebaseStore.collection("$roomsCollection")
-    val db = MessagesDataBase.getInstance(application)
+    private val allRoomsRef = firebaseStore.collection(roomsCollection)
+    private val db = MessagesDataBase.getInstance(application)
 
 
     suspend fun createNewRoom(room: Room) {
@@ -38,23 +41,6 @@ class RoomsRepository(
             createChatForRoom(room)
             joinRoomNotifications(roomId = room.roomId)
         } catch (_: Exception) {
-            // Log.d(TAG, "createNewRoom: " + e.message.toString())
-        }
-    }
-
-    private suspend fun createChatForRoom(room: Room) {
-        try {
-            val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
-            msgRef.add(
-                Message(
-                    messageOwner = "Mo Chat",
-                    messageOwnerId = "firebase",
-                    messageRoom = room.roomId,
-                    messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
-                    messageDateAndTime = "--/--/----  --:--"
-                )
-            ).await()
-        } catch (e: Exception) {
         }
     }
 
@@ -66,18 +52,6 @@ class RoomsRepository(
             updateRoom(it, false)
         }
         joinRoomNotifications(roomId = room.roomId)
-    }
-
-    private fun joinRoomNotifications(roomId: String){
-        Firebase.messaging.subscribeToTopic(roomId)
-            .addOnCompleteListener { task ->
-                var msg = "Subscribed"
-                if (!task.isSuccessful) {
-                    msg = "Subscribe failed"
-                }
-                Log.d("mohamed", msg)
-                // Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-            }
     }
 
     suspend fun checkIfRoomExist(roomId: String): Room? {
@@ -112,7 +86,7 @@ class RoomsRepository(
         deleteCachedMessages(room.roomId)
         val list = room.listOFUsers
         val nameList = room.listOFUsersNames
-
+        leaveRoomNotifications(roomId = room.roomId)
         if (list.size == 1) {
             try {
                 deleteRoomImages(room)
@@ -145,28 +119,6 @@ class RoomsRepository(
         }
     }
 
-    private fun deleteRoomImages(room:Room){
-        val storageRef = FirebaseStorage.getInstance().getReference("chat_images_${room.roomId}")
-        CoroutineScope(Dispatchers.IO).launch {
-            storageRef.listAll().addOnSuccessListener { listResult ->
-                listResult.items.forEach { item ->
-                    item.delete()
-                }
-            }
-        }
-    }
-
-    fun getUserRooms(value: QuerySnapshot?): ArrayList<Room> {
-        val userId = firebaseAuth.currentUser!!.uid
-        val arrayList = ArrayList<Room>()
-        for (i in value!!.documents) {
-            if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
-                arrayList.add(i.toObject<Room>()!!)
-            }
-        }
-        return arrayList
-    }
-
     suspend fun getAllRooms(): ArrayList<Room> {
         val arrayList = ArrayList<Room>()
         try {
@@ -175,26 +127,9 @@ class RoomsRepository(
             for (i in list) {
                 arrayList.add(i.toObject<Room>()!!)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
         return arrayList
-    }
-
-    private fun mapMyRoom(room: Room, fromChat: Boolean): Map<String, Any> {
-        val map = mutableMapOf<String, Any>()
-        map["roomName"] = room.roomName
-        map["roomPinState"] = room.roomPinState
-        map["roomTypeImage"] = room.roomTypeImage
-        map["roomId"] = room.roomId
-        map["roomOwnerId"] = room.roomOwnerId
-        map["hasPassword"] = room.hasPassword
-        map["password"] = room.password
-        map["roomBackgroundColor"] = room.roomBackgroundColor
-        if (!fromChat) {
-            map["listOFUsers"] = room.listOFUsers
-            map["listOFUsersNames"] = room.listOFUsersNames
-        }
-        return map
     }
 
     suspend fun updateRoomForUserName(room: Room, newName: String, uid: String) {
@@ -207,6 +142,71 @@ class RoomsRepository(
         updateRoom(room, false)
     }
 
-    suspend fun deleteCachedMessages(roomId: String) = db.myDao().deleteAll(roomId)
+    fun getUserRoomsFlow(): Flow<QuerySnapshot> {
+        return fireBaseRoomsDataSource.setUpRoomsListener()
+    }
+
+        private suspend fun createChatForRoom(room: Room) {
+            try {
+                val msgRef =
+                    firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+                msgRef.add(
+                    Message(
+                        messageOwner = "Mo Chat",
+                        messageOwnerId = "firebase",
+                        messageRoom = room.roomId,
+                        messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
+                        messageDateAndTime = "--/--/----  --:--"
+                    )
+                ).await()
+            } catch (_: Exception) {
+            }
+        }
+
+        private fun joinRoomNotifications(roomId: String) {
+            Firebase.messaging.subscribeToTopic(roomId)
+                .addOnCompleteListener { task ->
+                    Log.d("mohamed", "Subscribed to $roomId")
+                }
+        }
+
+        private fun leaveRoomNotifications(roomId: String) {
+            Firebase.messaging.unsubscribeFromTopic(roomId)
+                .addOnSuccessListener { task ->
+                    Log.d("mohamed", "UnSubscribed to $roomId")
+                }
+        }
+
+        private fun deleteRoomImages(room: Room) {
+            val storageRef =
+                FirebaseStorage.getInstance().getReference("chat_images_${room.roomId}")
+            CoroutineScope(Dispatchers.IO).launch {
+                storageRef.listAll().addOnSuccessListener { listResult ->
+                    listResult.items.forEach { item ->
+                        item.delete()
+                    }
+                }
+            }
+        }
+
+        private fun mapMyRoom(room: Room, fromChat: Boolean): Map<String, Any> {
+            val map = mutableMapOf<String, Any>()
+            map["roomName"] = room.roomName
+            map["roomPinState"] = room.roomPinState
+            map["roomTypeImage"] = room.roomTypeImage
+            map["roomId"] = room.roomId
+            map["roomOwnerId"] = room.roomOwnerId
+            map["hasPassword"] = room.hasPassword
+            map["password"] = room.password
+            map["roomBackgroundColor"] = room.roomBackgroundColor
+            if (!fromChat) {
+                map["listOFUsers"] = room.listOFUsers
+                map["listOFUsersNames"] = room.listOFUsersNames
+            }
+            return map
+        }
+
+        private fun deleteCachedMessages(roomId: String) = db.myDao().deleteAll(roomId)
+
 
 }

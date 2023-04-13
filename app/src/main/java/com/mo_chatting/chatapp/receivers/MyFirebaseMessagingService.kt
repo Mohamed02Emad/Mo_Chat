@@ -19,15 +19,14 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         Log.d("mohamed", "message recieved ")
-
         CoroutineScope(Dispatchers.Main).launch {
-            if (dataStore.getNotificationEnabled()){
+          //  if (dataStore.getNotificationEnabled()){
                 val title = message.data.get("title")
                 val body = message.data.get("body")
                 val userName = message.data.get("userName")
                 val targetRoomId = message.data.get("targetRoomId")
                 showLocalNotification(this@MyFirebaseMessagingService,title,body,userName,targetRoomId)
-            }
+           // }
         }
     }
 }
