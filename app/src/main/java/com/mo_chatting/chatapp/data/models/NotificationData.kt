@@ -4,5 +4,6 @@ data class NotificationData (
     val title: String,
     val body: String,
     val userName:String,
-    val roomId:String
+    val roomId:String,
+    val ownerId:String
         )

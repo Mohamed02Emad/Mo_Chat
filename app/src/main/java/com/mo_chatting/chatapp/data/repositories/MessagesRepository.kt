@@ -38,7 +38,7 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
     private fun sentNotificationToRoomMembers(message : Message , room : Room , userName: String ){
         val destination = "/topics/${room.roomId}"
         val body = if (message.messageType == MessageType.TEXT){message.messageText}else "Sent a photo"
-        sendFireBaseNotification(PushNotification(NotificationData(room.roomName,body,userName,room.roomId),destination))
+        sendFireBaseNotification(PushNotification(NotificationData(room.roomName,body,userName,room.roomId,firebaseAuth.currentUser!!.uid),destination))
     }
 
 

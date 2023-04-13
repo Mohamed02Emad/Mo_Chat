@@ -1,13 +1,23 @@
 package com.mo_chatting.chatapp.receivers
 
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mo_chatting.chatapp.appClasses.mapNotificationData
 import com.mo_chatting.chatapp.appClasses.showLocalNotification
+import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
+    @Inject
+    lateinit var dataStore: DataStoreImpl
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         Log.d("mohamed", "message received ")
@@ -17,14 +27,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val body = data.body
         val userName = data.userName
         val targetRoomId = data.roomId
-        Log.d("mohamed", "title: $title, body: $body, targetRoomId: $targetRoomId")
-        showLocalNotification(
-            this@MyFirebaseMessagingService,
-            title,
-            body,
-            userName,
-            targetRoomId
-        )
+        val owner = data.ownerId
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        CoroutineScope(Dispatchers.IO).launch {
+            if (userId != owner && dataStore.getNotificationEnabled()) {
+                Log.d("mohamed", "title: $title, body: $body, targetRoomId: $targetRoomId")
+                showLocalNotification(
+                    this@MyFirebaseMessagingService,
+                    title,
+                    body,
+                    userName,
+                    targetRoomId
+                )
+            }
+        }
     }
 
     override fun onMessageSent(msgId: String) {

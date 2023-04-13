@@ -41,5 +41,6 @@ fun mapNotificationData(map: Map<String, String>): NotificationData {
     val body = map["body"] ?: ""
     val userName = map["userName"] ?: ""
     val roomId = map["roomId"] ?: ""
-    return NotificationData(title, body, userName, roomId )
+    val ownerId = map["ownerId"] ?: ""
+    return NotificationData(title, body, userName, roomId , ownerId)
 }
