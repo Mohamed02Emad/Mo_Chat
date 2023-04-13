@@ -36,8 +36,9 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
     }
 
     private fun sentNotificationToRoomMembers(message : Message , room : Room , userName: String ){
+        val destination = "/topics/${room.roomId}"
         val body = if (message.messageType == MessageType.TEXT){message.messageText}else "Sent a photo"
-        sendFireBaseNotification(PushNotification(NotificationData(title = room.roomName,body,userName),room.roomId))
+        sendFireBaseNotification(PushNotification(NotificationData(room.roomName,body,userName,room.roomId),destination))
     }
 
 
@@ -62,8 +63,7 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
         return arrayList
     }
 
-    //return true if no such a message
-    suspend fun messageDoesNotExist(message: Message): Boolean {
+     fun messageDoesNotExist(message: Message): Boolean {
        val message = db.myDao().getExactMessage(message.messageRoom,message.messageOwnerId,message.timeWithMillis)
         return message.isEmpty()
     }

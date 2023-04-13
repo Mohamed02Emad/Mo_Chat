@@ -51,7 +51,7 @@ class HomeViewModel @Inject constructor(
             val arrayList = ArrayList<Room>()
             for (i in newRooms!!.documents) {
                 if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
-                    repository.joinRoomNotifications(i.toObject<Room>()!!.roomId)
+                 //   repository.joinRoomNotifications(i.toObject<Room>()!!.roomId)
                     arrayList.add(i.toObject<Room>()!!)
                 }
             }

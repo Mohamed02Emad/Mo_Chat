@@ -52,8 +52,9 @@ fun showLocalNotification(
     val importance = NotificationManager.IMPORTANCE_HIGH
     val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
     notificationManager.createNotificationChannel(mChannel)
+    val notificationId =hexToDecimal(roomId!!)
     notificationManager.notify(
-        roomId!!.toInt(16),
+        notificationId,
         notificationBuilder.build()
     )
 }
