@@ -27,6 +27,7 @@ fun showLocalNotification(
     Log.d("mohamed", "local notification to room : $roomId" )
 
     val intent = Intent(context, MainActivity::class.java)
+    intent.putExtra("roomId", roomId)
     val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE)
     } else {

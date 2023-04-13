@@ -224,5 +224,21 @@ class RoomsRepository(
         } catch (_: Exception) {
         }
     }
+    suspend fun getRoomById(roomId: String): Room? {
+        val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
+        try {
+            val userId = firebaseAuth.currentUser!!.uid
+            val arrayList = java.util.ArrayList<Room>()
+            for (i in newRooms!!.documents) {
+                if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
+                    if (i.toObject<Room>()!!.roomId==roomId){
+                        return i.toObject<Room>()!!
+                    }
+                }
+            }
+        } catch (_: Exception) {
+        }
+        return null
+    }
 
 }
