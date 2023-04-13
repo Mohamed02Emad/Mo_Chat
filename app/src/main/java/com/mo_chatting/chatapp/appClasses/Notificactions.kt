@@ -24,7 +24,6 @@ fun showLocalNotification(
     userName: String?,
     roomId: String?,
 ) {
-    Log.d("mohamed", "local notification to room : $roomId" )
 
     val intent = Intent(context, MainActivity::class.java)
     intent.putExtra("roomId", roomId)
@@ -68,9 +67,7 @@ fun sendFireBaseNotification(notification: PushNotification) =
                 .sendNotification(notification)
 
             if (response.isSuccessful) {
-                Log.d("mohamed", "notification sent to topic: " + notification.to)
             } else {
-                Log.d("mohamed", "failed to send notification to: " + response.errorBody()?.string())
             }
         } catch (e: Exception) {
         }

@@ -163,7 +163,7 @@ class ChatFragmentViewModel @Inject constructor(
 
             repository.addMesssageToChat(room, message)
         } catch (e: Exception) {
-            Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
+           // Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
         }
     }
 

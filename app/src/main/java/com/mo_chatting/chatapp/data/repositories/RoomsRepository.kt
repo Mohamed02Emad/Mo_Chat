@@ -168,14 +168,12 @@ class RoomsRepository(
     fun joinRoomNotifications(roomId: String) {
         Firebase.messaging.subscribeToTopic(roomId)
             .addOnCompleteListener { task ->
-                Log.d("mohamed", "Subscribed to $roomId")
             }
     }
 
     private fun leaveRoomNotifications(roomId: String) {
         Firebase.messaging.unsubscribeFromTopic(roomId)
             .addOnSuccessListener { task ->
-                Log.d("mohamed", "UnSubscribed to $roomId")
             }
     }
 
