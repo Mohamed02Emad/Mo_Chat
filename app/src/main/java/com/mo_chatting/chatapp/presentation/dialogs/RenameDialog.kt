@@ -15,10 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.mo_chatting.chatapp.MainActivity
+import com.mo_chatting.chatapp.appClasses.validateUserName
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.databinding.FragmentRenameDialogBinding
 import com.mo_chatting.chatapp.presentation.home.HomeFragment
-import com.mo_chatting.chatapp.validation.validateUserName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
