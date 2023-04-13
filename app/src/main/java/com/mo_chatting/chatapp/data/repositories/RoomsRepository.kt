@@ -19,6 +19,8 @@ import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -207,5 +209,20 @@ class RoomsRepository(
     }
 
     private fun deleteCachedMessages(roomId: String) = db.myDao().deleteAll(roomId)
+
+    suspend fun reSubscribeForAllUserRooms() {
+        val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
+        try {
+            val userId = firebaseAuth.currentUser!!.uid
+            val arrayList = java.util.ArrayList<Room>()
+            for (i in newRooms!!.documents) {
+                if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
+                    joinRoomNotifications(i.toObject<Room>()!!.roomId)
+                    arrayList.add(i.toObject<Room>()!!)
+                }
+            }
+        } catch (_: Exception) {
+        }
+    }
 
 }
