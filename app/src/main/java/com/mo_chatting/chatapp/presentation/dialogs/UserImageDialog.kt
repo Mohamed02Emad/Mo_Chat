@@ -46,7 +46,7 @@ class UserImageDialog(val userId: String, val userName: String , val imageUri: S
     private fun setViews() {
         CoroutineScope(Dispatchers.IO).launch {
             val uri =  if (isImageView){
-                getImage(imageUri)
+                imageUri
             }else {
                getUserImage()
             }
@@ -60,22 +60,6 @@ class UserImageDialog(val userId: String, val userName: String , val imageUri: S
         }
     }
 
-    private suspend fun getImage(messageImage: String?): Uri? {
-        var uriToReturn: Uri? = null
-        try {
-
-            val storageRef = FirebaseStorage.getInstance()
-                .getReference(messageImage.toString())
-            storageRef.downloadUrl.apply {
-                addOnSuccessListener { downloadUri ->
-                    uriToReturn = downloadUri
-                }
-                await()
-            }
-        } catch (_: Exception) {
-        }
-        return uriToReturn
-    }
 
     private fun setDimentions() {
         val metrics = resources.displayMetrics
