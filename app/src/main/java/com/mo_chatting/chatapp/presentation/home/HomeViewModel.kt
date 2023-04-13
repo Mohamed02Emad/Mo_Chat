@@ -51,6 +51,7 @@ class HomeViewModel @Inject constructor(
             val arrayList = ArrayList<Room>()
             for (i in newRooms!!.documents) {
                 if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
+                    repository.joinRoomNotifications(i.toObject<Room>()!!.roomId)
                     arrayList.add(i.toObject<Room>()!!)
                 }
             }
@@ -65,7 +66,6 @@ class HomeViewModel @Inject constructor(
         val baos = ByteArrayOutputStream()
         selectedImage.compress(Bitmap.CompressFormat.JPEG, 90, baos)
         val data = baos.toByteArray()
-
         val storageRef = FirebaseStorage.getInstance()
             .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
         storageRef.putBytes(data).addOnSuccessListener {
@@ -86,13 +86,12 @@ class HomeViewModel @Inject constructor(
             .requestEmail()
             .build()
         val googleSignInClient = GoogleSignIn.getClient(appContext, gso)
-
         googleSignInClient.signOut()
         dataStore.clearAll()
     }
 
     private suspend fun getUserImage(): String {
-        var uriToReturn: String = "null"
+        var uriToReturn = "null"
         try {
             val storageRef = FirebaseStorage.getInstance()
                 .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
@@ -122,7 +121,7 @@ class HomeViewModel @Inject constructor(
         return !roomsList.any { it.roomId == roomId }
     }
 
-    private suspend fun getNewRoomId(): String {
+    private  fun getNewRoomId(): String {
         val numChars = 8
         val r = Random()
         val sb = StringBuffer()
@@ -167,7 +166,6 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun deleteRoom(room: Room) {
-        //this method just leave the room right now
         repository.deleteRoom(room)
     }
 

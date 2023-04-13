@@ -18,9 +18,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
+import com.mo_chatting.chatapp.appClasses.isValidEmail
+import com.mo_chatting.chatapp.appClasses.validatePassword
 import com.mo_chatting.chatapp.databinding.FragmentLoginBinding
-import com.mo_chatting.chatapp.validation.isValidEmail
-import com.mo_chatting.chatapp.validation.validatePassword
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

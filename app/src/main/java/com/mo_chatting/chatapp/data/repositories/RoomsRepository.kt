@@ -146,67 +146,66 @@ class RoomsRepository(
         return fireBaseRoomsDataSource.setUpRoomsListener()
     }
 
-        private suspend fun createChatForRoom(room: Room) {
-            try {
-                val msgRef =
-                    firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
-                msgRef.add(
-                    Message(
-                        messageOwner = "Mo Chat",
-                        messageOwnerId = "firebase",
-                        messageRoom = room.roomId,
-                        messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
-                        messageDateAndTime = "--/--/----  --:--"
-                    )
-                ).await()
-            } catch (_: Exception) {
+    private suspend fun createChatForRoom(room: Room) {
+        try {
+            val msgRef =
+                firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+            msgRef.add(
+                Message(
+                    messageOwner = "Mo Chat",
+                    messageOwnerId = "firebase",
+                    messageRoom = room.roomId,
+                    messageText = firebaseAuth.currentUser!!.displayName.toString() + " Created this Room",
+                    messageDateAndTime = "--/--/----  --:--"
+                )
+            ).await()
+        } catch (_: Exception) {
+        }
+    }
+
+    fun joinRoomNotifications(roomId: String) {
+        Firebase.messaging.subscribeToTopic(roomId)
+            .addOnCompleteListener { task ->
+                Log.d("mohamed", "Subscribed to $roomId")
+            }
+    }
+
+    private fun leaveRoomNotifications(roomId: String) {
+        Firebase.messaging.unsubscribeFromTopic(roomId)
+            .addOnSuccessListener { task ->
+                Log.d("mohamed", "UnSubscribed to $roomId")
+            }
+    }
+
+    private fun deleteRoomImages(room: Room) {
+        val storageRef =
+            FirebaseStorage.getInstance().getReference("chat_images_${room.roomId}")
+        CoroutineScope(Dispatchers.IO).launch {
+            storageRef.listAll().addOnSuccessListener { listResult ->
+                listResult.items.forEach { item ->
+                    item.delete()
+                }
             }
         }
+    }
 
-        private fun joinRoomNotifications(roomId: String) {
-            Firebase.messaging.subscribeToTopic(roomId)
-                .addOnCompleteListener { task ->
-                    Log.d("mohamed", "Subscribed to $roomId")
-                }
+    private fun mapMyRoom(room: Room, fromChat: Boolean): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        map["roomName"] = room.roomName
+        map["roomPinState"] = room.roomPinState
+        map["roomTypeImage"] = room.roomTypeImage
+        map["roomId"] = room.roomId
+        map["roomOwnerId"] = room.roomOwnerId
+        map["hasPassword"] = room.hasPassword
+        map["password"] = room.password
+        map["roomBackgroundColor"] = room.roomBackgroundColor
+        if (!fromChat) {
+            map["listOFUsers"] = room.listOFUsers
+            map["listOFUsersNames"] = room.listOFUsersNames
         }
+        return map
+    }
 
-        private fun leaveRoomNotifications(roomId: String) {
-            Firebase.messaging.unsubscribeFromTopic(roomId)
-                .addOnSuccessListener { task ->
-                    Log.d("mohamed", "UnSubscribed to $roomId")
-                }
-        }
-
-        private fun deleteRoomImages(room: Room) {
-            val storageRef =
-                FirebaseStorage.getInstance().getReference("chat_images_${room.roomId}")
-            CoroutineScope(Dispatchers.IO).launch {
-                storageRef.listAll().addOnSuccessListener { listResult ->
-                    listResult.items.forEach { item ->
-                        item.delete()
-                    }
-                }
-            }
-        }
-
-        private fun mapMyRoom(room: Room, fromChat: Boolean): Map<String, Any> {
-            val map = mutableMapOf<String, Any>()
-            map["roomName"] = room.roomName
-            map["roomPinState"] = room.roomPinState
-            map["roomTypeImage"] = room.roomTypeImage
-            map["roomId"] = room.roomId
-            map["roomOwnerId"] = room.roomOwnerId
-            map["hasPassword"] = room.hasPassword
-            map["password"] = room.password
-            map["roomBackgroundColor"] = room.roomBackgroundColor
-            if (!fromChat) {
-                map["listOFUsers"] = room.listOFUsers
-                map["listOFUsersNames"] = room.listOFUsersNames
-            }
-            return map
-        }
-
-        private fun deleteCachedMessages(roomId: String) = db.myDao().deleteAll(roomId)
-
+    private fun deleteCachedMessages(roomId: String) = db.myDao().deleteAll(roomId)
 
 }

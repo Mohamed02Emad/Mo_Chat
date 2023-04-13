@@ -1,4 +1,4 @@
-package com.mo_chatting.chatapp.validation
+package com.mo_chatting.chatapp.appClasses
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

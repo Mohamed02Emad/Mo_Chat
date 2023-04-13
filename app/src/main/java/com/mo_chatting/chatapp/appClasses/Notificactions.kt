@@ -24,6 +24,7 @@ fun showLocalNotification(
     userName: String?,
     roomId: String?,
 ) {
+    Log.d("mohamed", "local notification to room : $roomId" )
 
     val intent = Intent(context, MainActivity::class.java)
     val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -52,8 +53,7 @@ fun showLocalNotification(
     val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
     notificationManager.createNotificationChannel(mChannel)
     notificationManager.notify(
-        123,
-        //roomId!!.toInt(16),
+        roomId!!.toInt(16),
         notificationBuilder.build()
     )
 }
@@ -66,9 +66,9 @@ fun sendFireBaseNotification(notification: PushNotification) =
                 .sendNotification(notification)
 
             if (response.isSuccessful) {
-                Log.d("mohamed", "sendFireBaseNotification: " + notification.to)
+                Log.d("mohamed", "notification sent to topic: " + notification.to)
             } else {
-                Log.d("mohamed", "failed: " + response.errorBody()?.string())
+                Log.d("mohamed", "failed to send notification to: " + response.errorBody()?.string())
             }
         } catch (e: Exception) {
         }
