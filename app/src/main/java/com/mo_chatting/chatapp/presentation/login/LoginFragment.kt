@@ -70,6 +70,7 @@ class LoginFragment : MyFragmentParent() {
     private fun setViews() {
         binding.etEmail.setText(viewModel.email.value)
         binding.etPassword.setText(viewModel.password.value)
+
     }
 
     private fun setOnClicks() {

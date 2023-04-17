@@ -31,25 +31,30 @@
     <color name="grey_dark">#CBCBCB</color>
     <color name="blue_white">#CFDCFF</color>
 
+
+
+
+    <color name="main_semi_transparent_color">#4D4A2A2A</color>
     <color name="main_color">#507BEE</color>
-    <color name="main_drawer">#CFDCFF</color>
-    <color name="main_text">#5679D6</color>
     <color name="main_background">#3E62C4</color>
     <color name="home_background">#CFDCFF</color>
 
 
     <color name="settings_item">#CFDCFF</color>
 
+
+
+    <!--     ................................................................................................................................-->
+
     <color name="secondary_text">#223152</color>
-
-    <color name="special_text">#0C2159</color>
-
-
     <color name="my_message">#F0CFDCFF</color>
     <color name="their_message">#EB0531AE</color>
-
-
     <color name="attach_menu">#E6133388</color>
+    <color name="app_edit_text">#80507BEE</color>
+    <color name="main_text">#212F54</color>
+    <color name="special_text">#507BEE</color>
+    <color name="main_drawer">#DBDEE7</color>
+
 
 
 </resources>
