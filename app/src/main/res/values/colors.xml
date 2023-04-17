@@ -46,15 +46,17 @@
 
     <!--     ................................................................................................................................-->
 
-    <color name="secondary_text">#223152</color>
     <color name="my_message">#F0CFDCFF</color>
     <color name="their_message">#EB0531AE</color>
-    <color name="attach_menu">#E6133388</color>
-    <color name="app_edit_text">#80507BEE</color>
-    <color name="main_text">#212F54</color>
+
+    <color name="user_text">#000814</color>
+    <color name="main_text">#03045E</color>
+    <color name="secondary_text">#507BEE</color>
+    <color name="attach_menu">#00B4D8</color>
+    <color name="app_edit_text">#03045E</color>
     <color name="special_text">#507BEE</color>
     <color name="main_drawer">#DBDEE7</color>
-
+    <color name="welcome_text">#DBDEE7</color>
 
 
 </resources>

@@ -32,7 +32,7 @@
     <color name="blue_white">#CFDCFF</color>
 
     <color name="main_semi_transparent_color">#4D360D0D</color>
-    <color name="main_color">#0C2159</color>
+    <color name="main_color">#123288</color>
     <color name="main_background">#03164B</color>
     <color name="home_background">#01081B</color>
 
@@ -45,13 +45,16 @@
     <!--     ................................................................................................................................-->
 
     <color name="my_message">#F0D1DDFC</color>
-    <color name="special_text">#5679D6</color>
     <color name="their_message">#EB021C63</color>
-    <color name="attach_menu">#D908153D</color>
-    <color name="main_text">#CFDCFF</color>
+
+    <color name="user_text">#CFDCFF</color>
+    <color name="special_text">#3565E6</color>
+    <color name="attach_menu">#001D3D</color>
+    <color name="main_text">#FFC300</color>
     <color name="main_drawer">#070E25</color>
-    <color name="app_edit_text">#80507BEE</color>
-    <color name="secondary_text">#E5EBF7</color>
+    <color name="app_edit_text">#003566</color>
+    <color name="secondary_text">#FFD60A</color>
+    <color name="welcome_text">#FFC300</color>
 
 
 
