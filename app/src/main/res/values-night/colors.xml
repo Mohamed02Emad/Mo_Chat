@@ -36,7 +36,6 @@
     <color name="main_background">#03164B</color>
     <color name="home_background">#01081B</color>
 
-    <color name="settings_item">#3352A6</color>
 
 
 
@@ -47,6 +46,7 @@
     <color name="my_message">#F0D1DDFC</color>
     <color name="their_message">#EB021C63</color>
 
+    <color name="settings_item">#001D3D</color>
     <color name="user_text">#CFDCFF</color>
     <color name="special_text">#3565E6</color>
     <color name="attach_menu">#001D3D</color>

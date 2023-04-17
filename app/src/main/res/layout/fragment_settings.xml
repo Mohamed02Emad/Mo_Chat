@@ -4,29 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/main_background"
+    android:background="@color/main_drawer"
     android:orientation="vertical"
     tools:context=".presentation.settings.SettingsFragment">
+
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/btn_back_arrow"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginStart="8dp"
         android:background="?attr/selectableItemBackground"
-        android:elevation="20dp"
+        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+        android:elevation="40dp"
         android:layout_marginTop="8dp"
         android:src="@drawable/baseline_arrow_back_24"
-        app:tint="@color/blue_white" />
+        app:tint="@color/user_text" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="51dp"
-        android:textColor="@color/blue_white"
+        android:textColor="@color/user_text"
         android:text="@string/settings"
-        android:background="@color/main_color"
+        android:background="@color/main_drawer"
         android:textSize="18sp"
+        android:elevation="2dp"
         android:layout_marginTop="-43dp"
         android:gravity="center"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:alpha="0.4"
+        android:background="@color/user_text"
         />
 
     <LinearLayout
@@ -42,7 +53,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/main_text"
             android:text="@string/dark_mode"
             android:textSize="18sp"
             android:layout_marginStart="16sp"
@@ -79,7 +90,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/main_text"
             android:text="@string/image_quality"
             android:textSize="18sp"
             android:layout_marginStart="16sp"
@@ -117,7 +128,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/main_text"
             android:text="@string/notifications"
             android:textSize="18sp"
             android:layout_marginStart="16sp"
@@ -151,7 +162,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/grey"
+        android:textColor="@color/secondary_text"
         android:text="@string/developed_by"
         android:textSize="14sp"
         android:gravity="center"
@@ -159,7 +170,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/blue_white"
+        android:textColor="@color/main_text"
         android:text="@string/mohamed_emad"
         android:textSize="12sp"
         android:gravity="center"

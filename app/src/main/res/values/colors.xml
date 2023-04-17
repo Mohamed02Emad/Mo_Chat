@@ -40,7 +40,6 @@
     <color name="home_background">#CFDCFF</color>
 
 
-    <color name="settings_item">#CFDCFF</color>
 
 
 
@@ -49,6 +48,7 @@
     <color name="my_message">#F0CFDCFF</color>
     <color name="their_message">#EB0531AE</color>
 
+    <color name="settings_item">#80507BEE</color>
     <color name="user_text">#000814</color>
     <color name="main_text">#03045E</color>
     <color name="secondary_text">#507BEE</color>
