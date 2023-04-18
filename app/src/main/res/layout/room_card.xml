@@ -4,51 +4,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    app:cardCornerRadius="20dp"
+    android:layout_marginTop="10dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/card_blue">
+        android:background="@drawable/setting_item">
+
+        <TextView
+            android:id="@+id/tv_last_message_date"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginEnd="10dp"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:textColor="@color/user_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="16/4\n4:30" />
 
         <TextView
             android:id="@+id/tv_room_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textColor="@color/blue_white"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/main_text"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/room_type_background"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="my Room" />
 
+        <TextView
+            android:id="@+id/tv_last_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:alpha="0.6"
+            android:maxLines="1"
+            android:textAlignment="viewStart"
+            android:textColor="@color/main_text"
+            android:textSize="16sp"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toStartOf="@id/tv_last_message_date"
+            app:layout_constraintStart_toStartOf="@id/tv_room_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_room_name"
+            tools:text="بكره هشوف الحوار ده" />
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/room_type_background"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="-20dp"
-            android:layout_marginBottom="-30dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginStart="10dp"
             android:background="@color/blue_50"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded" />
 
 
         <ImageView
             android:id="@+id/iv_room_type"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="70dp"
-            android:layout_marginBottom="16dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:src="@drawable/ic_family_room"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_room_name"
-            app:tint="@color/blue_white" />
+            app:layout_constraintBottom_toBottomOf="@id/room_type_background"
+            app:layout_constraintEnd_toEndOf="@id/room_type_background"
+            app:layout_constraintStart_toStartOf="@id/room_type_background"
+            app:layout_constraintTop_toTopOf="@id/room_type_background"
+            app:tint="@color/main_text" />
 
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -56,6 +86,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@color/dark_yellow"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/pin_icon"
             app:layout_constraintEnd_toEndOf="@id/pin_icon"
             app:layout_constraintStart_toStartOf="@id/pin_icon"
@@ -69,12 +100,12 @@
             android:layout_marginEnd="10dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_pin"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/edit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-            app:tint="@color/blue_white"
-            />
+            app:tint="@color/blue_white" />
 
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -82,6 +113,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@color/blue_50"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/edit_icon"
             app:layout_constraintEnd_toEndOf="@id/edit_icon"
             app:layout_constraintStart_toStartOf="@id/edit_icon"
@@ -95,6 +127,7 @@
             android:layout_marginEnd="10dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_edit"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/delete"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pin"
@@ -106,6 +139,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@color/red_50"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/delete_icon"
             app:layout_constraintEnd_toEndOf="@id/delete_icon"
             app:layout_constraintStart_toStartOf="@id/delete_icon"
@@ -119,9 +153,10 @@
             android:layout_marginEnd="10dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_logout"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit"
+            app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
             app:tint="@color/blue_white" />
 

@@ -33,7 +33,7 @@ class HomeRoomAdapter(
         val currentRoom = list[position]
         holder.binding.tvRoomName.text = currentRoom.roomName
         setRoomType(holder, currentRoom.roomTypeImage)
-        setCardColors(holder, position)
+        //setCardColors(holder, position)
         setCardOnClicks(holder, currentRoom, position)
         hideUnNecessaryItems(holder, currentRoom)
     }
