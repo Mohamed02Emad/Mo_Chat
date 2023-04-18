@@ -41,4 +41,5 @@
     <string name="image_quality">low quality image</string>
     <string name="notifications">notifications</string>
     <string name="group_chats">Group chats</string>
+    <string name="profile">profile</string>
 </resources>
