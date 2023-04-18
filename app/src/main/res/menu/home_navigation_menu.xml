@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item
+    android:title="group chat"
+    android:id="@+id/homeFragment"
+    android:icon="@drawable/ic_people"
+    />
+    <item
+    android:title="direct chat"
+    android:id="@+id/directChats"
+    android:icon="@drawable/ic_person_outline"
+    />
+</menu>

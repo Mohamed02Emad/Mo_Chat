@@ -36,6 +36,7 @@
     <color name="main_background">#03164B</color>
     <color name="home_background">#01081B</color>
 
+    <color name="main_yellow">#FFC300</color>
 
 
 
@@ -55,6 +56,10 @@
     <color name="app_edit_text">#003566</color>
     <color name="secondary_text">#FFD60A</color>
     <color name="welcome_text">#FFC300</color>
+
+
+    <color name="navigation_selected">#CFDCFF</color>
+    <color name="navigation_unselected">#FFD60A</color>
 
 
 

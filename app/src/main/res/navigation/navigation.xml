@@ -38,4 +38,13 @@
         android:name="com.mo_chatting.chatapp.presentation.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/directChats"
+        android:name="com.mo_chatting.chatapp.presentation.directChats.DirectChats"
+        android:label="fragment_direct_chats"
+        tools:layout="@layout/fragment_direct_chats" >
+        <action
+            android:id="@+id/action_directChats_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
 </navigation>
