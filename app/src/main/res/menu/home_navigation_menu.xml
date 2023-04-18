@@ -10,4 +10,9 @@
     android:id="@+id/directChats"
     android:icon="@drawable/ic_person_outline"
     />
+    <item
+    android:title="profile"
+    android:id="@+id/profileFragment"
+    android:icon="@drawable/ic_profile"
+    />
 </menu>

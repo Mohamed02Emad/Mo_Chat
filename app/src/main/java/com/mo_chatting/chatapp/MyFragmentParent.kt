@@ -2,8 +2,8 @@ package com.mo_chatting.chatapp
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
+import com.mo_chatting.chatapp.presentation.MainActivity.MainActivity
 
 open class MyFragmentParent: Fragment()  {
     fun showToast(string: String) {

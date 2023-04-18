@@ -47,4 +47,9 @@
             android:id="@+id/action_directChats_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.mo_chatting.chatapp.presentation.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

@@ -7,9 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.mo_chatting.chatapp.MainActivity
+import com.mo_chatting.chatapp.presentation.MainActivity.MainActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.PushNotification
 import com.mo_chatting.chatapp.data.retrofit.RetrofitInstance

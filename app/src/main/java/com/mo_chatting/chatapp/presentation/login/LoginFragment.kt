@@ -15,7 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.GoogleAuthProvider
-import com.mo_chatting.chatapp.MainActivity
+import com.mo_chatting.chatapp.presentation.MainActivity.MainActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.isValidEmail

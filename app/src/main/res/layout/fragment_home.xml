@@ -4,91 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main_drawer"
+    android:background="@color/attach_menu"
     tools:context=".presentation.home.HomeFragment">
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/anchor_view"
-        android:layout_width="match_parent"
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/btn_settings"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="16dp"
+        android:elevation="0dp"
+        android:src="@drawable/ic_settings"
+        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+        app:tint="@color/main_text" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/main_color"
-        app:layoutDescription="@xml/fragment_home_scene"
-        app:layout_constraintTop_toTopOf="parent">
+        android:text="@string/group_chats"
+        android:textColor="@color/main_text"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/btn_settings"
-            android:layout_width="35dp"
-            android:elevation="1dp"
-            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-            android:layout_height="35dp"
-            android:src="@drawable/ic_settings" />
-
-        <TextView
-            android:id="@+id/tv_user_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="17dp"
-            android:gravity="center"
-            android:textColor="@color/blue_white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/welcome" />
-
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/btn_edit_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#0DCFDCFF"
-            android:elevation="20dp"
-            android:src="@drawable/ic_edit" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/tv_edit_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#0DCFDCFF"
-            android:elevation="17dp"
-            android:src="@drawable/ic_edit_image" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/btn_logout"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:background="#0DCFDCFF"
-            android:elevation="18dp"
-            android:src="@drawable/ic_logout"
-            app:layout_constraintBottom_toBottomOf="@id/profile"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/profile"
-
-            />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/profile_card"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/profile"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:elevation="16dp"
-                android:scaleType="centerCrop" />
-        </androidx.cardview.widget.CardView>
-
-        <View
-            android:id="@+id/view1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="4dp"
-            android:alpha="0.3"
-            android:background="@color/blue_white"
-            app:layout_constraintTop_toBottomOf="@id/profile_card" />
-
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+    <View
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/home_background" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
@@ -102,18 +52,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/card_blue"
-        app:tint="@color/blue_white" />
+        app:tint="@color/main_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_home"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+        android:paddingHorizontal="16dp"
         android:paddingTop="6dp"
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/anchor_view" />
+        app:layout_constraintTop_toTopOf="@id/background" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

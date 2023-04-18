@@ -62,58 +62,55 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         while (viewModel.firebaseAuth.currentUser == null) {
         }
         CoroutineScope(Dispatchers.IO).launch {
-            setUserViews()
+           // setUserViews()
         }
         setOnClicks()
         setupRecyclerView()
         oservers()
     }
 
-    private suspend fun setUserViews() {
-
-        val name = viewModel.getUserName()
-        if (name != "null" || name.isBlank()) {
-            withContext(Dispatchers.Main) {
-                binding.tvUserName.text = name
-            }
-        } else {
-            viewModel.setUserName()
-            setUserViews()
-            return
-        }
-
-        withContext(Dispatchers.Main) {
-            val img = viewModel.getUserImageFromDataStore()
-            val uri = if (img != null) {
-                img
-            } else {
-                //todo : need improves
-                viewModel.setUserImageAtDataStore()
-                viewModel.getUserImageFromDataStore()
-            }
-            try {
-                Glide.with(requireContext())
-                    .load(uri)
-                    //  .error(R.drawable.ic_profile)
-                    .override(500, 400)
-                    .into(binding.profile)
-            } catch (e: Exception) {
-                showToast(e.message.toString())
-            }
-        }
-
-    }
+//    private suspend fun setUserViews() {
+//        val name = viewModel.getUserName()
+//        if (name != "null" || name.isBlank()) {
+//            withContext(Dispatchers.Main) {
+//                binding.tvUserName.text = name
+//            }
+//        } else {
+//            viewModel.setUserName()
+//            setUserViews()
+//            return
+//        }
+//        withContext(Dispatchers.Main) {
+//            val img = viewModel.getUserImageFromDataStore()
+//            val uri = if (img != null) {
+//                img
+//            } else {
+//                //todo : need improves
+//                viewModel.setUserImageAtDataStore()
+//                viewModel.getUserImageFromDataStore()
+//            }
+//            try {
+//                Glide.with(requireContext())
+//                    .load(uri)
+//                    //  .error(R.drawable.ic_profile)
+//                    .override(500, 400)
+//                    .into(binding.profile)
+//            } catch (e: Exception) {
+//                showToast(e.message.toString())
+//            }
+//        }
+//    }
 
     private fun setOnClicks() {
-        binding.btnLogout.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.signOut()
-                withContext(Dispatchers.Main) {
-                    startActivity(Intent(requireActivity(), AuthActivity::class.java))
-                    requireActivity().finish()
-                }
-            }
-        }
+//        binding.btnLogout.setOnClickListener {
+//            CoroutineScope(Dispatchers.IO).launch {
+//                viewModel.signOut()
+//                withContext(Dispatchers.Main) {
+//                    startActivity(Intent(requireActivity(), AuthActivity::class.java))
+//                    requireActivity().finish()
+//                }
+//            }
+//        }
 
         binding.fabAdd.setOnClickListener {
             if (isInternetAvailable(requireContext())) {
@@ -123,46 +120,46 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             }
         }
 
-        binding.tvEditImage.setOnClickListener {
-            if (isInternetAvailable(requireContext())) {
-                showBottomSheet()
-            } else {
-                showToast("No Internet")
-            }
-        }
-
-        binding.btnEditName.setOnClickListener {
-            if (isInternetAvailable(requireContext())) {
-                showNameDialog()
-            } else {
-                showToast("No Internet")
-            }
-        }
+//        binding.tvEditImage.setOnClickListener {
+//            if (isInternetAvailable(requireContext())) {
+//                showBottomSheet()
+//            } else {
+//                showToast("No Internet")
+//            }
+//        }
+//
+//        binding.btnEditName.setOnClickListener {
+//            if (isInternetAvailable(requireContext())) {
+//                showNameDialog()
+//            } else {
+//                showToast("No Internet")
+//            }
+//        }
 
         binding.btnSettings.setOnClickListener {
             settingsClicked()
         }
 
-        binding.tvUserName.setOnClickListener {
-            if (binding.anchorView.progress == 0.0f) {
-                binding.anchorView.transitionToState(R.id.end)
-            }
-        }
+//        binding.tvUserName.setOnClickListener {
+//            if (binding.anchorView.progress == 0.0f) {
+//                binding.anchorView.transitionToState(R.id.end)
+//            }
+//        }
 
     }
 
     private fun startPhotoPicker() {
-        singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+       // singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    val singlePhotoPicker =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                viewModel.uri.value = uri
-                binding.profile.setImageURI(viewModel.uri.value)
-                viewModel.updateUserData()
-            }
-        }
+//    val singlePhotoPicker =
+//        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+//            if (uri != null) {
+//                viewModel.uri.value = uri
+//                binding.profile.setImageURI(viewModel.uri.value)
+//                viewModel.updateUserData()
+//            }
+//        }
 
     private fun settingsClicked() {
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
@@ -326,7 +323,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
                 val data = result.data
                 viewModel.uri.value = data!!.data
 
-                binding.profile.setImageURI(viewModel.uri.value)
+           //     binding.profile.setImageURI(viewModel.uri.value)
                 viewModel.updateUserData()
             }
         }
@@ -336,7 +333,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             if (result.resultCode == Activity.RESULT_OK) {
                 if (viewModel.uri.value != null)
 
-                    binding.profile.setImageURI(viewModel.uri.value)
+            //        binding.profile.setImageURI(viewModel.uri.value)
                 viewModel.updateUserData()
             }
         }
@@ -354,7 +351,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
     }
 
     override fun onDataPassedRename(name: String) {
-        binding.tvUserName.text = name
+    //    binding.tvUserName.text = name
         viewModel.updateUSerName(name)
     }
 
