@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class RoomsRepository(
     private val firebaseStore: FirebaseFirestore,
@@ -206,7 +207,9 @@ class RoomsRepository(
         return map
     }
 
-    private fun deleteCachedMessages(roomId: String) = db.myDao().deleteAll(roomId)
+    private suspend fun deleteCachedMessages(roomId: String) = withContext(Dispatchers.IO){
+        db.myDao().deleteAll(roomId)
+    }
 
     suspend fun reSubscribeForAllUserRooms() {
         val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
