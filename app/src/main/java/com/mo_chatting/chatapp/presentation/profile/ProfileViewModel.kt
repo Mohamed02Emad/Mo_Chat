@@ -3,6 +3,8 @@ package com.mo_chatting.chatapp.presentation.profile
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
@@ -60,4 +62,16 @@ class ProfileViewModel @Inject constructor(
         }
         return uriToReturn
     }
+
+    suspend fun signOut() {
+        firebaseAuth.signOut()
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+        val googleSignInClient = GoogleSignIn.getClient(appContext, gso)
+        googleSignInClient.signOut()
+        dataStore.clearAll()
+    }
+
+
 }

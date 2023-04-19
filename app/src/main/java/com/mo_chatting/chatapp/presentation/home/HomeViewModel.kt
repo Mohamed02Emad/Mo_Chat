@@ -80,15 +80,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    suspend fun signOut() {
-        firebaseAuth.signOut()
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-        val googleSignInClient = GoogleSignIn.getClient(appContext, gso)
-        googleSignInClient.signOut()
-        dataStore.clearAll()
-    }
+
 
     suspend fun createNewRoom(room: Room) {
         var roomId = getNewRoomId()

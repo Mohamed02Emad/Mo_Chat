@@ -1,16 +1,18 @@
 package com.mo_chatting.chatapp.presentation.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,7 +35,19 @@ class ProfileFragment : MyFragmentParent() {
         }
         lifecycleScope.launch {
             setUserViews()
-            //setOnClicks()
+            setOnClicks()
+        }
+    }
+
+    private fun setOnClicks() {
+        binding.tvLogout.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.signOut()
+                withContext(Dispatchers.Main) {
+                    startActivity(Intent(requireActivity(), AuthActivity::class.java))
+                    requireActivity().finish()
+                }
+            }
         }
     }
 
@@ -67,8 +81,6 @@ class ProfileFragment : MyFragmentParent() {
             }
         }
     }
-
-
 
 
 }

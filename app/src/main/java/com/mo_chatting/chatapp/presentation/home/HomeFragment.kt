@@ -66,15 +66,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
 
     private fun setOnClicks() {
-//        binding.btnLogout.setOnClickListener {
-//            CoroutineScope(Dispatchers.IO).launch {
-//                viewModel.signOut()
-//                withContext(Dispatchers.Main) {
-//                    startActivity(Intent(requireActivity(), AuthActivity::class.java))
-//                    requireActivity().finish()
-//                }
-//            }
-//        }
 
         binding.fabAdd.setOnClickListener {
             if (isInternetAvailable(requireContext())) {
