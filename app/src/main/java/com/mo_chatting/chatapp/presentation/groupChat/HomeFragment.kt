@@ -1,4 +1,4 @@
-package com.mo_chatting.chatapp.presentation.home
+package com.mo_chatting.chatapp.presentation.groupChat
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -11,20 +11,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.isInternetAvailable
+import com.mo_chatting.chatapp.appClasses.swipeToDelete.SwipeToDeleteCallback
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
 import com.mo_chatting.chatapp.presentation.dialogs.*
@@ -59,61 +61,17 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        while (viewModel.firebaseAuth.currentUser == null) {
+
+        lifecycleScope.launch {
+            setOnClicks()
+            setupRecyclerView()
+            oservers()
+            setupSwipeToDelete()
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            setUserViews()
-        }
-        setOnClicks()
-        setupRecyclerView()
-        oservers()
     }
 
-    private suspend fun setUserViews() {
-
-        val name = viewModel.getUserName()
-        if (name != "null" || name.isBlank()) {
-            withContext(Dispatchers.Main) {
-                binding.tvUserName.text = name
-            }
-        } else {
-            viewModel.setUserName()
-            setUserViews()
-            return
-        }
-
-        withContext(Dispatchers.Main) {
-            val img = viewModel.getUserImageFromDataStore()
-            val uri = if (img != null) {
-                img
-            } else {
-                //todo : need improves
-                viewModel.setUserImageAtDataStore()
-                viewModel.getUserImageFromDataStore()
-            }
-            try {
-                Glide.with(requireContext())
-                    .load(uri)
-                    //  .error(R.drawable.ic_profile)
-                    .override(500, 400)
-                    .into(binding.profile)
-            } catch (e: Exception) {
-                showToast(e.message.toString())
-            }
-        }
-
-    }
 
     private fun setOnClicks() {
-        binding.btnLogout.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.signOut()
-                withContext(Dispatchers.Main) {
-                    startActivity(Intent(requireActivity(), AuthActivity::class.java))
-                    requireActivity().finish()
-                }
-            }
-        }
 
         binding.fabAdd.setOnClickListener {
             if (isInternetAvailable(requireContext())) {
@@ -123,46 +81,39 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             }
         }
 
-        binding.tvEditImage.setOnClickListener {
-            if (isInternetAvailable(requireContext())) {
-                showBottomSheet()
-            } else {
-                showToast("No Internet")
-            }
-        }
-
-        binding.btnEditName.setOnClickListener {
-            if (isInternetAvailable(requireContext())) {
-                showNameDialog()
-            } else {
-                showToast("No Internet")
-            }
-        }
+//        binding.tvEditImage.setOnClickListener {
+//            if (isInternetAvailable(requireContext())) {
+//                showBottomSheet()
+//            } else {
+//                showToast("No Internet")
+//            }
+//        }
+//
+//        binding.btnEditName.setOnClickListener {
+//            if (isInternetAvailable(requireContext())) {
+//                showNameDialog()
+//            } else {
+//                showToast("No Internet")
+//            }
+//        }
 
         binding.btnSettings.setOnClickListener {
             settingsClicked()
         }
-
-        binding.tvUserName.setOnClickListener {
-            if (binding.anchorView.progress == 0.0f) {
-                binding.anchorView.transitionToState(R.id.end)
-            }
-        }
-
     }
 
     private fun startPhotoPicker() {
-        singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        // singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    val singlePhotoPicker =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                viewModel.uri.value = uri
-                binding.profile.setImageURI(viewModel.uri.value)
-                viewModel.updateUserData()
-            }
-        }
+//    val singlePhotoPicker =
+//        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+//            if (uri != null) {
+//                viewModel.uri.value = uri
+//                binding.profile.setImageURI(viewModel.uri.value)
+//                viewModel.updateUserData()
+//            }
+//        }
 
     private fun settingsClicked() {
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
@@ -178,7 +129,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
         lifecycleScope.launch {
             viewModel.roomsFlow.collect() {
-              viewModel.addNewRoomsFromFireBaseToRoomList(it)
+                viewModel.addNewRoomsFromFireBaseToRoomList(it)
             }
         }
     }
@@ -194,10 +145,13 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
                 onRoomLongClick(room, position)
                 false
             }, { room, position ->
-                deleteRoom(room)
+                // not used
+                deleteRoom(room,position)
             }, { room, position ->
+                // not used
                 editRoom(room, position)
             }, { room, position ->
+                // not used
                 pinRoom(room, position)
             }
             )
@@ -220,23 +174,42 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         editRoomDialog.show(requireActivity().supportFragmentManager, null)
     }
 
-    private fun deleteRoom(room: Room) {
+    private fun deleteRoom(room: Room, position: Int) {
         if (!isInternetAvailable(requireContext())) {
             showToast("No Internet")
             return
         }
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Do you want to leave?")
+        val builder = AlertDialog.Builder(context,R.style.MyDialog)
+        builder.setTitle("Delete this item?")
         builder.setPositiveButton("Yes") { dialog, which ->
-            CoroutineScope(Dispatchers.IO).launch {
-                viewModel.deleteRoom(room)
-                dialog.dismiss()
+            lifecycleScope.launch {
+                    viewModel.deleteRoom(room)
+                withContext(Dispatchers.Main) {
+                    binding.rvHome.adapter!!.notifyItemRemoved(position)
+                    val snackbar = Snackbar
+                        .make(
+                            binding.root,
+                            "Removed",
+                            Snackbar.LENGTH_SHORT
+                        )
+                    snackbar.show()
+                    dialog.dismiss()
+
+                }
             }
         }
         builder.setNegativeButton("No") { dialog, which ->
+            adapter.notifyItemChanged(position)
             dialog.dismiss()
         }
+            .setCancelable(false)
         val dialog = builder.create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.main_text))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.main_text))
+        }
         dialog.show()
     }
 
@@ -326,7 +299,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
                 val data = result.data
                 viewModel.uri.value = data!!.data
 
-                binding.profile.setImageURI(viewModel.uri.value)
+                //     binding.profile.setImageURI(viewModel.uri.value)
                 viewModel.updateUserData()
             }
         }
@@ -336,8 +309,8 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             if (result.resultCode == Activity.RESULT_OK) {
                 if (viewModel.uri.value != null)
 
-                    binding.profile.setImageURI(viewModel.uri.value)
-                viewModel.updateUserData()
+                //        binding.profile.setImageURI(viewModel.uri.value)
+                    viewModel.updateUserData()
             }
         }
 
@@ -354,7 +327,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
     }
 
     override fun onDataPassedRename(name: String) {
-        binding.tvUserName.text = name
+        //    binding.tvUserName.text = name
         viewModel.updateUSerName(name)
     }
 
@@ -381,6 +354,21 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.joinRoom(room)
         }
+    }
+
+
+    private fun setupSwipeToDelete() {
+        val swipeToDeleteCallback: SwipeToDeleteCallback =
+            object : SwipeToDeleteCallback(requireContext()) {
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
+                    removeAfterSwiped(viewHolder)
+                }
+            }
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(binding.rvHome)
+    }
+    private fun removeAfterSwiped(viewHolder: RecyclerView.ViewHolder) {
+        deleteRoom(adapter.getItemByPosition(viewHolder.adapterPosition),viewHolder.adapterPosition)
     }
 
 }

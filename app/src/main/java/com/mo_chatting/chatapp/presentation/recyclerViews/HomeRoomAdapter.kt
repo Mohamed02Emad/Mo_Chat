@@ -33,17 +33,7 @@ class HomeRoomAdapter(
         val currentRoom = list[position]
         holder.binding.tvRoomName.text = currentRoom.roomName
         setRoomType(holder, currentRoom.roomTypeImage)
-        setCardColors(holder, position)
         setCardOnClicks(holder, currentRoom, position)
-        hideUnNecessaryItems(holder, currentRoom)
-    }
-
-    private fun hideUnNecessaryItems(holder: HomeViewHolder, currentRoom: Room) {
-        if (uId != currentRoom.roomOwnerId)
-            holder.binding.apply {
-                edit.visibility = View.GONE
-                editIcon.visibility = View.GONE
-            }
     }
 
     private fun setCardOnClicks(
@@ -61,43 +51,17 @@ class HomeRoomAdapter(
                     onClickListener.onRoomLongClick(currentRoom, position)
                 }
             }
-            delete.setOnClickListener {
-                onClickListener.deleteRoom(currentRoom, position)
-            }
-
-            edit.setOnClickListener {
-                onClickListener.editRoom(currentRoom, position)
-            }
-
-            pin.setOnClickListener {
-                onClickListener.onPinRoom(currentRoom,position)
-            }
-        }
-    }
-
-
-    private fun setCardColors(holder: HomeRoomAdapter.HomeViewHolder, position: Int) {
-        if (position % 3 == 0) {
-            holder.binding.roomTypeBackground.background = ContextCompat.getDrawable(
-                holder.binding.roomTypeBackground.context, R.color.blue_50
-            )
-            holder.binding.card.background = ContextCompat.getDrawable(
-                holder.binding.card.context, R.drawable.blue_card_ripples
-            )
-        } else if (position % 3 == 2) {
-            holder.binding.roomTypeBackground.background = ContextCompat.getDrawable(
-                holder.binding.roomTypeBackground.context, R.color.yellow
-            )
-            holder.binding.card.background = ContextCompat.getDrawable(
-                holder.binding.card.context, R.drawable.yellow_card_ripples
-            )
-        } else {
-            holder.binding.roomTypeBackground.background = ContextCompat.getDrawable(
-                holder.binding.roomTypeBackground.context, R.color.red_50
-            )
-            holder.binding.card.background = ContextCompat.getDrawable(
-                holder.binding.card.context, R.drawable.red_card_ripples
-            )
+//            delete.setOnClickListener {
+//                onClickListener.deleteRoom(currentRoom, position)
+//            }
+//
+//            edit.setOnClickListener {
+//                onClickListener.editRoom(currentRoom, position)
+//            }
+//
+//            pin.setOnClickListener {
+//                onClickListener.onPinRoom(currentRoom,position)
+//            }
         }
     }
 
@@ -136,6 +100,10 @@ class HomeRoomAdapter(
         return list.size
     }
 
+    fun getItemByPosition(adapterPosition: Int): Room {
+        return list[adapterPosition]
+    }
+
     class OnRoomClickListener(
         private val clickListener: (room: Room, position: Int) -> Unit,
         private val longClickListener: (room: Room, position: Int) -> Boolean,
@@ -155,7 +123,5 @@ class HomeRoomAdapter(
         fun onPinRoom(room:Room,position: Int) = pinClickListener(room, position)
 
     }
-
-
 
 }

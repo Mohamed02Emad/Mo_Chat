@@ -25,7 +25,7 @@
         android:layout_marginStart="@dimen/corners_space"
         android:paddingVertical="10dp"
         android:text="@string/room_name"
-        android:textColor="@color/grey_dark"
+        android:textColor="@color/main_text"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_cancel" />
@@ -58,7 +58,7 @@
         android:layout_marginTop="16dp"
         android:paddingVertical="10dp"
         android:text="@string/room_type"
-        android:textColor="@color/grey_dark"
+        android:textColor="@color/main_text"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_room_name" />
@@ -73,7 +73,7 @@
         app:layout_constraintEnd_toEndOf="@id/et_room_name"
         app:layout_constraintStart_toEndOf="@id/tv_room_type"
         app:layout_constraintTop_toTopOf="@id/tv_room_type"
-        app:tint="@color/grey" />
+        app:tint="@color/main_text" />
 
 
     <TextView
@@ -84,7 +84,7 @@
         android:layout_marginTop="12dp"
         android:paddingVertical="10dp"
         android:text="@string/password"
-        android:textColor="@color/grey_dark"
+        android:textColor="@color/main_text"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_room_type" />

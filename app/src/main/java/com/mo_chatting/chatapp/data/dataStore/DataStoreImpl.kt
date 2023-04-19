@@ -32,7 +32,9 @@ class DataStoreImpl(
     }
 
     override suspend fun clearAll() {
+        val mode = getDarkMode()
         mDataStore.edit { it.clear() }
+        setDarkMode(mode)
     }
 
     override suspend fun getUserImage(): String = withContext(dispatcher) {

@@ -24,9 +24,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var dataStoreImpl: DataStoreImpl
-
     private val pushPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -39,18 +36,9 @@ class AuthActivity : AppCompatActivity() {
         requestForPermission()
         checkCameraPermission()
         setContentView(R.layout.activity_auth)
-        checkDarkMode()
     }
 
-    private fun checkDarkMode() {
-        CoroutineScope(Dispatchers.Main).launch {
-            if (dataStoreImpl.getDarkMode()){
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }else{
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
-    }
+
 
 
     private fun requestForPermission() {
