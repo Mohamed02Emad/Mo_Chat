@@ -42,4 +42,6 @@
     <string name="notifications">notifications</string>
     <string name="group_chats">Group chats</string>
     <string name="profile">profile</string>
+    <string name="save">save</string>
+    <string name="direct_chat">Direct chat</string>
 </resources>

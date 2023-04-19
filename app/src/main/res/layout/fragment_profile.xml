@@ -102,7 +102,7 @@
         android:layout_marginHorizontal="@dimen/corners_space"
         android:background="@drawable/app_button"
         android:elevation="4dp"
-        android:text="@string/login"
+        android:text="@string/save"
         android:textColor="@color/main_text"
         android:textSize="14sp"
         app:initialCornerAngle="16dp"

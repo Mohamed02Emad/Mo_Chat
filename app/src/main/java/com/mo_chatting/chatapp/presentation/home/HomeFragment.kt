@@ -11,17 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.isInternetAvailable
@@ -59,14 +56,13 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        while (viewModel.firebaseAuth.currentUser == null) {
+//        while (viewModel.firebaseAuth.currentUser == null) {
+//        }
+        lifecycleScope.launch {
+            setOnClicks()
+            setupRecyclerView()
+            oservers()
         }
-        CoroutineScope(Dispatchers.IO).launch {
-           // setUserViews()
-        }
-        setOnClicks()
-        setupRecyclerView()
-        oservers()
     }
 
 //    private suspend fun setUserViews() {
@@ -149,7 +145,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
     }
 
     private fun startPhotoPicker() {
-       // singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        // singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
 //    val singlePhotoPicker =
@@ -175,7 +171,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
         lifecycleScope.launch {
             viewModel.roomsFlow.collect() {
-              viewModel.addNewRoomsFromFireBaseToRoomList(it)
+                viewModel.addNewRoomsFromFireBaseToRoomList(it)
             }
         }
     }
@@ -323,7 +319,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
                 val data = result.data
                 viewModel.uri.value = data!!.data
 
-           //     binding.profile.setImageURI(viewModel.uri.value)
+                //     binding.profile.setImageURI(viewModel.uri.value)
                 viewModel.updateUserData()
             }
         }
@@ -333,8 +329,8 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             if (result.resultCode == Activity.RESULT_OK) {
                 if (viewModel.uri.value != null)
 
-            //        binding.profile.setImageURI(viewModel.uri.value)
-                viewModel.updateUserData()
+                //        binding.profile.setImageURI(viewModel.uri.value)
+                    viewModel.updateUserData()
             }
         }
 
@@ -351,7 +347,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
     }
 
     override fun onDataPassedRename(name: String) {
-    //    binding.tvUserName.text = name
+        //    binding.tvUserName.text = name
         viewModel.updateUSerName(name)
     }
 
