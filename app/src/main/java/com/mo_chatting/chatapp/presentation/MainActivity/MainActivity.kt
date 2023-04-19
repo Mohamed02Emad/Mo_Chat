@@ -12,7 +12,7 @@ import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import com.mo_chatting.chatapp.databinding.ActivityMainBinding
-import com.mo_chatting.chatapp.presentation.home.HomeFragmentDirections
+import com.mo_chatting.chatapp.presentation.groupChat.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

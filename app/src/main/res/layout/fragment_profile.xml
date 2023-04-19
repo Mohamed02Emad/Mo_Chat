@@ -50,7 +50,7 @@
         app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
         app:strokeColor="@color/main_text"
         app:strokeWidth="1dp"
-        android:src="@drawable/login_background" />
+        tools:src="@drawable/login_background" />
 
     <TextView
         android:id="@+id/user_name"

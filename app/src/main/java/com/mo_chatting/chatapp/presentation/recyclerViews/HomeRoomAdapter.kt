@@ -136,6 +136,10 @@ class HomeRoomAdapter(
         return list.size
     }
 
+    fun getItemByPosition(adapterPosition: Int): Room {
+        return list[adapterPosition]
+    }
+
     class OnRoomClickListener(
         private val clickListener: (room: Room, position: Int) -> Unit,
         private val longClickListener: (room: Room, position: Int) -> Boolean,

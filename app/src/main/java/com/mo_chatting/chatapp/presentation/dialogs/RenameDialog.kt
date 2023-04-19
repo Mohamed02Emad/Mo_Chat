@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mo_chatting.chatapp.appClasses.validateUserName
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.databinding.FragmentRenameDialogBinding
-import com.mo_chatting.chatapp.presentation.home.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject

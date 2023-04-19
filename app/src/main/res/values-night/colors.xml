@@ -51,11 +51,11 @@
     <color name="user_text">#CFDCFF</color>
     <color name="special_text">#3565E6</color>
     <color name="attach_menu">#001D3D</color>
-    <color name="main_text">#FFC300</color>
+    <color name="main_text">#DEFFFFFF</color>
     <color name="main_drawer">#070E25</color>
     <color name="app_edit_text">#003566</color>
-    <color name="secondary_text">#FFD60A</color>
-    <color name="welcome_text">#FFC300</color>
+    <color name="secondary_text">#BFFFFFFF</color>
+    <color name="welcome_text">#BEFFFFFF</color>
 
 
     <color name="navigation_selected">#CFDCFF</color>

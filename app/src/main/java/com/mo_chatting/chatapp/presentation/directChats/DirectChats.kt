@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentDirectChatsBinding
-import com.mo_chatting.chatapp.presentation.home.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
