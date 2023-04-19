@@ -35,5 +35,9 @@
         <item name="android:windowExitAnimation">@anim/slide_out_down</item>
     </style>
 
+    <style name="MyDialog" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="android:background">@color/main_drawer</item>
+        <item name="android:textColor">@color/red</item>
+    </style>
 
 </resources>

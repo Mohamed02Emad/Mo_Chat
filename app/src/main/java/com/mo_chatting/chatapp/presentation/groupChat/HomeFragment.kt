@@ -3,7 +3,6 @@ package com.mo_chatting.chatapp.presentation.groupChat
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentValues
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -100,13 +100,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         binding.btnSettings.setOnClickListener {
             settingsClicked()
         }
-
-//        binding.tvUserName.setOnClickListener {
-//            if (binding.anchorView.progress == 0.0f) {
-//                binding.anchorView.transitionToState(R.id.end)
-//            }
-//        }
-
     }
 
     private fun startPhotoPicker() {
@@ -152,10 +145,13 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
                 onRoomLongClick(room, position)
                 false
             }, { room, position ->
+                // not used
                 deleteRoom(room,position)
             }, { room, position ->
+                // not used
                 editRoom(room, position)
             }, { room, position ->
+                // not used
                 pinRoom(room, position)
             }
             )
@@ -183,8 +179,8 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             showToast("No Internet")
             return
         }
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Do you want to leave?")
+        val builder = AlertDialog.Builder(context,R.style.MyDialog)
+        builder.setTitle("Delete this item?")
         builder.setPositiveButton("Yes") { dialog, which ->
             lifecycleScope.launch {
                     viewModel.deleteRoom(room)
@@ -206,7 +202,14 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             adapter.notifyItemChanged(position)
             dialog.dismiss()
         }
+            .setCancelable(false)
         val dialog = builder.create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.main_text))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.main_text))
+        }
         dialog.show()
     }
 
