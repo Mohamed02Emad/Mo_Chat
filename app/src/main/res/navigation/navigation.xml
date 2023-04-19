@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_directChats_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_directChats_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"

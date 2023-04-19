@@ -56,8 +56,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        while (viewModel.firebaseAuth.currentUser == null) {
-//        }
+
         lifecycleScope.launch {
             setOnClicks()
             setupRecyclerView()
@@ -65,37 +64,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         }
     }
 
-//    private suspend fun setUserViews() {
-//        val name = viewModel.getUserName()
-//        if (name != "null" || name.isBlank()) {
-//            withContext(Dispatchers.Main) {
-//                binding.tvUserName.text = name
-//            }
-//        } else {
-//            viewModel.setUserName()
-//            setUserViews()
-//            return
-//        }
-//        withContext(Dispatchers.Main) {
-//            val img = viewModel.getUserImageFromDataStore()
-//            val uri = if (img != null) {
-//                img
-//            } else {
-//                //todo : need improves
-//                viewModel.setUserImageAtDataStore()
-//                viewModel.getUserImageFromDataStore()
-//            }
-//            try {
-//                Glide.with(requireContext())
-//                    .load(uri)
-//                    //  .error(R.drawable.ic_profile)
-//                    .override(500, 400)
-//                    .into(binding.profile)
-//            } catch (e: Exception) {
-//                showToast(e.message.toString())
-//            }
-//        }
-//    }
 
     private fun setOnClicks() {
 //        binding.btnLogout.setOnClickListener {

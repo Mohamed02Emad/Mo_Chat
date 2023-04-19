@@ -90,23 +90,6 @@ class HomeViewModel @Inject constructor(
         dataStore.clearAll()
     }
 
-    private suspend fun getUserImage(): String {
-        var uriToReturn = "null"
-        try {
-            val storageRef = FirebaseStorage.getInstance()
-                .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
-            storageRef.downloadUrl.apply {
-                addOnSuccessListener { downloadUri ->
-                    uriToReturn = downloadUri.toString()
-                }
-                await()
-            }
-        } catch (_: Exception) {
-
-        }
-        return uriToReturn
-    }
-
     suspend fun createNewRoom(room: Room) {
         var roomId = getNewRoomId()
         while (!isRoomValidId(roomId)) {
@@ -137,28 +120,6 @@ class HomeViewModel @Inject constructor(
 
     suspend fun joinRoom(room: Room) {
         repository.joinRoom(room)
-    }
-
-    suspend fun getUserName(): String {
-        return dataStore.getUserName()
-    }
-
-    suspend fun setUserName() {
-        val userName = firebaseAuth.currentUser?.let { it.displayName.toString() } ?: "null"
-        dataStore.setUserName(userName)
-    }
-
-    suspend fun getUserImageFromDataStore(): Uri? {
-        val data = dataStore.getUserImage()
-        return if (data == "null" || data.isBlank()) {
-            null
-        } else {
-            Uri.parse(data)
-        }
-    }
-
-    suspend fun setUserImageAtDataStore() {
-        dataStore.setUserImage(getUserImage())
     }
 
     private suspend fun setUserImageAtDataStoreUri(uri: Uri) {
