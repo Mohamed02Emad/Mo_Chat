@@ -16,7 +16,7 @@
         <item name="android:navigationBarColor">#DBDEE7</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
 
-
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 

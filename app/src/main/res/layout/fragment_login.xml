@@ -222,7 +222,6 @@
             android:padding="5dp"
             android:src="@drawable/ic_google"
             app:layout_constraintTop_toBottomOf="@id/tv_or_login_with" />
-
     </LinearLayout>
 
     <LinearLayout
