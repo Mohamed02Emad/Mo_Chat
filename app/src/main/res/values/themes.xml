@@ -10,10 +10,13 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/main_color</item>
+        <item name="android:statusBarColor">#DBDEE7</item>
+        <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
-        <item name="android:navigationBarColor">@color/main_color</item>
+        <item name="android:navigationBarColor">#DBDEE7</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
 
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 
@@ -32,5 +35,9 @@
         <item name="android:windowExitAnimation">@anim/slide_out_down</item>
     </style>
 
+    <style name="MyDialog" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="android:background">@color/main_drawer</item>
+        <item name="android:textColor">@color/red</item>
+    </style>
 
 </resources>

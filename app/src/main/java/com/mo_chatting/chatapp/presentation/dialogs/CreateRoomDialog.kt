@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentCreateRoomDialogBinding
-import com.mo_chatting.chatapp.presentation.home.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

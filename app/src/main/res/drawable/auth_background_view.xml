@@ -4,4 +4,5 @@
     <solid android:color="@color/main_drawer" />
     <corners android:topRightRadius="20dp"
         android:topLeftRadius="20dp"/>
+
 </shape>

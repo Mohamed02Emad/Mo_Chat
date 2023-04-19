@@ -1,7 +1,6 @@
 package com.mo_chatting.chatapp.presentation.dialogs
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -13,18 +12,12 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.mo_chatting.chatapp.MainActivity
 import com.mo_chatting.chatapp.appClasses.validateUserName
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.databinding.FragmentRenameDialogBinding
-import com.mo_chatting.chatapp.presentation.home.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint

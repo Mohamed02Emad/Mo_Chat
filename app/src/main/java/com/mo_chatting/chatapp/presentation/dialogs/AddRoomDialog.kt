@@ -7,9 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.createViewModelLazy
 import com.mo_chatting.chatapp.databinding.FragmentAddRoomDialogBinding
-import com.mo_chatting.chatapp.presentation.home.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
 
 class AddRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
 

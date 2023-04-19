@@ -203,9 +203,6 @@ class ChatFragment : Fragment() {
     }
 
     private fun onChatClick(message: Message, position: Int) {
-//        val index = adapter.getMessageIndex(message)
-//        val messageAtZero = adapter.getMessageAt(0)!!.messageText
-//        showToast("index = $index, message at Zero = $messageAtZero")
     }
 
     private  fun checkIfToScroll() {

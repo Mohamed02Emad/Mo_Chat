@@ -8,10 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.mo_chatting.chatapp.R
-import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentJoinRoomDialogBinding
-import com.mo_chatting.chatapp.presentation.home.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
 
 class JoinRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
 

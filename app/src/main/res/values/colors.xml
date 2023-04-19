@@ -12,7 +12,7 @@
     <color name="gradient_dark_blue">#091B44</color>
     <color name="their_message_color">#03164B</color>
     <color name="dark_blue_top_bar">#0C2159</color>
-    <color name="blue_50">#860A279A</color>
+    <color name="blue_50">#400A279A</color>
     <color name="gradient_light_blue">#223152</color>
     <color name="dark_blue">#133388</color>
     <color name="light_blue">#507BEE</color>
@@ -30,26 +30,36 @@
     <color name="grey">#E0CBCBCB</color>
     <color name="grey_dark">#CBCBCB</color>
     <color name="blue_white">#CFDCFF</color>
+    <color name="main_yellow">#FFC300</color>
 
+
+
+
+    <color name="main_semi_transparent_color">#4D4A2A2A</color>
     <color name="main_color">#507BEE</color>
-    <color name="main_drawer">#CFDCFF</color>
-    <color name="main_text">#5679D6</color>
     <color name="main_background">#3E62C4</color>
     <color name="home_background">#CFDCFF</color>
 
 
-    <color name="settings_item">#CFDCFF</color>
 
-    <color name="secondary_text">#223152</color>
 
-    <color name="special_text">#0C2159</color>
 
+    <!--     ................................................................................................................................-->
 
     <color name="my_message">#F0CFDCFF</color>
-    <color name="their_message">#EB0531AE</color>
+    <color name="their_message">#EB032073</color>
 
-
-    <color name="attach_menu">#E6133388</color>
+    <color name="settings_item">#80507BEE</color>
+    <color name="user_text">#000814</color>
+    <color name="main_text">#03045E</color>
+    <color name="secondary_text">#507BEE</color>
+    <color name="attach_menu">#8BA7F5</color>
+    <color name="app_edit_text">#03045E</color>
+    <color name="special_text">#507BEE</color>
+    <color name="main_drawer">#DBDEE7</color>
+    <color name="welcome_text">#DBDEE7</color>
+    <color name="navigation_selected">#80172959</color>
+    <color name="navigation_unselected">#000814</color>
 
 
 </resources>

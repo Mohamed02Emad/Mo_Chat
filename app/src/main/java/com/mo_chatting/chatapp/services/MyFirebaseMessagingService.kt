@@ -1,9 +1,10 @@
-package com.mo_chatting.chatapp.receivers
+package com.mo_chatting.chatapp.services
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.mo_chatting.chatapp.appClasses.Constants.isOnline
 import com.mo_chatting.chatapp.appClasses.mapNotificationData
 import com.mo_chatting.chatapp.appClasses.showLocalNotification
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
@@ -29,8 +30,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val targetRoomId = data.roomId
         val owner = data.ownerId
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        Log.d("mohamed", "onMessageReceived: "+ isOnline)
         CoroutineScope(Dispatchers.IO).launch {
-            if (userId != owner && dataStore.getNotificationEnabled()) {
+            if (userId != owner && dataStore.getNotificationEnabled() && !isOnline) {
                 Log.d("mohamed", "title: $title, body: $body, targetRoomId: $targetRoomId")
                 showLocalNotification(
                     this@MyFirebaseMessagingService,

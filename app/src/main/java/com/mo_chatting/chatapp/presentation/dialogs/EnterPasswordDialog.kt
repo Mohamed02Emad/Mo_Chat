@@ -11,8 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentEnterPasswordDialogBinding
-import com.mo_chatting.chatapp.presentation.home.HomeFragment
-import kotlinx.coroutines.CoroutineScope
+import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
 
 class EnterPasswordDialog(val homeFragment: HomeFragment,val room: Room) : DialogFragment() {
 
