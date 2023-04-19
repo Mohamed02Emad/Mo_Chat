@@ -49,6 +49,10 @@ class ProfileFragment : MyFragmentParent() {
                 }
             }
         }
+
+        binding.btnSave.setOnClickListener {
+            showToast("not yet")
+        }
     }
 
     private suspend fun setUserViews() {
