@@ -4,7 +4,6 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +13,6 @@ import androidx.paging.cachedIn
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
-import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.MessageType
@@ -28,6 +26,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 import javax.inject.Inject
 
@@ -163,13 +163,23 @@ class ChatFragmentViewModel @Inject constructor(
 
             repository.addMesssageToChat(room, message)
         } catch (e: Exception) {
-           // Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
+            // Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
         }
     }
 
     suspend fun sendMessage(message: Message, room: Room) {
         cacheNewMessageSent(message)
         repository.addMesssageToChat(message = message, room = room)
+    }
+
+    fun getDateForAllCountries(): String {
+        val timeZone = ZoneId.systemDefault()
+        val currentDateTime = LocalDateTime.now(timeZone)
+        // Calculate the offset from UTC for the user's time zone
+        val offset = timeZone.rules.getOffset(currentDateTime)
+        // Convert to timestamp in milliseconds
+        val currentTimestamp = currentDateTime.toEpochSecond(offset) * 1000
+        return currentTimestamp.toString()
     }
 
     suspend fun showNewMessages(list: ArrayList<Message>) {
