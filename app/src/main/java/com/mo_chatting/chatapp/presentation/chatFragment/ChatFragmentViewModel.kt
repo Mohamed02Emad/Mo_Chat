@@ -4,6 +4,7 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -167,8 +168,8 @@ class ChatFragmentViewModel @Inject constructor(
     }
 
     suspend fun sendMessage(message: Message, room: Room) {
-        cacheNewMessageSent(message)
         message.messageid = getMessageId()
+        cacheNewMessageSent(message)
         repository.addMesssageToChat(message = message, room = room)
     }
 
@@ -194,8 +195,9 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun cacheNewMessages(list: ArrayList<Message>) {
         if (list.isEmpty()) return
         for (message in list) {
-            if (message.messageDateAndTime == "")
-            message.messageDateAndTime = getCurrentDate()
+            if (message.messageDateAndTime.isEmpty()) {
+                message.messageDateAndTime = getCurrentDate()
+            }
             repository.db.myDao().insert(message)
         }
         try {
@@ -207,6 +209,7 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun cacheNewMessageSent(message: Message) {
         CoroutineScope(Dispatchers.IO).launch {
             if (checkIfMessageISNotCachedInLastPage(message)) {
+                message.messageDateAndTime = getCurrentDate()
                 repository.insertMessageToDatabase(message)
                 pagingSource.invalidate()
             }

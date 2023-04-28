@@ -1,5 +1,6 @@
 package com.mo_chatting.chatapp.presentation.recyclerViews
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,11 @@ class HomeRoomAdapter(
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentRoom = list[position]
-        holder.binding.tvRoomName.text = currentRoom.roomName
+        holder.binding.apply {
+            tvRoomName.text = currentRoom.roomName
+            tvLastMessage.text = currentRoom.lastMessage
+        }
+
         setRoomType(holder, currentRoom.roomTypeImage)
         setCardOnClicks(holder, currentRoom, position)
     }

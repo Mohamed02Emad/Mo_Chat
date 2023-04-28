@@ -1,9 +1,11 @@
 package com.mo_chatting.chatapp.data.repositories
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.sendFireBaseNotification
@@ -14,6 +16,7 @@ import kotlinx.coroutines.tasks.await
 
 class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: FirebaseAuth , val application: Context) {
 
+    private val allRoomsRef = firebaseStore.collection(Constants.roomsCollection)
 
     val db = MessagesDataBase.getInstance(application)
 
@@ -30,6 +33,13 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
             val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
             msgRef.add(message).await()
             sentNotificationToRoomMembers(message,room,firebaseAuth.currentUser!!.displayName!!)
+            var lastMessage = if (message.messageType == MessageType.TEXT){
+                message.messageText
+            }else {
+                "Image"
+            }
+            room.lastMessage = lastMessage
+            updateRoom(room , true)
         } catch (_: Exception) {
             deleteMessageFromDatabase(message)
         }
@@ -72,4 +82,40 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
         return  db.myDao().getMessagesByRoomID(room.roomId).last().messageid ?: 0
     }
 
+    private suspend fun updateRoom(room: Room, fromChat: Boolean) {
+        val map = mapMyRoom(room, fromChat)
+        try {
+            val roomQuery = allRoomsRef
+                .whereEqualTo("roomId", room.roomId)
+                .get()
+                .await()
+            if (roomQuery.documents.isNotEmpty()) {
+                for (document in roomQuery) {
+                    allRoomsRef.document(document.id).set(map, SetOptions.merge())
+                }
+            }
+
+        } catch (_: Exception) {
+        }
+
+    }
+
+    private fun mapMyRoom(room: Room, fromChat: Boolean): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        map["roomName"] = room.roomName
+        map["roomPinState"] = room.roomPinState
+        map["roomTypeImage"] = room.roomTypeImage
+        map["roomId"] = room.roomId
+        map["roomOwnerId"] = room.roomOwnerId
+        map["hasPassword"] = room.hasPassword
+        map["password"] = room.password
+        map["roomBackgroundColor"] = room.roomBackgroundColor
+        map["lastMessageData"] = room.lastMessageData
+        map["lastMessage"] = room.lastMessage
+        if (!fromChat) {
+            map["listOFUsers"] = room.listOFUsers
+            map["listOFUsersNames"] = room.listOFUsersNames
+        }
+        return map
+    }
 }

@@ -200,6 +200,8 @@ class RoomsRepository(
         map["hasPassword"] = room.hasPassword
         map["password"] = room.password
         map["roomBackgroundColor"] = room.roomBackgroundColor
+        map["lastMessageData"] = room.lastMessageData
+        map["lastMessage"] = room.lastMessage
         if (!fromChat) {
             map["listOFUsers"] = room.listOFUsers
             map["listOFUsersNames"] = room.listOFUsersNames
