@@ -160,7 +160,7 @@ class ChatFragmentViewModel @Inject constructor(
                 messageType = MessageType.IMAGE,
                 messageImage = imageUrl
             )
-
+            message.messageid = getMessageId()
             repository.addMesssageToChat(room, message)
         } catch (e: Exception) {
             // Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
@@ -169,7 +169,13 @@ class ChatFragmentViewModel @Inject constructor(
 
     suspend fun sendMessage(message: Message, room: Room) {
         cacheNewMessageSent(message)
+        message.messageid = getMessageId()
         repository.addMesssageToChat(message = message, room = room)
+    }
+
+    private fun getMessageId(): Long {
+      val lastMessageId = repository.getLastMessageId(thisRoom)
+      return (lastMessageId + 1)
     }
 
     fun getDateForAllCountries(): String {

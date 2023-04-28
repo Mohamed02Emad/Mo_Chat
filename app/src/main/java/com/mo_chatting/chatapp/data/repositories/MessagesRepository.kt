@@ -68,4 +68,8 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
         return message.isEmpty()
     }
 
+    fun getLastMessageId(room: Room): Long {
+        return  db.myDao().getMessagesByRoomID(room.roomId).last().messageid ?: 0
+    }
+
 }
