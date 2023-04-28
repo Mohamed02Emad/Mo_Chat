@@ -15,7 +15,7 @@ data class Message(
     val messageRoom: String = "",
     val messageOwnerId: String = "",
     val messageText: String = "",
-    val messageDateAndTime: String = "",
+    var messageDateAndTime: String = "",
     var messageOwner: String = "",
     var likedEmoji: String? = null,
     var messageImage: String? = null,

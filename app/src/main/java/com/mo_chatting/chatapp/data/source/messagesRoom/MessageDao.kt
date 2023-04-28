@@ -20,7 +20,7 @@ interface MessageDao {
     @Query("SELECT * FROM Message where (messageRoom == :roomId )ORDER BY messageid")
     fun getMessagesPagingData(roomId: String): PagingSource<Int,Message>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert( messages: Message)
 
     @Query("delete from Message where messageRoom == :roomId")

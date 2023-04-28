@@ -154,7 +154,6 @@ class ChatFragmentViewModel @Inject constructor(
             val message = Message(
                 messageRoom = room.roomId,
                 messageOwnerId = getUserId(),
-                messageDateAndTime = getCurrentDate(),
                 messageOwner = getUserName(),
                 timeWithMillis = messageTimeInMillis,
                 messageType = MessageType.IMAGE,
@@ -195,6 +194,8 @@ class ChatFragmentViewModel @Inject constructor(
     suspend fun cacheNewMessages(list: ArrayList<Message>) {
         if (list.isEmpty()) return
         for (message in list) {
+            if (message.messageDateAndTime == "")
+            message.messageDateAndTime = getCurrentDate()
             repository.db.myDao().insert(message)
         }
         try {

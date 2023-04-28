@@ -149,7 +149,6 @@ class ChatFragment : Fragment() {
                             messageRoom = thisRoom.roomId,
                             messageOwnerId = viewModel.getUserId(),
                             messageText = messageString,
-                            messageDateAndTime = viewModel.getCurrentDate(),
                             timeWithMillis = viewModel.getDateForAllCountries(),
                             messageOwner = viewModel.getUserName(),
                         ), room = thisRoom
