@@ -188,13 +188,12 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
                     binding.rvHome.adapter!!.notifyItemRemoved(position)
                     val snackbar = Snackbar
                         .make(
-                            binding.root,
+                            binding.rvHome,
                             "Removed",
                             Snackbar.LENGTH_SHORT
                         )
                     snackbar.show()
                     dialog.dismiss()
-
                 }
             }
         }

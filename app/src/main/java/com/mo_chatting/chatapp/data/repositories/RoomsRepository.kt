@@ -151,10 +151,11 @@ class RoomsRepository(
 
     private suspend fun createChatForRoom(room: Room) {
         try {
-            val msgRef =
-                firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+            val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+
             msgRef.add(
                 Message(
+                    timeWithMillis = System.currentTimeMillis().toString(),
                     messageOwner = "Mo Chat",
                     messageOwnerId = "firebase",
                     messageRoom = room.roomId,
@@ -200,6 +201,8 @@ class RoomsRepository(
         map["hasPassword"] = room.hasPassword
         map["password"] = room.password
         map["roomBackgroundColor"] = room.roomBackgroundColor
+        map["lastMessageData"] = room.lastMessageData
+        map["lastMessage"] = room.lastMessage
         if (!fromChat) {
             map["listOFUsers"] = room.listOFUsers
             map["listOFUsersNames"] = room.listOFUsersNames
@@ -241,5 +244,6 @@ class RoomsRepository(
         }
         return null
     }
+
 
 }

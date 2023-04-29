@@ -149,9 +149,8 @@ class ChatFragment : Fragment() {
                             messageRoom = thisRoom.roomId,
                             messageOwnerId = viewModel.getUserId(),
                             messageText = messageString,
-                            messageDateAndTime = viewModel.getCurrentDate(),
+                            timeWithMillis = viewModel.getDateForAllCountries(),
                             messageOwner = viewModel.getUserName(),
-                            timeWithMillis = System.currentTimeMillis().toString()
                         ), room = thisRoom
                     )
                     withContext(Dispatchers.Main) {
@@ -205,7 +204,7 @@ class ChatFragment : Fragment() {
     private fun onChatClick(message: Message, position: Int) {
     }
 
-    private  fun checkIfToScroll() {
+    private fun checkIfToScroll() {
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
         val lowerScreenItemPosition = layoutManager.findFirstVisibleItemPosition()
         if (lowerScreenItemPosition < 3) {
@@ -343,6 +342,7 @@ class ChatFragment : Fragment() {
                 }
             }
         }
+
     private fun startPhotoPicker() {
         singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
@@ -416,7 +416,6 @@ class ChatFragment : Fragment() {
 
         popupWindow.showAsDropDown(binding.attachMenuView)
     }
-
 
 
     private fun showToast(string: String) {
