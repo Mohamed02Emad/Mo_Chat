@@ -202,7 +202,6 @@ class ChatFragment : Fragment() {
     }
 
     private fun onChatClick(message: Message, position: Int) {
-        showToast(message.messageid.toString())
     }
 
     private fun checkIfToScroll() {
