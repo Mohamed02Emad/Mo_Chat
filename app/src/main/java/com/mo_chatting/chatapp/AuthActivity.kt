@@ -43,7 +43,9 @@ class AuthActivity : AppCompatActivity() {
 
     private fun requestForPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            pushPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+                pushPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
 
     }
