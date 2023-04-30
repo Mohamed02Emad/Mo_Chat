@@ -58,6 +58,20 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getCurrentDate(): String {
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH) + 1
+        var hour = calendar.get(Calendar.HOUR_OF_DAY).toString()
+        var minute: String = calendar.get(Calendar.MINUTE).toString()
+        if (minute.length == 1) {
+            minute = "0" + minute
+        }
+        if (hour.length == 1) {
+            hour = "0" + hour
+        }
+        return "$day/$month\n$hour:$minute"
+    }
     fun updateUserData() {
         val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
         val selectedImage = BitmapFactory.decodeStream(imageStream)

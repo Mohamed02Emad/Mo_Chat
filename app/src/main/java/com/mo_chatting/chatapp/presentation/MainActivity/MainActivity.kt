@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) {
-            //  Toast.makeText(this, "granted", Toast.LENGTH_SHORT).show()
         }
     }
 

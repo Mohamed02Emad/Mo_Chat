@@ -1,7 +1,6 @@
 package com.mo_chatting.chatapp.data.repositories
 
 import android.content.Context
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -19,11 +18,11 @@ import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class RoomsRepository(
     private val firebaseStore: FirebaseFirestore,
@@ -245,5 +244,54 @@ class RoomsRepository(
         return null
     }
 
+    private fun cacheMessages(messages: QuerySnapshot) : Message?{
+        val arrayList = ArrayList<Message>()
+        for (i in messages!!.documents) {
+            arrayList.add(i.toObject<Message>()!!)
+        }
+        if (arrayList.isEmpty()) return null
+        for (i in 0 until arrayList.size) {
+            var message = arrayList[i]
+            if (message.messageDateAndTime.isEmpty()) {
+                message.messageDateAndTime = getCurrentDate()
+            }
+            db.myDao().insert(message)
+            if (i == arrayList.size - 1) return message
+        }
+        return null
+    }
+
+    fun getCurrentDate(): String {
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH) + 1
+        var hour = calendar.get(Calendar.HOUR_OF_DAY).toString()
+        var minute: String = calendar.get(Calendar.MINUTE).toString()
+        if (minute.length == 1) {
+            minute = "0" + minute
+        }
+        if (hour.length == 1) {
+            hour = "0" + hour
+        }
+        return "$day/$month\n$hour:$minute"
+    }
+
+    fun cacheNewMessagesForRoomAndReturnLast(roomId: String, callback: (Message?) -> Unit) {
+        firebaseStore.collection("${Constants.roomsChatCollection}${roomId}")
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    callback(null)
+                    return@addSnapshotListener
+                }
+                value?.let {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val message = cacheMessages(it)
+                        withContext(Dispatchers.Main) {
+                            callback(message)
+                        }
+                    }
+                }
+            }
+    }
 
 }
