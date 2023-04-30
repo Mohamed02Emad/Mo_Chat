@@ -22,7 +22,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         Log.d("mohamed", "message received ")
-
         val data = mapNotificationData(message.data)
         val title = data.title
         val body = data.body
@@ -33,7 +32,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d("mohamed", "onMessageReceived: "+ isOnline)
         CoroutineScope(Dispatchers.IO).launch {
             if (userId != owner && dataStore.getNotificationEnabled() && !isOnline) {
-                Log.d("mohamed", "title: $title, body: $body, targetRoomId: $targetRoomId")
                 showLocalNotification(
                     this@MyFirebaseMessagingService,
                     title,
@@ -47,12 +45,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageSent(msgId: String) {
         super.onMessageSent(msgId)
-        Log.d("mohamed", "onMessageSent: $msgId")
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("mohamed", "onNewToken: $token")
     }
 
 }
