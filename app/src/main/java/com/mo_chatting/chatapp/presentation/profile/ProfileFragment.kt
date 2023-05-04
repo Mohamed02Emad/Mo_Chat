@@ -61,8 +61,18 @@ class ProfileFragment : MyFragmentParent() {
         }
 
         binding.btnSave.setOnClickListener {
+
             if (viewModel.userImageChanged && viewModel.uri.value != null) {
                 viewModel.updateUserImage()
+            }
+            lifecycleScope.launch(Dispatchers.Main) {
+                if (viewModel.getUserName() != binding.etUserName.text.toString()) {
+                    viewModel.updateUserName( binding.etUserName.text.toString())
+                }
+            }
+
+            if (!isInternetAvailable(requireContext())){
+                Toast.makeText(requireContext(),"no internet , your data might not get updated",Toast.LENGTH_LONG).show()
             }
         }
 

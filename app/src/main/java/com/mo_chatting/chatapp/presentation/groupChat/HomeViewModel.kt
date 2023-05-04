@@ -49,7 +49,6 @@ class HomeViewModel @Inject constructor(
             val arrayList = ArrayList<Room>()
             for (i in newRooms!!.documents) {
                 if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
-                 //   repository.joinRoomNotifications(i.toObject<Room>()!!.roomId)
                     arrayList.add(i.toObject<Room>()!!)
                 }
             }
@@ -57,42 +56,6 @@ class HomeViewModel @Inject constructor(
         } catch (_: Exception) {
         }
     }
-
-    fun getCurrentDate(): String {
-        val calendar = Calendar.getInstance()
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.get(Calendar.MONTH) + 1
-        var hour = calendar.get(Calendar.HOUR_OF_DAY).toString()
-        var minute: String = calendar.get(Calendar.MINUTE).toString()
-        if (minute.length == 1) {
-            minute = "0" + minute
-        }
-        if (hour.length == 1) {
-            hour = "0" + hour
-        }
-        return "$day/$month\n$hour:$minute"
-    }
-    fun updateUserData() {
-        val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
-        val selectedImage = BitmapFactory.decodeStream(imageStream)
-        val baos = ByteArrayOutputStream()
-        selectedImage.compress(Bitmap.CompressFormat.JPEG, 90, baos)
-        val data = baos.toByteArray()
-        val storageRef = FirebaseStorage.getInstance()
-            .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
-        storageRef.putBytes(data).addOnSuccessListener {
-            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                val userRef = FirebaseDatabase.getInstance().getReference("users")
-                    .child(firebaseAuth.currentUser!!.uid)
-                userRef.child("image").setValue(downloadUri.toString())
-                CoroutineScope(Dispatchers.IO).launch {
-                    setUserImageAtDataStoreUri(downloadUri)
-                }
-            }
-        }
-    }
-
-
 
     suspend fun createNewRoom(room: Room) {
         var roomId = getNewRoomId()
@@ -126,10 +89,6 @@ class HomeViewModel @Inject constructor(
         repository.joinRoom(room)
     }
 
-    private suspend fun setUserImageAtDataStoreUri(uri: Uri) {
-        dataStore.setUserImage(uri.toString())
-    }
-
     suspend fun deleteRoom(room: Room) {
         repository.deleteRoom(room)
     }
@@ -137,31 +96,5 @@ class HomeViewModel @Inject constructor(
     suspend fun updateRoom(room: Room) {
         repository.updateRoom(room, false)
     }
-
-    fun updateUSerName(newName: String) {
-        firebaseAuth.currentUser?.let { user ->
-            val profileUpdates = UserProfileChangeRequest.Builder()
-                .setDisplayName(newName)
-                .build()
-
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    user.updateProfile(profileUpdates).await()
-                    updateRoomByName(newName, firebaseAuth.currentUser!!.uid)
-                    dataStore.setUserName(newName)
-                } catch (_: Exception) {
-
-                }
-            }
-        }
-    }
-
-    private suspend fun updateRoomByName(newName: String, uid: String) {
-        val list = ArrayList<Room>().apply { addAll(_roomsList.value!!) }
-        for (room in list) {
-            repository.updateRoomForUserName(room, newName, uid)
-        }
-    }
-
 
 }

@@ -14,8 +14,4 @@ interface DialogsInterface {
     //JoinRoomDialog
     fun onDataPassedJoinRoom(roomId: String)
 
-    //RenameDialog
-    fun onDataPassedRename(name:String )
-
-
 }

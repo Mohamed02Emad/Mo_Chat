@@ -9,13 +9,17 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
+import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
@@ -106,5 +110,32 @@ class ProfileViewModel @Inject constructor(
 
     private suspend fun setUserImageAtDataStoreUri(uri: Uri) {
         dataStore.setUserImage(uri.toString())
+    }
+
+    fun updateUserName(newName: String) {
+
+        firebaseAuth.currentUser?.let { user ->
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(newName)
+                .build()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    user.updateProfile(profileUpdates).await()
+                    updateRoomByName(newName, firebaseAuth.currentUser!!.uid)
+                    dataStore.setUserName(newName)
+                } catch (_: Exception) {
+
+                }
+            }
+        }
+    }
+
+    private suspend fun updateRoomByName(newName: String, uid: String) {
+        val userRooms = repository.getUserRoomsFlow().first()
+        for (i in userRooms) {
+            val room = i.toObject<Room>()
+            repository.updateRoomForUserName(room, newName, uid)
+        }
     }
 }
