@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -22,10 +23,7 @@ import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 @AndroidEntryPoint
 class ProfileFragment : MyFragmentParent() {
@@ -60,24 +58,51 @@ class ProfileFragment : MyFragmentParent() {
             }
         }
 
-        binding.btnSave.setOnClickListener {
+        binding.btnSave.apply {
+            setOnClickListener {
+                startAnimation {
+                    binding.progressBar.visibility = View.VISIBLE
+                    it.isClickable = false
+                    lifecycleScope.launch(Dispatchers.Main){
+                        delay(400)
+                        revertAnimation()
+                        it.isClickable = true
+                        binding.progressBar.visibility = View.GONE
+                        delay(130)
+                        it.visibility = View.GONE
+                    }
+                    if (viewModel.userImageChanged && viewModel.uri.value != null) {
+                        viewModel.updateUserImage()
+                    }
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        if (viewModel.getUserName() != binding.etUserName.text.toString()) {
+                            viewModel.updateUserName(binding.etUserName.text.toString())
+                        }
+                    }
 
-            if (viewModel.userImageChanged && viewModel.uri.value != null) {
-                viewModel.updateUserImage()
-            }
-            lifecycleScope.launch(Dispatchers.Main) {
-                if (viewModel.getUserName() != binding.etUserName.text.toString()) {
-                    viewModel.updateUserName( binding.etUserName.text.toString())
+                    if (!isInternetAvailable(requireContext())) {
+                        Toast.makeText(
+                            requireContext(),
+                            "no internet , your data might not get updated",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
-            }
-
-            if (!isInternetAvailable(requireContext())){
-                Toast.makeText(requireContext(),"no internet , your data might not get updated",Toast.LENGTH_LONG).show()
             }
         }
 
         binding.ivProfileImage.setOnClickListener {
             showProfileImageOptions()
+        }
+
+        binding.etUserName.doAfterTextChanged {
+            lifecycleScope.launch {
+                if (it.toString() == viewModel.getUserName() && !viewModel.userImageChanged){
+                    binding.btnSave.visibility=View.GONE
+                }else{
+                    binding.btnSave.visibility=View.VISIBLE
+                }
+            }
         }
     }
 
@@ -186,6 +211,7 @@ class ProfileFragment : MyFragmentParent() {
                     CoroutineScope(Dispatchers.Main).launch {
                         binding.ivProfileImage.setImageURI(viewModel.uri.value)
                         viewModel.userImageChanged = true
+                        binding.btnSave.visibility=View.VISIBLE
                     }
                 }
             }
@@ -202,6 +228,8 @@ class ProfileFragment : MyFragmentParent() {
                     viewModel.uri.value = uri
                     binding.ivProfileImage.setImageURI(uri)
                     viewModel.userImageChanged = true
+                    binding.btnSave.visibility=View.VISIBLE
+
                 }
             }
         }
