@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -81,39 +82,10 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             }
         }
 
-//        binding.tvEditImage.setOnClickListener {
-//            if (isInternetAvailable(requireContext())) {
-//                showBottomSheet()
-//            } else {
-//                showToast("No Internet")
-//            }
-//        }
-//
-//        binding.btnEditName.setOnClickListener {
-//            if (isInternetAvailable(requireContext())) {
-//                showNameDialog()
-//            } else {
-//                showToast("No Internet")
-//            }
-//        }
-
         binding.btnSettings.setOnClickListener {
             settingsClicked()
         }
     }
-
-    private fun startPhotoPicker() {
-        // singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-    }
-
-//    val singlePhotoPicker =
-//        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-//            if (uri != null) {
-//                viewModel.uri.value = uri
-//                binding.profile.setImageURI(viewModel.uri.value)
-//                viewModel.updateUserData()
-//            }
-//        }
 
     private fun settingsClicked() {
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
@@ -126,7 +98,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             } catch (_: Exception) {
             }
         }
-
         lifecycleScope.launch {
             viewModel.roomsFlow.collect() {
                 viewModel.addNewRoomsFromFireBaseToRoomList(it)
@@ -233,86 +204,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         }
     }
 
-    private fun showNameDialog() {
-        if (isInternetAvailable(requireContext())) {
-            val dialogFragment = RenameDialog(this)
-            dialogFragment.show(requireActivity().supportFragmentManager, null)
-        } else {
-            showToast("No Internet")
-        }
-    }
-
-
-    private fun showBottomSheet() {
-        if (!isInternetAvailable(requireContext())) {
-            showToast("No Internet")
-            return
-        }
-        val dialog = BottomSheetDialog(requireContext())
-        val view = layoutInflater.inflate(R.layout.chose_edit_image, null)
-        val btnCamera: LinearLayout = view.findViewById(R.id.camera_choice)
-        btnCamera.setOnClickListener {
-            startCameraIntent()
-            dialog.dismiss()
-        }
-        val btnGallery: LinearLayout = view.findViewById(R.id.gallery_choice)
-        btnGallery.setOnClickListener {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                startPhotoPicker()
-            } else {
-                startGalleryIntent()
-            }
-            dialog.dismiss()
-        }
-        dialog.setCancelable(true)
-        dialog.setContentView(view)
-        dialog.show()
-    }
-
-    private fun startCameraIntent() {
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, "New Picture")
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
-        viewModel.uri.value = requireContext().contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            values
-        )
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, viewModel.uri.value)
-
-        cameraResultLauncher.launch(cameraIntent)
-    }
-
-    private fun startGalleryIntent() {
-
-        val i = Intent().apply {
-            type = "image/*"
-            action = Intent.ACTION_GET_CONTENT
-        }
-        galleryResultLauncher.launch(i)
-    }
-
-    private val galleryResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data
-                viewModel.uri.value = data!!.data
-
-                //     binding.profile.setImageURI(viewModel.uri.value)
-                viewModel.updateUserData()
-            }
-        }
-
-    private val cameraResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                if (viewModel.uri.value != null)
-
-                //        binding.profile.setImageURI(viewModel.uri.value)
-                    viewModel.updateUserData()
-            }
-        }
-
     override fun onDataPassedCreateRoom(room: Room) {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.createNewRoom(room)
@@ -323,11 +214,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.updateRoom(room)
         }
-    }
-
-    override fun onDataPassedRename(name: String) {
-        //    binding.tvUserName.text = name
-        viewModel.updateUSerName(name)
     }
 
     override fun onDataPassedJoinRoom(roomId: String) {
@@ -354,8 +240,6 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             viewModel.joinRoom(room)
         }
     }
-
-
     private fun setupSwipeToDelete() {
         val swipeToDeleteCallback: SwipeToDeleteCallback =
             object : SwipeToDeleteCallback(requireContext()) {

@@ -44,4 +44,6 @@
     <string name="profile">profile</string>
     <string name="save">save</string>
     <string name="direct_chat">Direct chat</string>
+    <string name="show">show</string>
+    <string name="change">change</string>
 </resources>

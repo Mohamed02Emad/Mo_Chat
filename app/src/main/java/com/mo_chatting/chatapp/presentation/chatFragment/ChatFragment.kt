@@ -309,29 +309,6 @@ class ChatFragment : Fragment() {
         cameraResultLauncher.launch(cameraIntent)
     }
 
-    private fun startGalleryIntent() {
-        if (!isInternetAvailable(requireContext())) {
-            showToast("No Internet")
-            return
-        }
-        val i = Intent().apply {
-            type = "image/*"
-            action = Intent.ACTION_GET_CONTENT
-        }
-        galleryResultLauncher.launch(i)
-    }
-
-    private val galleryResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val data = result.data
-                    viewModel.uri.value = data!!.data
-                    viewModel.uploadImage(thisRoom)
-                }
-            }
-        }
-
     private val cameraResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -394,11 +371,7 @@ class ChatFragment : Fragment() {
 
         val button1 = popupView.findViewById<LinearLayout>(R.id.gallery_item)
         button1.setOnClickListener {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
                 startPhotoPicker()
-            } else {
-                startGalleryIntent()
-            }
             popupWindow.dismiss()
         }
 

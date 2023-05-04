@@ -1,16 +1,28 @@
 package com.mo_chatting.chatapp.presentation.profile
 
 import android.app.Application
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
+import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +35,9 @@ class ProfileViewModel @Inject constructor(
     @Inject
     lateinit var dataStore: DataStoreImpl
 
+    var uri = MutableLiveData<Uri?>(null)
+
+    var userImageChanged = false
 
     suspend fun getUserName(): String {
         return dataStore.getUserName()
@@ -73,5 +88,54 @@ class ProfileViewModel @Inject constructor(
         dataStore.clearAll()
     }
 
+    fun updateUserImage() {
+        val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
+        val selectedImage = BitmapFactory.decodeStream(imageStream)
+        val baos = ByteArrayOutputStream()
+        selectedImage.compress(Bitmap.CompressFormat.JPEG, 90, baos)
+        val data = baos.toByteArray()
+        val storageRef = FirebaseStorage.getInstance()
+            .getReference("user_images/${firebaseAuth.currentUser!!.uid}")
+        storageRef.putBytes(data).addOnSuccessListener {
+            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                val userRef = FirebaseDatabase.getInstance().getReference("users")
+                    .child(firebaseAuth.currentUser!!.uid)
+                userRef.child("image").setValue(downloadUri.toString())
+                CoroutineScope(Dispatchers.IO).launch {
+                    setUserImageAtDataStoreUri(downloadUri)
+                }
+            }
+        }
+    }
 
+    private suspend fun setUserImageAtDataStoreUri(uri: Uri) {
+        dataStore.setUserImage(uri.toString())
+    }
+
+    fun updateUserName(newName: String) {
+
+        firebaseAuth.currentUser?.let { user ->
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(newName)
+                .build()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    user.updateProfile(profileUpdates).await()
+                    updateRoomByName(newName, firebaseAuth.currentUser!!.uid)
+                    dataStore.setUserName(newName)
+                } catch (_: Exception) {
+
+                }
+            }
+        }
+    }
+
+    private suspend fun updateRoomByName(newName: String, uid: String) {
+        val userRooms = repository.getUserRoomsFlow().first()
+        for (i in userRooms) {
+            val room = i.toObject<Room>()
+            repository.updateRoomForUserName(room, newName, uid)
+        }
+    }
 }
