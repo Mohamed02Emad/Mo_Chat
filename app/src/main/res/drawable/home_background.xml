@@ -3,6 +3,8 @@
 <solid android:color="@color/main_drawer"
     />
 
-    <corners android:topLeftRadius="24dp"/>
+    <corners android:topLeftRadius="24dp"
+        android:topRightRadius="24dp"
+        />
 
 </shape>
