@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.databinding.FragmentUserImageDialogBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +22,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UserImageDialog(val userId: String, val userName: String , val imageUri: String?=null , val isImageView : Boolean = false) : DialogFragment() {
+class UserImageDialog(
+    val userId: String,
+    val userName: String,
+    val imageUri: String? = null,
+    val isImageView: Boolean = false,
+    val imgFromProfile: Uri? = null
+) : DialogFragment() {
     @Inject
     lateinit var firestore: FirebaseFirestore
 
@@ -45,10 +50,12 @@ class UserImageDialog(val userId: String, val userName: String , val imageUri: S
 
     private fun setViews() {
         CoroutineScope(Dispatchers.IO).launch {
-            val uri =  if (isImageView){
+            val uri = if (isImageView) {
                 getImage(imageUri)
-            }else {
-               getUserImage()
+            } else if (imgFromProfile != null) {
+                imgFromProfile
+            } else {
+                getUserImage()
             }
             withContext(Dispatchers.Main) {
                 Glide.with(requireContext())
@@ -81,7 +88,7 @@ class UserImageDialog(val userId: String, val userName: String , val imageUri: S
         val metrics = resources.displayMetrics
         val width = metrics.widthPixels
         val height = metrics.heightPixels
-        this.dialog!!.window!!.setLayout(((9 * width) / 10), (7 * height) / 10)
+        this.dialog!!.window!!.setLayout(((10 * width) / 11), (5 * height) / 10)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 

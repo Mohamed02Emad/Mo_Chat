@@ -22,6 +22,7 @@ import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.databinding.FragmentProfileBinding
+import com.mo_chatting.chatapp.presentation.dialogs.UserImageDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
@@ -152,7 +153,9 @@ class ProfileFragment : MyFragmentParent() {
     }
 
     private fun showUserImage() {
-        Toast.makeText(requireContext(), "not Yet", Toast.LENGTH_LONG).show()
+        lifecycleScope.launch(Dispatchers.Main){
+            openUserImage()
+        }
     }
 
     private suspend fun setUserViews() {
@@ -171,7 +174,6 @@ class ProfileFragment : MyFragmentParent() {
             val uri = if (img != null) {
                 img
             } else {
-                //todo : need improves
                 viewModel.setUserImageAtDataStore()
                 viewModel.getUserImageFromDataStore()
             }
@@ -237,5 +239,17 @@ class ProfileFragment : MyFragmentParent() {
     override fun onDetach() {
         super.onDetach()
         viewModel.userImageChanged = false
+    }
+
+    private suspend fun openUserImage(){
+        val img = viewModel.getUserImageFromDataStore()
+        val uri = if (img != null) {
+            img
+        } else {
+            viewModel.setUserImageAtDataStore()
+            viewModel.getUserImageFromDataStore()
+        }
+        val userImageDialog = UserImageDialog(viewModel.firebaseAuth.uid!!,"firebase", imgFromProfile = uri)
+        userImageDialog.show(requireActivity().supportFragmentManager, null )
     }
 }
