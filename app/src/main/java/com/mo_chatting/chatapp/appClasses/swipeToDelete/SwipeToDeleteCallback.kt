@@ -78,16 +78,38 @@ abstract class SwipeToDeleteCallback(context: Context) :
 
         val radius = 16.dp().toFloat()
         val rect = RectF(
-            (itemView.right + dX - 30).toFloat(),
+            (itemView.right + dX - 30),
             itemView.top.toFloat(),
             itemView.right.toFloat(),
             itemView.bottom.toFloat()
         )
 
+//        val paint = Paint()
+//        paint.color = backgroundColor
+//        paint.style = Paint.Style.FILL
+//        c.drawRoundRect(rect, radius, radius, paint)
+
+        val path = Path()
+        path.moveTo(rect.left, rect.top)
+        path.lineTo(rect.right - radius, rect.top)
+        path.arcTo(
+            RectF(rect.right - 2 * radius, rect.top, rect.right, rect.top + 2 * radius),
+            -90f,
+            90f
+        )
+        path.lineTo(rect.right, rect.bottom)
+        path.arcTo(
+            RectF(rect.right - 2 * radius, rect.bottom - 2 * radius, rect.right, rect.bottom),
+            0f,
+            90f
+        )
+        path.lineTo(rect.left, rect.bottom)
+        path.close()
+
         val paint = Paint()
         paint.color = backgroundColor
         paint.style = Paint.Style.FILL
-        c.drawRoundRect(rect, radius, radius, paint)
+        c.drawPath(path, paint)
 
         val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
         val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
