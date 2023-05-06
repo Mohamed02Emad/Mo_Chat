@@ -8,6 +8,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.fireBaseDataSource.FireBaseRoomsDataSource
+import com.mo_chatting.chatapp.data.repositories.DirectChatRepository
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.Module
@@ -37,6 +38,16 @@ object module {
         firebaseFireStore, firebaseAuth,
         appContext,
         fireBaseRoomsDataSource
+    )
+    @Singleton
+    @Provides
+    fun provideDirectChatRepository(
+        firebaseFireStore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth,
+        @ApplicationContext appContext: Context
+    ): DirectChatRepository = DirectChatRepository(
+        firebaseFireStore, firebaseAuth,
+        appContext
     )
 
     @Singleton
