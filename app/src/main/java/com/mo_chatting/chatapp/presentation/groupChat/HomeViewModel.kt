@@ -2,7 +2,6 @@ package com.mo_chatting.chatapp.presentation.groupChat
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,7 +24,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     val appContext: Application,
     val firebaseAuth: FirebaseAuth,
-    val firebaseFirestore: FirebaseFirestore,
+     firebaseFirestore: FirebaseFirestore,
     private val repository: RoomsRepository
 ) : ViewModel() {
     @Inject
@@ -94,7 +93,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun createUser() {
-        var id = ""
+        var id : String
         if (userExists()) return
         do {
             id = createUserId()
@@ -109,8 +108,10 @@ class HomeViewModel @Inject constructor(
             .whereEqualTo("token", firebaseAuth.currentUser!!.uid)
             .get()
             .await()
-        for ( user in userQuery){
-                dataStore.saveUserId(user.toObject<User>().userId)
+        for (user in userQuery) {
+            val user = user.toObject<User>()
+            dataStore.saveUserId(user.userId)
+            dataStore.setUserImage(user.imageUrl)
         }
         userQuery.documents.isNotEmpty()
     } catch (_: Exception) {
@@ -140,7 +141,7 @@ class HomeViewModel @Inject constructor(
             .whereEqualTo("userId", userId)
             .get()
             .await()
-        !userQuery.documents.isNotEmpty()
+        userQuery.documents.isEmpty()
     } catch (_: Exception) {
         false
     }
@@ -156,7 +157,7 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun setupUserId() {
-            createUser()
+        createUser()
 
     }
 

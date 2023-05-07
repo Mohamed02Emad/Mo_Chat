@@ -16,6 +16,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.mo_chatting.chatapp.AuthActivity
 import com.mo_chatting.chatapp.MyFragmentParent
@@ -162,7 +163,8 @@ class ProfileFragment : MyFragmentParent() {
         val name = viewModel.getUserName()
         if (name != "null" || name.isBlank()) {
             withContext(Dispatchers.Main) {
-                binding.etUserName.setText(name)
+
+                binding.etUserName.setText(name.trimStart().trimEnd())
             }
         } else {
             viewModel.setUserName()
@@ -171,16 +173,11 @@ class ProfileFragment : MyFragmentParent() {
         }
         withContext(Dispatchers.Main) {
             val img = viewModel.getUserImageFromDataStore()
-            val uri = if (img != null) {
-                img
-            } else {
-                viewModel.setUserImageAtDataStore()
-                viewModel.getUserImageFromDataStore()
-            }
             try {
                 Glide.with(requireContext())
-                    .load(uri)
+                    .load(img)
                     .override(500, 400)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(binding.ivProfileImage)
             } catch (e: Exception) {
                 showToast(e.message.toString())
