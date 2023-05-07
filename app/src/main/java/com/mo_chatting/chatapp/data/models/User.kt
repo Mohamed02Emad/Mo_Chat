@@ -5,13 +5,12 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class User(
-    var userName: String,
-    var userImageUri: String,
-    var userId: String,
-    var userAbout: String = " hi there ^_- ",
-    var lastSeen: String = "--/-/----  --:--",
-    var isOnline: Boolean = false,
-    var showOnlineStateToOthers: Boolean = true,
-    var showLastSeenToOthers: Boolean = true
-
+    var userName : String,
+    var userId : String,
+    var token:String,
+    var userAbout : String = " hi there ^_- ",
+    //var userImageUri : String,
+//    var lastSeen : String = "--/-/----  --:--",
+//    var showOnlineStateToOthers: Boolean = true,
+//    var showLastSeenToOthers: Boolean = true
 ) : Parcelable

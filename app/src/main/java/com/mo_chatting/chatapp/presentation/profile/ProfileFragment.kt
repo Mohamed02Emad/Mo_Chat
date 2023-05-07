@@ -186,6 +186,8 @@ class ProfileFragment : MyFragmentParent() {
                 showToast(e.message.toString())
             }
         }
+
+        binding.etUserId.setText(viewModel.getUserId())
     }
 
     private fun startCameraIntent() {

@@ -68,6 +68,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             setupRecyclerView()
             oservers()
             setupSwipeToDelete()
+            viewModel.setupUserId()
         }
     }
 

@@ -93,7 +93,7 @@
         app:layout_constraintTop_toBottomOf="@id/et_user_name"
         android:text="User id" />
 
-    <EditText
+    <TextView
         android:id="@+id/et_user_id"
         android:layout_width="match_parent"
         android:layout_height="45dp"
@@ -101,6 +101,7 @@
         android:layout_marginTop="2dp"
         android:background="@drawable/setting_item"
         android:maxLines="1"
+        android:clickable="false"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"

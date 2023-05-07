@@ -138,4 +138,8 @@ class ProfileViewModel @Inject constructor(
             repository.updateRoomForUserName(room, newName, uid)
         }
     }
+
+    suspend fun getUserId():String{
+        return dataStore.getUserId()
+    }
 }

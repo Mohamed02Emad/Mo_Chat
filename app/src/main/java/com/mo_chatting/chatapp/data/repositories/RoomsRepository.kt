@@ -150,7 +150,7 @@ class RoomsRepository(
 
     private suspend fun createChatForRoom(room: Room) {
         try {
-            val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+            val msgRef = firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
 
             msgRef.add(
                 Message(

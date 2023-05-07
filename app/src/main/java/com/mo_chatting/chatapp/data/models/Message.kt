@@ -31,13 +31,3 @@ data class Message(
 
 enum class MessageState() { DELIVERED, SEEN, NOT_DELIVERED }
 enum class MessageType() { VOICE_RECORD, TEXT, IMAGE, VIDEO }
-
-@Parcelize
-data class MessageSeenInfo(
-    var user: User,
-    var messageState: MessageState = MessageState.NOT_DELIVERED,
-    var deliveryDate: String = "--/--/----",
-    var deliveryTime: String = "--:--",
-    var seenDate: String = "--/--/----",
-    var seenTime: String = "--:--"
-) : Parcelable
