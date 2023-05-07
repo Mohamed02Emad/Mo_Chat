@@ -76,9 +76,9 @@ class DataStoreImpl(
     }
 
 
-    override suspend fun getUserId(): String = withContext(dispatcher) {
+    override suspend fun getUserId(): String? = withContext(dispatcher) {
         mDataStore.data.map { settings ->
-            settings[stringPreferencesKey(USER)] ?: "null"
+            settings[stringPreferencesKey(USER)]
         }.first()
     }
 

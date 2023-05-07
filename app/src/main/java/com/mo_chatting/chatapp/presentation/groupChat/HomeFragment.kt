@@ -64,11 +64,11 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
+            viewModel.setupUserId()
             setOnClicks()
             setupRecyclerView()
             oservers()
             setupSwipeToDelete()
-            viewModel.setupUserId()
         }
     }
 

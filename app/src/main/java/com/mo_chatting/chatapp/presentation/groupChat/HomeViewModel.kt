@@ -28,12 +28,9 @@ class HomeViewModel @Inject constructor(
     val firebaseFirestore: FirebaseFirestore,
     private val repository: RoomsRepository
 ) : ViewModel() {
-
     @Inject
     lateinit var dataStore: DataStoreImpl
-
     private val usersRef = firebaseFirestore.collection(Constants.users)
-
 
     private val _roomsList = MutableLiveData<ArrayList<Room>>(ArrayList())
     val roomsList: LiveData<ArrayList<Room>> = _roomsList
@@ -101,7 +98,6 @@ class HomeViewModel @Inject constructor(
         if (userExists()) return
         do {
             id = createUserId()
-            Log.d("mohamed", "setupUserId: ")
         } while (!checkIfUserIdExist(id))
 
         saveUser(id)
@@ -113,11 +109,13 @@ class HomeViewModel @Inject constructor(
             .whereEqualTo("token", firebaseAuth.currentUser!!.uid)
             .get()
             .await()
+        for ( user in userQuery){
+                dataStore.saveUserId(user.toObject<User>().userId)
+        }
         userQuery.documents.isNotEmpty()
     } catch (_: Exception) {
         true
     }
-
 
     private suspend fun saveUser(id: String) {
         uploadUserId(id)
@@ -147,7 +145,6 @@ class HomeViewModel @Inject constructor(
         false
     }
 
-
     private fun createUserId(): String {
         val numChars = 8
         val r = Random()
@@ -159,7 +156,8 @@ class HomeViewModel @Inject constructor(
     }
 
     suspend fun setupUserId() {
-        createUser()
+            createUser()
+
     }
 
 }

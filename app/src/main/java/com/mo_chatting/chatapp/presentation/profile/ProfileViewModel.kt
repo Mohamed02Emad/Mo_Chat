@@ -139,7 +139,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    suspend fun getUserId():String{
+    suspend fun getUserId():String?{
         return dataStore.getUserId()
     }
 }
