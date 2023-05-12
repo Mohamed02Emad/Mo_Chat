@@ -1,5 +1,7 @@
 package com.mo_chatting.chatapp.data.dataStore
 
+import com.mo_chatting.chatapp.data.models.User
+
 interface DataStore {
 
     suspend fun getUserImage():String
@@ -7,7 +9,8 @@ interface DataStore {
 
     suspend fun getUserName():String
     suspend fun setUserName(userName:String)
-
+    suspend fun saveUserId(userId: String)
+    suspend fun getUserId():String?
     suspend fun getLowImageQuality():Boolean
     suspend fun setLowImageQuality(isLow:Boolean)
     suspend fun getDarkMode():Boolean

@@ -30,7 +30,7 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
     fun getDao():MessageDao = db.myDao()
     suspend fun addMesssageToChat(room: Room, message: Message) {
         try {
-            val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+            val msgRef = firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
             msgRef.add(message).await()
             sentNotificationToRoomMembers(message,room,firebaseAuth.currentUser!!.displayName!!)
             var lastMessage = if (message.messageType == MessageType.TEXT){

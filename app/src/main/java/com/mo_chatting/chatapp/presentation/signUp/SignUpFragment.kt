@@ -122,7 +122,6 @@ class SignUpFragment : Fragment() {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             user.updateProfile(profileUpdates).await()
-
                             startActivity(Intent(requireActivity(), MainActivity::class.java))
                             requireActivity().finish()
                         } catch (_: Exception) {

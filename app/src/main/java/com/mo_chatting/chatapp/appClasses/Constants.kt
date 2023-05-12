@@ -2,7 +2,8 @@ package com.mo_chatting.chatapp.appClasses
 
 object Constants {
     val roomsCollection = "CHAT_ROOMS"
-    val roomsChatCollection = "CHATS"
+    val roomsChatCollection = "GroupChats"
+    val users = "USERS"
     val TAG = "mohamed"
 
     const val BASE_URL="https://fcm.googleapis.com"

@@ -11,10 +11,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
+import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Room
+import com.mo_chatting.chatapp.data.models.User
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -29,11 +33,14 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     val appContext: Application,
     val firebaseAuth: FirebaseAuth,
-    private val repository: RoomsRepository
+    private val repository: RoomsRepository,
+    val firebaseFirestore: FirebaseFirestore
 ) : ViewModel() {
 
     @Inject
     lateinit var dataStore: DataStoreImpl
+    private val usersRef = firebaseFirestore.collection(Constants.users)
+
 
     var uri = MutableLiveData<Uri?>(null)
 
@@ -48,7 +55,7 @@ class ProfileViewModel @Inject constructor(
         dataStore.setUserName(userName)
     }
 
-    suspend fun getUserImageFromDataStore(): Uri? {
+     suspend fun getUserImageFromDataStore(): Uri? {
         val data = dataStore.getUserImage()
         return if (data == "null" || data.isBlank()) {
             null
@@ -57,7 +64,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    suspend fun setUserImageAtDataStore() {
+     suspend fun setUserImageAtDataStore() {
         dataStore.setUserImage(getUserImage())
     }
 
@@ -102,10 +109,40 @@ class ProfileViewModel @Inject constructor(
                     .child(firebaseAuth.currentUser!!.uid)
                 userRef.child("image").setValue(downloadUri.toString())
                 CoroutineScope(Dispatchers.IO).launch {
+                    updateUserImageAtFireBase(downloadUri)
                     setUserImageAtDataStoreUri(downloadUri)
                 }
             }
         }
+    }
+
+    private suspend fun updateUserImageAtFireBase(downloadUri: Uri) {
+        val user = getUser(dataStore.getUserId()!!)!!
+        user.imageUrl = downloadUri.toString()
+        val mappedUser = mapUser(user)
+        try {
+            val userQuery = usersRef
+                .whereEqualTo("userId", user.userId)
+                .get()
+                .await()
+            if (userQuery.documents.isNotEmpty()) {
+                for (document in userQuery) {
+                    usersRef.document(document.id).set(mappedUser, SetOptions.merge())
+                }
+            }
+        } catch (_: Exception) {
+        }
+    }
+
+    private suspend fun getUser(id : String): User? {
+        val userQuery = usersRef
+            .whereEqualTo("userId", id)
+            .get()
+            .await()
+        for (i in userQuery){
+            return i.toObject<User>()
+        }
+        return null
     }
 
     private suspend fun setUserImageAtDataStoreUri(uri: Uri) {
@@ -137,5 +174,19 @@ class ProfileViewModel @Inject constructor(
             val room = i.toObject<Room>()
             repository.updateRoomForUserName(room, newName, uid)
         }
+    }
+
+    suspend fun getUserId():String?{
+        return dataStore.getUserId()
+    }
+
+    private fun mapUser(user: User): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        map["userName"] = user.userName
+        map["userId"] = user.userId
+        map["token"] = user.token
+        map["userAbout"] = user.userAbout
+        map["imageUrl"] = user.imageUrl
+        return map
     }
 }

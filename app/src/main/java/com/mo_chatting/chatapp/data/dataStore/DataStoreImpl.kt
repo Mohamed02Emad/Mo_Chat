@@ -29,6 +29,7 @@ class DataStoreImpl(
         const val IMAGE_IS_LOW = "lowQualityImages"
         const val DARK_MODE = "darkMode"
         const val NOTIFICATIONS = "notifications"
+        const val USER = "user"
     }
 
     override suspend fun clearAll() {
@@ -66,6 +67,21 @@ class DataStoreImpl(
         }
     }
 
+    override suspend fun saveUserId(userId: String) {
+        withContext(dispatcher) {
+            mDataStore.edit { settings ->
+                settings[stringPreferencesKey(USER)] = userId
+            }
+        }
+    }
+
+
+    override suspend fun getUserId(): String? = withContext(dispatcher) {
+        mDataStore.data.map { settings ->
+            settings[stringPreferencesKey(USER)]
+        }.first()
+    }
+
     override suspend fun setLowImageQuality(isLow: Boolean) {
         withContext(dispatcher) {
             mDataStore.edit { settings ->
@@ -100,6 +116,7 @@ class DataStoreImpl(
             settings[booleanPreferencesKey(NOTIFICATIONS)] ?: true
         }.first()
     }
+
     override suspend fun setNotificationEnabled(enable: Boolean) {
         withContext(dispatcher) {
             mDataStore.edit { settings ->
