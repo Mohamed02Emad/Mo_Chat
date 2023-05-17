@@ -11,8 +11,11 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mo_chatting.chatapp.data.models.User
 import com.mo_chatting.chatapp.databinding.FragmentSearchUserDialogBinding
+import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
+import com.mo_chatting.chatapp.presentation.recyclerViews.SearchUsersAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -21,6 +24,7 @@ class SearchUserDialog : DialogFragment() {
 
     private lateinit var binding: FragmentSearchUserDialogBinding
     private val viewModel: SearchUserViewModel by viewModels()
+    private lateinit var adapter : SearchUsersAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,7 +43,7 @@ class SearchUserDialog : DialogFragment() {
     private fun setOnClicks() {
         binding.etSearch.doAfterTextChanged {
             it.toString().let {
-                if (it.length > 4) {
+                if (it.length > 3) {
                     lifecycleScope.launch {
                         viewModel.getUsersById(it)
                     }
@@ -55,7 +59,17 @@ class SearchUserDialog : DialogFragment() {
     }
 
     private fun setUpRecyclerView(users: ArrayList<User>) {
-        Toast.makeText(requireContext(), users.size.toString(), Toast.LENGTH_SHORT).show()
+      //  Toast.makeText(requireContext(), users.size.toString(), Toast.LENGTH_SHORT).show()
+        adapter = SearchUsersAdapter(
+            viewModel.users.value!!,
+            SearchUsersAdapter.OnUserClickListener(){user, position ->
+                viewModel.addUserToFriends(user)
+                Toast.makeText(requireContext(), user.userName, Toast.LENGTH_SHORT).show()
+
+            }
+        )
+        binding.rvSearchUsers.adapter = adapter
+        binding.rvSearchUsers.layoutManager = LinearLayoutManager(requireActivity())
     }
 
     private fun setDimentions() {

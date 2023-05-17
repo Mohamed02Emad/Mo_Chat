@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
+    android:layout_marginHorizontal="8dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="16dp">
 
@@ -39,7 +40,7 @@
             android:layout_marginTop="4dp"
             android:maxLines="1"
             android:textColor="@color/main_text"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@id/room_type_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -58,7 +59,7 @@
             app:shapeAppearanceOverlay="@style/roundedImageViewRounded" />
 
         <ImageView
-            android:id="@+id/iv_room_type"
+            android:id="@+id/iv_user_image"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:src="@drawable/ic_family_room"
