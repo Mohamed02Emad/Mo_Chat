@@ -1,8 +1,7 @@
 package com.mo_chatting.chatapp.presentation.profile
 
 import android.app.Activity
-import android.content.ContentValues
-import android.content.Intent
+import android.content.*
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -58,6 +57,10 @@ class ProfileFragment : MyFragmentParent() {
                     requireActivity().finish()
                 }
             }
+        }
+
+        binding.etUserId.setOnClickListener {
+            copyIdToClipBoard(binding.etUserId.text.toString())
         }
 
         binding.btnSave.apply {
@@ -251,4 +254,16 @@ class ProfileFragment : MyFragmentParent() {
         val userImageDialog = UserImageDialog(viewModel.firebaseAuth.uid!!,"firebase", imgFromProfile = uri)
         userImageDialog.show(requireActivity().supportFragmentManager, null )
     }
+
+    private fun copyIdToClipBoard(userId: String) {
+        // Get a reference to the system clipboard
+        val clipboardManager = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+        // Create a new ClipData object with the text to be copied
+        val clipData = ClipData.newPlainText("User Id", userId)
+
+        // Set the ClipData object as the primary clip on the clipboard
+        clipboardManager.setPrimaryClip(clipData)
+    }
+
 }

@@ -8,5 +8,6 @@ data class User(
     var userId: String = "",
     var token: String = "",
     var userAbout: String = " hi there ^_- ",
-    var imageUrl: String = "null"
+    var imageUrl: String = "null",
+    var friends: List<String> = emptyList()
 )

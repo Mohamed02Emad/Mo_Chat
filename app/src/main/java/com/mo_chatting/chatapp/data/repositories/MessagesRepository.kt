@@ -55,7 +55,7 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
     suspend fun getServerAllMessagesForThisRoom(room: Room): ArrayList<Message> {
         val arrayList = ArrayList<Message>()
         try {
-            val msgRef = firebaseStore.collection("${Constants.roomsChatCollection}${room.roomId}")
+            val msgRef = firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
             val result = msgRef.get().await()
             for (i in result.documents)
                 arrayList.add(i.toObject<Message>()!!)

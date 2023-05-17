@@ -207,7 +207,7 @@ class ChatFragment : Fragment() {
     private fun checkIfToScroll() {
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
         val lowerScreenItemPosition = layoutManager.findFirstVisibleItemPosition()
-        if (lowerScreenItemPosition < 3) {
+        if (lowerScreenItemPosition < 2) {
             smoothRefreshRV()
         }
     }
