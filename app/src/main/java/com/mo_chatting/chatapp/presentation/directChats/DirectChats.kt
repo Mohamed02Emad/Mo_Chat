@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.databinding.FragmentDirectChatsBinding
-import com.mo_chatting.chatapp.presentation.dialogs.SearchUserDialog
+import com.mo_chatting.chatapp.presentation.dialogs.searchUser.SearchUserDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.DirectChatsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
