@@ -35,6 +35,6 @@ class SearchUserViewModel @Inject constructor(private val repository: SearchUser
     }
 
     fun addUserToFriends(user: User) {
-        //TODO("Not yet implemented")
+        repository.addUserToFriends(user.userId)
     }
 }

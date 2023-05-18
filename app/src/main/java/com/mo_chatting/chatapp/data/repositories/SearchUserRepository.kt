@@ -37,4 +37,5 @@ class SearchUserRepository(
     fun removeUserFromFriends(userId: String){
 
     }
+
 }

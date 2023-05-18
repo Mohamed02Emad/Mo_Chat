@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.User
 import com.mo_chatting.chatapp.databinding.SearchUserCardBinding
-import java.net.URL
 
 class SearchUsersAdapter(
     private val list: ArrayList<User>,
@@ -40,11 +40,14 @@ class SearchUsersAdapter(
     }
 
     private fun setUserImage(imageUrl: String, holder: HomeViewHolder) {
-        val img =  Uri.parse(imageUrl)
-            Glide.with(holder.binding.ivUserImage)
-                .load(img)
-                .override(100, 80)
-                .into(holder.binding.ivUserImage)
+        val img : Uri? = Uri.parse(imageUrl)
+        Glide.with(holder.binding.ivUserImage)
+            .load(img)
+            .placeholder(R.drawable.ic_profile)
+            .error(R.drawable.ic_profile)
+            .override(35, 35)
+            .centerCrop()
+            .into(holder.binding.ivUserImage)
     }
 
     private fun setCardOnClicks(
