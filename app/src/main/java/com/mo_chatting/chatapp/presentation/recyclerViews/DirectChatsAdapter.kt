@@ -29,8 +29,8 @@ class DirectChatsAdapter(
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentChat = list[position]
         holder.binding.apply {
-            tvRoomName.text = currentChat.name
-            tvLastMessage.text = currentChat.lastMessage
+            tvRoomName.text = ""
+            tvLastMessage.text = ""
         }
         setImage()
         setCardOnClicks(holder, currentChat, position)

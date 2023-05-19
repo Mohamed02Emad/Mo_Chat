@@ -2,6 +2,7 @@ package com.mo_chatting.chatapp.presentation.recyclerViews
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -59,6 +60,7 @@ class SearchUsersAdapter(
             btnAdd.apply {
                 setOnClickListener {
                     onClickListener.onAddClick(currentUser, position)
+                    it.visibility = View.GONE
                 }
             }
         }
