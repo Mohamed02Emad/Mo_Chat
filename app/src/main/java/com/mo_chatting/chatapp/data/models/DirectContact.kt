@@ -12,6 +12,10 @@ import kotlinx.parcelize.Parcelize
 data class DirectContact(
     @PrimaryKey val chatToken: String = "",
     val users : ArrayList<String> = ArrayList(),
+    var hasChat : Boolean = false,
+    var user1 : String = "",
+    var user2 : String = ""
+
 //    var lastMessage:String = "" ,
 //    var lastMessageData : String = ""
     ): Parcelable

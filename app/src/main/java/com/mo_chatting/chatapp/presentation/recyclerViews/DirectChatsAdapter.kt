@@ -10,6 +10,7 @@ import com.mo_chatting.chatapp.databinding.RoomCardBinding
 class DirectChatsAdapter(
     private val list: ArrayList<DirectContact>,
     private val onClickListener:OnChatClickListener,
+    private val currentUserName:String
 ) :
     RecyclerView.Adapter<DirectChatsAdapter.HomeViewHolder>() {
 
@@ -29,7 +30,12 @@ class DirectChatsAdapter(
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentChat = list[position]
         holder.binding.apply {
-            tvRoomName.text = ""
+            val chatName = if (currentChat.user1 == currentUserName){
+                currentChat.user2
+            }else{
+                currentChat.user1
+            }
+            tvRoomName.text = chatName.trimEnd().trimStart()
             tvLastMessage.text = ""
         }
         setImage()
@@ -50,7 +56,6 @@ class DirectChatsAdapter(
                 setOnClickListener {
                     onClickListener.onRoomClick(currentChat, position)
                 }
-
                 setOnLongClickListener {
                     onClickListener.onRoomLongClick(currentChat, position)
                 }

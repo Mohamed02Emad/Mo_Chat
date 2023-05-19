@@ -45,10 +45,11 @@ object module {
     fun provideDirectChatRepository(
         firebaseFireStore: FirebaseFirestore,
         firebaseAuth: FirebaseAuth,
-        @ApplicationContext appContext: Context
+        @ApplicationContext appContext: Context,
+        fireBaseRoomsDataSource: FireBaseRoomsDataSource
     ): DirectChatRepository = DirectChatRepository(
         firebaseFireStore, firebaseAuth,
-        appContext
+        appContext,fireBaseRoomsDataSource
     )
     @Singleton
     @Provides

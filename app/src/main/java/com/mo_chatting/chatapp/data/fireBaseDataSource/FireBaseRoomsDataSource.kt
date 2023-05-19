@@ -36,4 +36,23 @@ class FireBaseRoomsDataSource(
         }
     }
 
+    fun setUpChatsListener(): Flow<QuerySnapshot> = callbackFlow {
+        val listenerRegistration = firebaseFirestore
+            .collection(Constants.directChatCollection)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                } else if (snapshot != null) {
+                    try {
+                        trySend(snapshot).isSuccess
+                    } catch (_: Exception) {
+                    }
+                }
+            }
+
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }
+
 }

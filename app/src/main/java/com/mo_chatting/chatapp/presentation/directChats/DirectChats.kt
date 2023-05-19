@@ -4,14 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.databinding.FragmentDirectChatsBinding
 import com.mo_chatting.chatapp.presentation.dialogs.searchUser.SearchUserDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.DirectChatsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DirectChats : Fragment() {
@@ -29,21 +33,29 @@ class DirectChats : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setOnClicks()
-        setObservers()
-        viewModel.getCachedChats("token")
+        lifecycleScope.launch {
+            setOnClicks()
+            setObservers()
+            viewModel.getCachedChats("token")
+        }
     }
 
     private fun setObservers() {
         viewModel.chats.observe(viewLifecycleOwner) { chats ->
-            if (chats.size > 0) {
-                setUpRecyclerView(chats)
+            lifecycleScope.launch {
+                if (chats.size > 0) {
+                    setUpRecyclerView(chats)
+                }
             }
-
+        }
+        lifecycleScope.launch {
+            viewModel.chatsFlow.collect() {
+                viewModel.addNewChatsFromFireBaseToChatList(it)
+            }
         }
     }
 
-    private fun setUpRecyclerView(list: ArrayList<DirectContact>?) {
+    private suspend fun setUpRecyclerView(list: ArrayList<DirectContact>?) {
         adapter = DirectChatsAdapter(
             list!!,
             DirectChatsAdapter.OnChatClickListener(
@@ -62,14 +74,18 @@ class DirectChats : Fragment() {
                 },
                 { chat, position ->
                     //pin chat
-                })
+                }),
+            viewModel.getUserName()
         )
         binding.rvDirectChats.adapter = adapter
+        binding.rvDirectChats.layoutManager = LinearLayoutManager(requireActivity())
+
     }
 
     private fun setOnClicks() {
         binding.btnSettings.setOnClickListener {
             settingsClicked()
+
         }
 
         binding.fabAdd.setOnClickListener {
