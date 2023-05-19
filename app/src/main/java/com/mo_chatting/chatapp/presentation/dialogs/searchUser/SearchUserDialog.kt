@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.User
 import com.mo_chatting.chatapp.databinding.FragmentSearchUserDialogBinding
 import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
@@ -62,9 +63,14 @@ class SearchUserDialog : DialogFragment() {
     private fun setUpRecyclerView(users: ArrayList<User>) {
         adapter = SearchUsersAdapter(
             viewModel.users.value!!,
-            SearchUsersAdapter.OnUserClickListener(){user, position ->
+            SearchUsersAdapter.OnUserClickListener(){user, position,btnText ->
                 lifecycleScope.launch {
+                    val stringAdd = resources.getString(R.string.add)
+                    if (btnText == stringAdd){
                     viewModel.addUserToFriends(user)
+                    }else {
+                        viewModel.removeUserFromFriends(user)
+                    }
                 }
             }
         )

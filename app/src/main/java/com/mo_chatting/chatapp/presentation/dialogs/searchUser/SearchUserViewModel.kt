@@ -40,4 +40,11 @@ class SearchUserViewModel @Inject constructor(private val repository: SearchUser
             repository.addUserToFriends(currentUserId,user)
         }
     }
+
+    suspend fun removeUserFromFriends(user: User) {
+        val currentUserId = dataStore.getUserId()
+        if (currentUserId != null) {
+            repository.removeUserFromFriends(currentUserId,user.userId,user.token)
+        }
+    }
 }

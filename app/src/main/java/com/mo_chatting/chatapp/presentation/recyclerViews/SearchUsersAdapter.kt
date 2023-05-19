@@ -59,8 +59,15 @@ class SearchUsersAdapter(
         holder.binding.apply {
             btnAdd.apply {
                 setOnClickListener {
-                    onClickListener.onAddClick(currentUser, position)
-                    it.visibility = View.GONE
+                    val btnText =holder.binding.btnAdd.text.toString()
+                    val stringAdd = resources.getString(R.string.add)
+                    val stringUndo = resources.getString(R.string.undo)
+                    onClickListener.onAddClick(currentUser, position,btnText)
+                    if ( btnText == stringAdd){
+                        holder.binding.btnAdd.text = stringUndo
+                    }else{
+                        holder.binding.btnAdd.text = stringAdd
+                    }
                 }
             }
         }
@@ -76,10 +83,10 @@ class SearchUsersAdapter(
 
 
     class OnUserClickListener(
-        private val clickListener: (user: User, position: Int) -> Unit
+        private val clickListener: (user: User, position: Int, btnText:String) -> Unit
 
     ) {
-        fun onAddClick(user: User, position: Int) = clickListener(user, position)
+        fun onAddClick(user: User, position: Int,btnText:String) = clickListener(user, position,btnText)
     }
 }
 

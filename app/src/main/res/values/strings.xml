@@ -47,4 +47,6 @@
     <string name="show">show</string>
     <string name="change">change</string>
     <string name="enter_user_id">Enter user id</string>
+    <string name="add">add</string>
+    <string name="undo">undo</string>
 </resources>
