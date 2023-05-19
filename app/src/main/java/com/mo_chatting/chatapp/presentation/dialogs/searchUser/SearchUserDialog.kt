@@ -18,6 +18,7 @@ import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import com.mo_chatting.chatapp.presentation.recyclerViews.SearchUsersAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SearchUserDialog : DialogFragment() {
@@ -59,13 +60,12 @@ class SearchUserDialog : DialogFragment() {
     }
 
     private fun setUpRecyclerView(users: ArrayList<User>) {
-      //  Toast.makeText(requireContext(), users.size.toString(), Toast.LENGTH_SHORT).show()
         adapter = SearchUsersAdapter(
             viewModel.users.value!!,
             SearchUsersAdapter.OnUserClickListener(){user, position ->
-                viewModel.addUserToFriends(user)
-                Toast.makeText(requireContext(), user.userName, Toast.LENGTH_SHORT).show()
-
+                lifecycleScope.launch {
+                    viewModel.addUserToFriends(user)
+                }
             }
         )
         binding.rvSearchUsers.adapter = adapter

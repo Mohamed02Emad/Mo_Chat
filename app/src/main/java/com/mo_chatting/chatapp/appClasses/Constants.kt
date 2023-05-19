@@ -2,6 +2,7 @@ package com.mo_chatting.chatapp.appClasses
 
 object Constants {
     val roomsCollection = "CHAT_ROOMS"
+    val directChatCollection = "DirectChats"
     val roomsChatCollection = "GroupChats"
     val users = "USERS"
     val TAG = "mohamed"

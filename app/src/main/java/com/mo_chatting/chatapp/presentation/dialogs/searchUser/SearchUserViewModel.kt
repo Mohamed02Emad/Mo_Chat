@@ -19,11 +19,11 @@ class SearchUserViewModel @Inject constructor(private val repository: SearchUser
 
     suspend fun getUsersById(userId: String) {
         val searchResult = repository.getUsersWithId(userId)
-        val currentUserId = dataStore.getUserId()
+        val currentUserId = dataStore.getUserId()!!
+        val currentUser = repository.getUser(currentUserId)
         for (user in searchResult){
-            if (user.userId == currentUserId){
+            if (user.userId == currentUserId || currentUser!!.friends.contains(user.userId)){
                 searchResult.remove(user)
-                break
             }
         }
             setUsers(searchResult)
@@ -34,7 +34,10 @@ class SearchUserViewModel @Inject constructor(private val repository: SearchUser
         _users.postValue(users)
     }
 
-    fun addUserToFriends(user: User) {
-        repository.addUserToFriends(user.userId)
+    suspend fun addUserToFriends(user: User) {
+        val currentUserId = dataStore.getUserId()
+        if (currentUserId != null) {
+            repository.addUserToFriends(currentUserId,user)
+        }
     }
 }
