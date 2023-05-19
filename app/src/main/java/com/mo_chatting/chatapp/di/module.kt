@@ -11,6 +11,7 @@ import com.mo_chatting.chatapp.data.fireBaseDataSource.FireBaseRoomsDataSource
 import com.mo_chatting.chatapp.data.repositories.DirectChatRepository
 import com.mo_chatting.chatapp.data.repositories.MessagesRepository
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
+import com.mo_chatting.chatapp.data.repositories.SearchUserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,8 +45,19 @@ object module {
     fun provideDirectChatRepository(
         firebaseFireStore: FirebaseFirestore,
         firebaseAuth: FirebaseAuth,
-        @ApplicationContext appContext: Context
+        @ApplicationContext appContext: Context,
+        fireBaseRoomsDataSource: FireBaseRoomsDataSource
     ): DirectChatRepository = DirectChatRepository(
+        firebaseFireStore, firebaseAuth,
+        appContext,fireBaseRoomsDataSource
+    )
+    @Singleton
+    @Provides
+    fun provideSearchUserRepository(
+        firebaseFireStore: FirebaseFirestore,
+        firebaseAuth: FirebaseAuth,
+        @ApplicationContext appContext: Context
+    ): SearchUserRepository = SearchUserRepository(
         firebaseFireStore, firebaseAuth,
         appContext
     )

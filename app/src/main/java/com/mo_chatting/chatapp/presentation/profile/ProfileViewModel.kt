@@ -187,6 +187,7 @@ class ProfileViewModel @Inject constructor(
         map["token"] = user.token
         map["userAbout"] = user.userAbout
         map["imageUrl"] = user.imageUrl
+        map["friends"] = user.friends
         return map
     }
 }

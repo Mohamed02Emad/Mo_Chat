@@ -59,7 +59,6 @@ class RoomIdDialog(val roomId: String) : DialogFragment() {
 
         // Set the ClipData object as the primary clip on the clipboard
         clipboardManager.setPrimaryClip(clipData)
-
     }
 
     private fun setDimentions() {

@@ -1,15 +1,19 @@
 package com.mo_chatting.chatapp.presentation.recyclerViews
 
+import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.DirectContact
-import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.RoomCardBinding
 
 class DirectChatsAdapter(
     private val list: ArrayList<DirectContact>,
     private val onClickListener:OnChatClickListener,
+    private val currentUserName:String
 ) :
     RecyclerView.Adapter<DirectChatsAdapter.HomeViewHolder>() {
 
@@ -29,15 +33,30 @@ class DirectChatsAdapter(
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentChat = list[position]
         holder.binding.apply {
-            tvRoomName.text = currentChat.name
-            tvLastMessage.text = currentChat.lastMessage
+            ivRoomType.visibility= View.GONE
+
+            val chatName = if (currentChat.user1 == currentUserName){
+                setImage(currentChat.user2Image,holder)
+                currentChat.user2
+            }else{
+                setImage(currentChat.user1Image, holder)
+                currentChat.user1
+            }
+            tvRoomName.text = chatName.trimEnd().trimStart()
+            tvLastMessage.text = ""
         }
-        setImage()
         setCardOnClicks(holder, currentChat, position)
     }
 
-    private fun setImage() {
-        //TODO("Not yet implemented")
+    private fun setImage(imgUrl: String, holder: HomeViewHolder) {
+        val img : Uri? = Uri.parse(imgUrl)
+        Glide.with(holder.binding.roomTypeBackground)
+            .load(img)
+            .placeholder(R.drawable.ic_profile)
+            .error(R.drawable.ic_profile)
+            .override(200, 200)
+            .centerCrop()
+            .into(holder.binding.roomTypeBackground)
     }
 
     private fun setCardOnClicks(
@@ -50,7 +69,6 @@ class DirectChatsAdapter(
                 setOnClickListener {
                     onClickListener.onRoomClick(currentChat, position)
                 }
-
                 setOnLongClickListener {
                     onClickListener.onRoomLongClick(currentChat, position)
                 }

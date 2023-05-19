@@ -112,6 +112,7 @@
         tools:text="123456789" />
 
 
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="0dp"
@@ -124,6 +125,18 @@
         app:layout_constraintStart_toStartOf="@id/btn_save"
         app:layout_constraintTop_toTopOf="@id/btn_save" />
 
+    <ImageView
+        android:id="@+id/btn_copy"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:padding="5dp"
+        android:src="@drawable/ic_copy"
+        app:layout_constraintBottom_toBottomOf="@id/et_user_id"
+        app:layout_constraintEnd_toEndOf="@id/et_user_id"
+        app:layout_constraintTop_toTopOf="@id/et_user_id"
+        app:tint="@color/main_text" />
 
     <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
         android:id="@+id/btn_save"

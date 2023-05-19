@@ -62,8 +62,10 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         lifecycleScope.launch {
+            while (viewModel.firebaseAuth.currentUser == null ){
+
+            }
             viewModel.setupUserId()
             setOnClicks()
             setupRecyclerView()
