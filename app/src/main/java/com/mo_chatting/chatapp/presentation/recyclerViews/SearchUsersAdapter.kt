@@ -46,7 +46,7 @@ class SearchUsersAdapter(
             .load(img)
             .placeholder(R.drawable.ic_profile)
             .error(R.drawable.ic_profile)
-            .override(35, 35)
+            .override(150, 150)
             .centerCrop()
             .into(holder.binding.ivUserImage)
     }

@@ -14,7 +14,9 @@ data class DirectContact(
     val users : ArrayList<String> = ArrayList(),
     var hasChat : Boolean = false,
     var user1 : String = "",
-    var user2 : String = ""
+    var user2 : String = "",
+    var user1Image : String = "",
+    var user2Image : String = ""
 
 //    var lastMessage:String = "" ,
 //    var lastMessageData : String = ""

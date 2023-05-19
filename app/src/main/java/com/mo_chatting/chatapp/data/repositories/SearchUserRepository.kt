@@ -24,7 +24,7 @@ class SearchUserRepository(
         currentUser.friends.add(newUser.userId)
         val updatedUser = mapUser(currentUser)
         updateUser(updatedUser, currentUserId)
-        createDirectChatForUsers(currentUser.token, newUser.token, currentUserId, newUser.userId,currentUser.userName,newUser.userName)
+        createDirectChatForUsers(currentUser.token, newUser.token, currentUserId, newUser.userId,currentUser.userName,newUser.userName,currentUser.imageUrl , newUser.imageUrl)
     }
 
     suspend fun removeUserFromFriends(
@@ -69,7 +69,9 @@ class SearchUserRepository(
         currentUserId: String,
         newUserId: String,
         currentUserName: String,
-        newUserName: String
+        newUserName: String,
+        currentUserimageUrl: String,
+        newUserimageUrl: String
     ) {
         var max: String
         var min: String
@@ -83,7 +85,7 @@ class SearchUserRepository(
         val users = ArrayList<String>()
         users.add(currentUserId)
         users.add(newUserId)
-        val directChat = DirectContact(min + max, users,false,currentUserName,newUserName)
+        val directChat = DirectContact(min + max, users,false,currentUserName,newUserName,currentUserimageUrl,newUserimageUrl)
         directChatsRef.add(directChat).await()
     }
 
