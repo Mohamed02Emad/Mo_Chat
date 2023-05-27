@@ -239,4 +239,8 @@ class ChatFragmentViewModel @Inject constructor(
         return thisRoom
     }
 
+    suspend fun getCurrentUserImage(): String {
+          return dataStore.getUserImage()
+    }
+
 }

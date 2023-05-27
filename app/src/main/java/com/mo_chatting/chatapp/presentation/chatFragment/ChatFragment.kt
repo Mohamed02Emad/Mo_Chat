@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
@@ -92,8 +93,8 @@ class ChatFragment : Fragment() {
             }, { message, position ->
                 onChatLongClick(message, position)
                 false
-            }, { userId, userName ->
-                messageUserNameClicked(userId, userName)
+            }, { userId, userName, isMe ->
+                messageUserNameClicked(userId, userName, isMe)
             }, { imageUri ->
                 messageImageClicked(imageUri)
             }), viewModel.getUserId()
@@ -192,9 +193,20 @@ class ChatFragment : Fragment() {
         userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
-    private fun messageUserNameClicked(userId: String, userName: String) {
-        val userImageDialog = UserImageDialog(userId, userName)
-        userImageDialog.show(requireActivity().supportFragmentManager, null)
+    private fun messageUserNameClicked(userId: String, userName: String, isMe: Boolean) {
+        lifecycleScope.launch {
+            val imgUri = if (isMe) {
+                Uri.parse(viewModel.getCurrentUserImage())
+            } else {
+                null
+            }
+            val userImageDialog = UserImageDialog(
+                userId = userId,
+                userName = userName,
+                myProfileUri = imgUri
+            )
+            userImageDialog.show(requireActivity().supportFragmentManager, null)
+        }
     }
 
     private fun onChatLongClick(message: Message, position: Int) {
@@ -324,10 +336,11 @@ class ChatFragment : Fragment() {
         singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    val singlePhotoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+    val singlePhotoPicker =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 CoroutineScope(Dispatchers.Main).launch {
-                  //  showToast(uri.toString())
+                    //  showToast(uri.toString())
                     viewModel.uri.value = uri
                     withContext(Dispatchers.IO) {
                         viewModel.uploadImage(thisRoom)
@@ -373,7 +386,7 @@ class ChatFragment : Fragment() {
 
         val button1 = popupView.findViewById<LinearLayout>(R.id.gallery_item)
         button1.setOnClickListener {
-                startPhotoPicker()
+            startPhotoPicker()
             popupWindow.dismiss()
         }
 
