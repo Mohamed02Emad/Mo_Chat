@@ -14,6 +14,7 @@ import androidx.paging.cachedIn
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
+import com.mo_chatting.chatapp.appClasses.getCurrentDate
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.MessageType
@@ -26,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -163,7 +165,7 @@ class ChatFragmentViewModel @Inject constructor(
             message.messageid = getMessageId()
             repository.addMesssageToChat(room, message)
         } catch (e: Exception) {
-            // Log.d(Constants.TAG, "uploadImage: " + e.message.toString())
+           //  Log.d("mohamed", "uploadImage: " + e.message.toString())
         }
     }
 

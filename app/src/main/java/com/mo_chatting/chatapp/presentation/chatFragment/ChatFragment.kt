@@ -174,7 +174,7 @@ class ChatFragment : Fragment() {
             }
         }
 
-        firebaseStore.collection("${Constants.roomsChatCollection}${thisRoom.roomId}")
+        firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
                 error?.let {
                     return@addSnapshotListener
@@ -324,12 +324,14 @@ class ChatFragment : Fragment() {
         singlePhotoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    val singlePhotoPicker =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+    val singlePhotoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 CoroutineScope(Dispatchers.Main).launch {
+                  //  showToast(uri.toString())
                     viewModel.uri.value = uri
-                    viewModel.uploadImage(thisRoom)
+                    withContext(Dispatchers.IO) {
+                        viewModel.uploadImage(thisRoom)
+                    }
                 }
             }
         }
@@ -389,7 +391,6 @@ class ChatFragment : Fragment() {
 
         popupWindow.showAsDropDown(binding.attachMenuView)
     }
-
 
     private fun showToast(string: String) {
         CoroutineScope(Dispatchers.Main).launch {
