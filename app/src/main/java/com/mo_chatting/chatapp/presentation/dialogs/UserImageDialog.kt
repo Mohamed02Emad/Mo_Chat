@@ -27,8 +27,10 @@ class UserImageDialog(
     val userName: String,
     val imageUri: String? = null,
     val isImageView: Boolean = false,
-    val imgFromProfile: Uri? = null
+    val imgFromProfile: Uri? = null,
+    val myProfileUri : Uri? = null
 ) : DialogFragment() {
+
     @Inject
     lateinit var firestore: FirebaseFirestore
 
@@ -37,7 +39,7 @@ class UserImageDialog(
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentUserImageDialogBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -51,11 +53,15 @@ class UserImageDialog(
     private fun setViews() {
         CoroutineScope(Dispatchers.IO).launch {
             val uri = if (isImageView) {
-                getImage(imageUri)
+                Uri.parse(imageUri)
             } else if (imgFromProfile != null) {
                 imgFromProfile
             } else {
-                getUserImage()
+                if (myProfileUri != null) {
+                    myProfileUri
+                }else {
+                    getUserImage()
+                }
             }
             withContext(Dispatchers.Main) {
                 Glide.with(requireContext())
@@ -65,23 +71,6 @@ class UserImageDialog(
             }
 
         }
-    }
-
-    private suspend fun getImage(messageImage: String?): Uri? {
-        var uriToReturn: Uri? = null
-        try {
-
-            val storageRef = FirebaseStorage.getInstance()
-                .getReference(messageImage.toString())
-            storageRef.downloadUrl.apply {
-                addOnSuccessListener { downloadUri ->
-                    uriToReturn = downloadUri
-                }
-                await()
-            }
-        } catch (_: Exception) {
-        }
-        return uriToReturn
     }
 
     private fun setDimentions() {
@@ -107,4 +96,5 @@ class UserImageDialog(
         }
         return uriToReturn
     }
+
 }

@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
@@ -92,8 +93,8 @@ class ChatFragment : Fragment() {
             }, { message, position ->
                 onChatLongClick(message, position)
                 false
-            }, { userId, userName ->
-                messageUserNameClicked(userId, userName)
+            }, { userId, userName, isMe ->
+                messageUserNameClicked(userId, userName, isMe)
             }, { imageUri ->
                 messageImageClicked(imageUri)
             }), viewModel.getUserId()
@@ -174,7 +175,7 @@ class ChatFragment : Fragment() {
             }
         }
 
-        firebaseStore.collection("${Constants.roomsChatCollection}${thisRoom.roomId}")
+        firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
                 error?.let {
                     return@addSnapshotListener
@@ -192,9 +193,20 @@ class ChatFragment : Fragment() {
         userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
-    private fun messageUserNameClicked(userId: String, userName: String) {
-        val userImageDialog = UserImageDialog(userId, userName)
-        userImageDialog.show(requireActivity().supportFragmentManager, null)
+    private fun messageUserNameClicked(userId: String, userName: String, isMe: Boolean) {
+        lifecycleScope.launch {
+            val imgUri = if (isMe) {
+                Uri.parse(viewModel.getCurrentUserImage())
+            } else {
+                null
+            }
+            val userImageDialog = UserImageDialog(
+                userId = userId,
+                userName = userName,
+                myProfileUri = imgUri
+            )
+            userImageDialog.show(requireActivity().supportFragmentManager, null)
+        }
     }
 
     private fun onChatLongClick(message: Message, position: Int) {
@@ -328,8 +340,11 @@ class ChatFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 CoroutineScope(Dispatchers.Main).launch {
+                    //  showToast(uri.toString())
                     viewModel.uri.value = uri
-                    viewModel.uploadImage(thisRoom)
+                    withContext(Dispatchers.IO) {
+                        viewModel.uploadImage(thisRoom)
+                    }
                 }
             }
         }
@@ -371,7 +386,7 @@ class ChatFragment : Fragment() {
 
         val button1 = popupView.findViewById<LinearLayout>(R.id.gallery_item)
         button1.setOnClickListener {
-                startPhotoPicker()
+            startPhotoPicker()
             popupWindow.dismiss()
         }
 
@@ -389,7 +404,6 @@ class ChatFragment : Fragment() {
 
         popupWindow.showAsDropDown(binding.attachMenuView)
     }
-
 
     private fun showToast(string: String) {
         CoroutineScope(Dispatchers.Main).launch {

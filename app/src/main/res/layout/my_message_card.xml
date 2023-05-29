@@ -37,19 +37,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="mohamed" />
-        <ImageView
-            android:id="@+id/message_image"
-            android:layout_width="240dp"
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@id/tv_message_owner"
-            android:layout_marginBottom="4dp"
-            app:layout_constraintBottom_toTopOf="@id/tv_message_date"
-            android:visibility="gone"
-            />
+            app:cardCornerRadius="15dp"
+            android:layout_marginTop="4dp"
+            app:cardElevation="0dp"
+            android:elevation="0dp"
+            >
+
+            <ImageView
+                android:id="@+id/message_image"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:elevation="0dp"
+                android:adjustViewBounds="true"
+                android:visibility="gone" />
+        </androidx.cardview.widget.CardView>
 
         <View
             android:id="@+id/line"
@@ -80,9 +90,14 @@
             android:layout_marginTop="4dp"
             android:textColor="#6A6161"
             android:textSize="8sp"
+            android:elevation="1dp"
+            android:paddingHorizontal="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="20/5/2022 , 3:30" />
+            tools:text="20/5/2022 , 3:30"
+            android:background="@color/my_message"
+            android:alpha="1"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

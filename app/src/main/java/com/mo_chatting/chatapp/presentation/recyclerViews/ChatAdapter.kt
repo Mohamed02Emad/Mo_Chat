@@ -69,7 +69,8 @@ class ChatAdapter(
                     if (currentMessage.messageOwnerId != "firebase") {
                         onClickListener.onUserNameClicked(
                             currentMessage.messageOwnerId,
-                            currentMessage.messageOwner
+                            currentMessage.messageOwner,
+                            currentMessage.messageOwnerId == userId
                         )
                     }
                 }
@@ -121,7 +122,8 @@ class ChatAdapter(
                     if (currentMessage.messageOwnerId != "firebase") {
                         onClickListener.onUserNameClicked(
                             currentMessage.messageOwnerId,
-                            currentMessage.messageOwner
+                            currentMessage.messageOwner,
+                            currentMessage.messageOwnerId == userId
                         )
                     }
                 }
@@ -189,13 +191,13 @@ class ChatAdapter(
     class OnChatClickListener(
         private val clickListener: (message: Message, position: Int) -> Unit,
         private val longClickListener: (message: Message, position: Int) -> Boolean,
-        private val userNameClickListener: (userId: String, userName: String) -> Unit,
+        private val userNameClickListener: (userId: String, userName: String, isMe : Boolean) -> Unit,
         private val ImageClicked: (messageImage: String?) -> Unit
     ) {
         fun onChatClick(message: Message, position: Int) = clickListener(message, position)
         fun onRoomLongClick(message: Message, position: Int) = longClickListener(message, position)
-        fun onUserNameClicked(userId: String, userName: String) =
-            userNameClickListener(userId, userName)
+        fun onUserNameClicked(userId: String, userName: String , isMe: Boolean) =
+            userNameClickListener(userId, userName , isMe)
 
         fun onImageClicked(messageImage: String?) = ImageClicked(messageImage)
     }
