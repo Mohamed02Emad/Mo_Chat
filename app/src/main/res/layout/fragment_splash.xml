@@ -7,12 +7,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.splash.SplashFragment">
 
-  <com.airbnb.lottie.LottieAnimationView
-      android:id="@+id/splash_animation"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      app:lottie_autoPlay="true"
-      app:lottie_rawRes="@raw/chat_anim"
-      />
+<!--  <com.airbnb.lottie.LottieAnimationView-->
+<!--      android:id="@+id/splash_animation"-->
+<!--      android:layout_width="match_parent"-->
+<!--      android:layout_height="match_parent"-->
+<!--      app:lottie_autoPlay="true"-->
+<!--      app:lottie_rawRes="@raw/chat_anim"-->
+<!--      />-->
+  <ImageView
+      android:layout_width="120dp"
+      android:layout_height="wrap_content"
+      android:layout_marginHorizontal="20dp"
+      android:adjustViewBounds="true"
+      android:layout_gravity="center"
+      android:src="@drawable/baseline_message_24"
+      app:tint="@color/main_text"
+    />
 
 </FrameLayout>

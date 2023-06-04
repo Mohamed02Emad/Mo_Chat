@@ -10,12 +10,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mo_chatting.chatapp.appClasses.mapDirectChatToRoom
 import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.databinding.FragmentDirectChatsBinding
 import com.mo_chatting.chatapp.presentation.dialogs.searchUser.SearchUserDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.DirectChatsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class DirectChats : Fragment() {
@@ -60,7 +63,9 @@ class DirectChats : Fragment() {
             list!!,
             DirectChatsAdapter.OnChatClickListener(
                 { chat, position ->
-                    //chat clicked
+                    lifecycleScope.launch {
+                        chatClicked(chat)
+                    }
                 },
                 { chat, position ->
                     //chat long click
@@ -80,6 +85,13 @@ class DirectChats : Fragment() {
         binding.rvDirectChats.adapter = adapter
         binding.rvDirectChats.layoutManager = LinearLayoutManager(requireActivity())
 
+    }
+
+    private suspend fun chatClicked(chat: DirectContact) {
+       val room = mapDirectChatToRoom(chat , viewModel.getUserName())
+        withContext(Dispatchers.Main){
+            findNavController().navigate(DirectChatsDirections.actionDirectChatsToChatFragment(room))
+        }
     }
 
     private fun setOnClicks() {

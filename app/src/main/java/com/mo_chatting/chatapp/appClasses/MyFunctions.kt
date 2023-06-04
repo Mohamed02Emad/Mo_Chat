@@ -4,7 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import androidx.room.PrimaryKey
+import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.data.models.NotificationData
+import com.mo_chatting.chatapp.data.models.Room
 import java.util.*
 
 fun drawableToBitmap(drawable: Drawable): Bitmap? {
@@ -42,7 +45,7 @@ fun mapNotificationData(map: Map<String, String>): NotificationData {
     val userName = map["userName"] ?: ""
     val roomId = map["roomId"] ?: ""
     val ownerId = map["ownerId"] ?: ""
-    return NotificationData(title, body, userName, roomId , ownerId)
+    return NotificationData(title, body, userName, roomId, ownerId)
 }
 
 fun getCurrentDate(): String {
@@ -58,4 +61,33 @@ fun getCurrentDate(): String {
         hour = "0" + hour
     }
     return "$day/$month\n$hour:$minute"
+}
+
+fun mapDirectChatToRoom(directChat: DirectContact, currentUserName: String): Room {
+    var room = Room()
+    room.apply {
+        roomName = if (directChat.user1 == currentUserName) {
+            imgUrl = directChat.user2Image
+            directChat.user2.trimEnd().trimStart()
+        } else {
+            imgUrl = directChat.user1Image
+            directChat.user1.trimEnd().trimStart()
+        }
+        roomPinState = directChat.chatPinState
+        roomTypeImage = 100
+        roomBackgroundColor = directChat.chatBackgroundColor
+        roomId = directChat.roomId
+        roomOwnerId = "No Owner"
+        hasPassword = false
+        password = ""
+        lastMessage = directChat.lastMessage
+        lastMessageData = directChat.lastMessageData
+        listOFUsers = directChat.users
+        listOFUsersNames = ArrayList<String>().apply {
+            add(directChat.user1)
+            add(directChat.user2)
+        }
+        isDirectChat = true
+    }
+    return room
 }

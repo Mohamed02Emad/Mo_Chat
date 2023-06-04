@@ -159,12 +159,31 @@ class ProfileViewModel @Inject constructor(
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     user.updateProfile(profileUpdates).await()
+                    updateNameAtFirebase(newName)
                     updateRoomByName(newName, firebaseAuth.currentUser!!.uid)
                     dataStore.setUserName(newName)
                 } catch (_: Exception) {
 
                 }
             }
+        }
+    }
+
+    private suspend fun updateNameAtFirebase(newName: String) {
+        val user = getUser(dataStore.getUserId()!!)!!
+        user.userName = newName
+        val mappedUser = mapUser(user)
+        try {
+            val userQuery = usersRef
+                .whereEqualTo("userId", user.userId)
+                .get()
+                .await()
+            if (userQuery.documents.isNotEmpty()) {
+                for (document in userQuery) {
+                    usersRef.document(document.id).set(mappedUser, SetOptions.merge())
+                }
+            }
+        } catch (_: Exception) {
         }
     }
 

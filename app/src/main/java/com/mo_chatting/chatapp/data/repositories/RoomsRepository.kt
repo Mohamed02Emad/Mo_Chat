@@ -33,6 +33,8 @@ class RoomsRepository(
 
     private val allRoomsRef = firebaseStore.collection(roomsCollection)
     private val db = MessagesDataBase.getInstance(application)
+    private val usersRef = firebaseStore.collection(Constants.users)
+
 
 
     suspend fun createNewRoom(room: Room) {
@@ -293,5 +295,7 @@ class RoomsRepository(
                 }
             }
     }
+
+
 
 }

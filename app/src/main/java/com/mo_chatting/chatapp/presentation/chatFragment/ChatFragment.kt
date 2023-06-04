@@ -162,8 +162,12 @@ class ChatFragment : Fragment() {
 
             pushViewsToTopOfKeyBoard()
 
-            btnRoomInfo.setOnClickListener {
-                showMenu(it!!)
+            if (thisRoom.isDirectChat) {
+                btnRoomInfo.visibility = View.GONE
+            } else {
+                btnRoomInfo.setOnClickListener {
+                    showMenu(it!!)
+                }
             }
 
             clipCard.setOnClickListener {
@@ -174,8 +178,13 @@ class ChatFragment : Fragment() {
                 }
             }
         }
+        val roomType = if (thisRoom.isDirectChat) {
+            Constants.directChatCollection
+        } else {
+            Constants.roomsChatCollection
+        }
 
-        firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${thisRoom.roomId}")
+        firebaseStore.collection("Chats/${roomType}/${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
                 error?.let {
                     return@addSnapshotListener

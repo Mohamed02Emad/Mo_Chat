@@ -14,48 +14,76 @@ import com.mo_chatting.chatapp.data.source.messagesRoom.MessageDao
 import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
 import kotlinx.coroutines.tasks.await
 
-class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth: FirebaseAuth , val application: Context) {
+class MessagesRepository(
+    val firebaseStore: FirebaseFirestore,
+    val firebaseAuth: FirebaseAuth,
+    val application: Context
+) {
 
-    private val allRoomsRef = firebaseStore.collection(Constants.roomsCollection)
-
+    private val usersRef = firebaseStore.collection(Constants.users)
     val db = MessagesDataBase.getInstance(application)
 
-    suspend fun insertMessageToDatabase(message: Message){
+    suspend fun insertMessageToDatabase(message: Message) {
         db.myDao().insert(message)
     }
 
-    suspend fun deleteMessageFromDatabase(message: Message){
+    suspend fun deleteMessageFromDatabase(message: Message) {
         db.myDao().delete(message)
     }
-    fun getDao():MessageDao = db.myDao()
+
+    fun getDao(): MessageDao = db.myDao()
     suspend fun addMesssageToChat(room: Room, message: Message) {
         try {
-            val msgRef = firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
+            val roomType = if (room.isDirectChat){
+                Constants.directChatCollection
+            }else{
+                Constants.roomsChatCollection
+            }
+            val msgRef =
+                firebaseStore.collection("Chats/${roomType}/${room.roomId}")
             msgRef.add(message).await()
-            sentNotificationToRoomMembers(message,room,firebaseAuth.currentUser!!.displayName!!)
-            var lastMessage = if (message.messageType == MessageType.TEXT){
+            sentNotificationToRoomMembers(message, room, firebaseAuth.currentUser!!.displayName!!)
+            var lastMessage = if (message.messageType == MessageType.TEXT) {
                 message.messageText
-            }else {
+            } else {
                 "Image"
             }
             room.lastMessage = lastMessage
-            updateRoom(room , true)
+            updateRoom(room, true)
         } catch (_: Exception) {
             deleteMessageFromDatabase(message)
         }
     }
 
-    private fun sentNotificationToRoomMembers(message : Message , room : Room , userName: String ){
+
+    private fun sentNotificationToRoomMembers(message: Message, room: Room, userName: String) {
         val destination = "/topics/${room.roomId}"
-        val body = if (message.messageType == MessageType.TEXT){message.messageText}else "Sent a photo"
-        sendFireBaseNotification(PushNotification(NotificationData(room.roomName,body,userName,room.roomId,firebaseAuth.currentUser!!.uid),destination))
+        val body = if (message.messageType == MessageType.TEXT) {
+            message.messageText
+        } else "Sent a photo"
+        sendFireBaseNotification(
+            PushNotification(
+                NotificationData(
+                    room.roomName,
+                    body,
+                    userName,
+                    room.roomId,
+                    firebaseAuth.currentUser!!.uid
+                ), destination
+            )
+        )
     }
 
 
     suspend fun getServerAllMessagesForThisRoom(room: Room): ArrayList<Message> {
         val arrayList = ArrayList<Message>()
         try {
-            val msgRef = firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
+            val roomType = if (room.isDirectChat){
+                Constants.directChatCollection
+            }else{
+                Constants.roomsChatCollection
+            }
+            val msgRef = firebaseStore.collection("Chats/${roomType}/${room.roomId}")
             val result = msgRef.get().await()
             for (i in result.documents)
                 arrayList.add(i.toObject<Message>()!!)
@@ -73,18 +101,30 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
         return arrayList
     }
 
-     fun messageDoesNotExist(message: Message): Boolean {
-       val message = db.myDao().getExactMessage(message.messageRoom,message.messageOwnerId,message.timeWithMillis)
+    fun messageDoesNotExist(message: Message): Boolean {
+        val message = db.myDao()
+            .getExactMessage(message.messageRoom, message.messageOwnerId, message.timeWithMillis)
         return message.isEmpty()
     }
 
     fun getLastMessageId(room: Room): Long {
-        return  db.myDao().getMessagesByRoomID(room.roomId).last().messageid ?: 0
+        return try {
+            db.myDao().getMessagesByRoomID(room.roomId).last().messageid ?: 0
+        }catch (e: Exception) {
+            0
+        }
     }
 
     private suspend fun updateRoom(room: Room, fromChat: Boolean) {
         val map = mapMyRoom(room, fromChat)
         try {
+            val roomType = if (room.isDirectChat){
+                Constants.directChatCollection
+            }else{
+                Constants.roomsChatCollection
+            }
+             val allRoomsRef = firebaseStore.collection(roomType)
+
             val roomQuery = allRoomsRef
                 .whereEqualTo("roomId", room.roomId)
                 .get()
@@ -100,22 +140,31 @@ class MessagesRepository(val firebaseStore: FirebaseFirestore, val firebaseAuth:
 
     }
 
-    private fun mapMyRoom(room: Room, fromChat: Boolean): Map<String, Any> {
+    private fun mapMyRoom(updatedRoom: Room, fromChat: Boolean): Map<String, Any> {
         val map = mutableMapOf<String, Any>()
-        map["roomName"] = room.roomName
-        map["roomPinState"] = room.roomPinState
-        map["roomTypeImage"] = room.roomTypeImage
-        map["roomId"] = room.roomId
-        map["roomOwnerId"] = room.roomOwnerId
-        map["hasPassword"] = room.hasPassword
-        map["password"] = room.password
-        map["roomBackgroundColor"] = room.roomBackgroundColor
-        map["lastMessageData"] = room.lastMessageData
-        map["lastMessage"] = room.lastMessage
-        if (!fromChat) {
-            map["listOFUsers"] = room.listOFUsers
-            map["listOFUsersNames"] = room.listOFUsersNames
+         val room =if (!updatedRoom.isDirectChat) {
+            updatedRoom
+        }else{
+           // getCachedDirectChat(updatedRoom.roomId)
+             updatedRoom
         }
+            map["roomName"] = room.roomName
+            map["roomPinState"] = room.roomPinState
+            map["roomTypeImage"] = room.roomTypeImage
+            map["roomId"] = room.roomId
+            map["roomOwnerId"] = room.roomOwnerId
+            map["hasPassword"] = room.hasPassword
+            map["password"] = room.password
+            map["roomBackgroundColor"] = room.roomBackgroundColor
+            map["lastMessageData"] = room.lastMessageData
+            map["lastMessage"] = room.lastMessage
+            if (!fromChat) {
+                map["listOFUsers"] = room.listOFUsers
+                map["listOFUsersNames"] = room.listOFUsersNames
+            }
+
         return map
     }
+
+
 }

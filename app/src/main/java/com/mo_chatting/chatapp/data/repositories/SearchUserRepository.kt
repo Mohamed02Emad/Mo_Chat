@@ -7,6 +7,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.models.DirectContact
+import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.User
 import kotlinx.coroutines.tasks.await
 
@@ -22,8 +23,11 @@ class SearchUserRepository(
     suspend fun addUserToFriends(currentUserId: String, newUser: User) {
         val currentUser = getUser(currentUserId) ?: return
         currentUser.friends.add(newUser.userId)
+        newUser.friends.add(currentUser.userId)
         val updatedUser = mapUser(currentUser)
+        val updatedUser2 = mapUser(newUser)
         updateUser(updatedUser, currentUserId)
+        updateUser(updatedUser2, newUser.userId)
         createDirectChatForUsers(currentUser.token, newUser.token, currentUserId, newUser.userId,currentUser.userName,newUser.userName,currentUser.imageUrl , newUser.imageUrl)
     }
 
@@ -87,6 +91,22 @@ class SearchUserRepository(
         users.add(newUserId)
         val directChat = DirectContact(min + max, users,false,currentUserName,newUserName,currentUserimageUrl,newUserimageUrl)
         directChatsRef.add(directChat).await()
+        createInitialMessage(directChat.roomId)
+    }
+
+    private suspend fun createInitialMessage(roomId: String) {
+        val msgRef = firebaseFireStore.collection("Chats/${Constants.directChatCollection}/${roomId}")
+
+        msgRef.add(
+            Message(
+                timeWithMillis = System.currentTimeMillis().toString(),
+                messageOwner = "Mo Chat",
+                messageOwnerId = "firebase",
+                messageRoom = roomId,
+                messageText = firebaseAuth.currentUser!!.displayName.toString() + " wants to talk with you ",
+                messageDateAndTime = "--/--/----  --:--"
+            )
+        ).await()
     }
 
     private suspend fun deleteDirectChatForUser(

@@ -21,5 +21,7 @@ data class Room (
     var lastMessage:String = "" ,
     var lastMessageData : String = "",
     var listOFUsers :ArrayList<String> = ArrayList(),
-    var listOFUsersNames :ArrayList<String> = ArrayList()
+    var listOFUsersNames :ArrayList<String> = ArrayList(),
+    var isDirectChat :Boolean = false,
+    var imgUrl :String? = null
         ): Parcelable

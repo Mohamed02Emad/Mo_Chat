@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.User
 import com.mo_chatting.chatapp.databinding.SearchUserCardBinding

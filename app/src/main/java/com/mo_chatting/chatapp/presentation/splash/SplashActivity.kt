@@ -2,6 +2,7 @@ package com.mo_chatting.chatapp.presentation.splash
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
