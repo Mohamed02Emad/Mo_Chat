@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants
@@ -83,7 +84,50 @@ class ChatFragment : Fragment() {
     private fun setViews() {
         binding.tvRoomName.text = thisRoom.roomName
         setBackground(thisRoom.roomBackgroundColor)
+        if (thisRoom.isDirectChat){
+            val img : Uri? = Uri.parse(thisRoom.imgUrl)
+            Glide.with(requireContext())
+                .load(img)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .override(150, 150)
+                .centerCrop()
+                .into(binding.chatImg)
+        }else{
+            setGroupImage()
+        }
 
+    }
+
+    private fun setGroupImage() {
+        val image = when (thisRoom.roomTypeImage) {
+            0 -> {
+                R.drawable.ic_family
+            }
+            1 -> {
+                R.drawable.ic_technology
+            }
+            2 -> {
+                R.drawable.ic_talk
+            }
+            3 -> {
+                R.drawable.ic_study
+            }
+            4 -> {
+                R.drawable.ic_sport
+
+            }
+            5 -> {
+                R.drawable.ic_heart
+            }
+            6 -> {
+                R.drawable.ic_games
+            }
+            else -> {
+                R.drawable.ic_food
+            }
+        }
+        binding.chatImg.setImageResource(image)
     }
 
     private suspend fun setupRecyclerView() {

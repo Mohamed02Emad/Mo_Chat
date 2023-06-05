@@ -29,19 +29,44 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Room 1" />
 
-    <com.google.android.material.imageview.ShapeableImageView
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/btn_back_arrow"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/chat_back_button"
         android:elevation="1dp"
-        android:layout_marginStart="@dimen/corners_space"
-        android:background="?attr/selectableItemBackground"
-        android:src="@drawable/baseline_arrow_back_24"
+        android:padding="2dp"
         app:layout_constraintBottom_toBottomOf="@id/tv_room_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_room_name"
-        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
-        app:tint="@color/main_text" />
+        app:layout_constraintTop_toTopOf="@id/tv_room_name">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/back"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/baseline_arrow_back_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+            app:tint="@color/main_text" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/chat_img"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/back"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -49,8 +74,8 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="@dimen/corners_space"
-        android:elevation="1dp"
         android:background="?attr/selectableItemBackground"
+        android:elevation="1dp"
         android:src="@drawable/ic_three_dots"
         app:layout_constraintBottom_toBottomOf="@id/tv_room_name"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,8 +90,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="0dp"
-        android:paddingBottom="12dp"
         android:paddingHorizontal="8dp"
+        android:paddingBottom="12dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/et_message"
         app:layout_constraintTop_toBottomOf="@id/tv_room_name" />
@@ -111,9 +136,9 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="6dp"
-        android:elevation="0dp"
         android:layout_marginBottom="6dp"
         android:backgroundTint="@color/blue_white"
+        android:elevation="0dp"
         app:cardCornerRadius="25dp"
         app:layout_constraintBottom_toBottomOf="@id/et_message"
         app:layout_constraintEnd_toEndOf="@id/et_message">
