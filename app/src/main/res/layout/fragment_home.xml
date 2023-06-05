@@ -12,9 +12,24 @@
         android:id="@+id/btn_settings"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:elevation="0dp"
         android:src="@drawable/ic_settings"
+        android:background="?attr/selectableItemBackground"
+        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+        app:tint="@color/main_text" />
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/fab_add"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="16dp"
+        android:elevation="0dp"
+        android:src="@drawable/baseline_search_24"
         android:background="?attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@id/background"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,20 +55,6 @@
         android:layout_height="match_parent"
         android:layout_marginTop="70dp"
         android:background="@drawable/home_background" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="25dp"
-        android:backgroundTint="@color/main_color"
-        android:contentDescription="@string/add_new_chat"
-        android:src="@drawable/ic_add_chat"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="@color/card_blue"
-        app:tint="@color/main_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_home"
