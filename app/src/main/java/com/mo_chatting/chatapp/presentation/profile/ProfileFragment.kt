@@ -1,7 +1,10 @@
 package com.mo_chatting.chatapp.presentation.profile
 
+import android.Manifest
 import android.app.Activity
 import android.content.*
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -30,6 +33,7 @@ import kotlinx.coroutines.*
 class ProfileFragment : MyFragmentParent() {
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -97,6 +101,7 @@ class ProfileFragment : MyFragmentParent() {
         }
 
         binding.ivProfileImage.setOnClickListener {
+
             showProfileImageOptions()
         }
 
@@ -125,6 +130,7 @@ class ProfileFragment : MyFragmentParent() {
         }
         val btnChange: LinearLayout = view.findViewById(R.id.change_image)
         btnChange.setOnClickListener {
+            checkCameraPermission()
             editUserImage()
             dialog.dismiss()
         }
@@ -148,7 +154,6 @@ class ProfileFragment : MyFragmentParent() {
         val btnGallery: LinearLayout = view.findViewById(R.id.gallery_choice)
         btnGallery.setOnClickListener {
             startPhotoPicker()
-
             dialog.dismiss()
         }
         dialog.setCancelable(true)
@@ -264,6 +269,20 @@ class ProfileFragment : MyFragmentParent() {
 
         // Set the ClipData object as the primary clip on the clipboard
         clipboardManager.setPrimaryClip(clipData)
+    }
+
+    private fun checkCameraPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (requireActivity().checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED || requireActivity().checkSelfPermission(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                == PackageManager.PERMISSION_DENIED
+            ) {
+                val permission =
+                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                requestPermissions(permission, 112)
+            }
+        }
     }
 
 }

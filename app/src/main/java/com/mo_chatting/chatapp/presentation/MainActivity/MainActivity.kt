@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity() {
         return repository.getRoomById(roomIdFromNotification!!)
     }
 
+
     override fun onPause() {
         super.onPause()
         isOnline = false

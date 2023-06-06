@@ -1,12 +1,15 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
 
+import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
@@ -43,6 +46,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
@@ -216,6 +220,7 @@ class ChatFragment : Fragment() {
 
             clipCard.setOnClickListener {
                 try {
+                    checkCameraPermission()
                     showPopUpWindow(it)
                 } catch (e: Exception) {
                     //showToast(e.message.toString())
@@ -461,6 +466,20 @@ class ChatFragment : Fragment() {
     private fun showToast(string: String) {
         CoroutineScope(Dispatchers.Main).launch {
             Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun checkCameraPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (requireActivity().checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED || requireActivity().checkSelfPermission(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                == PackageManager.PERMISSION_DENIED
+            ) {
+                val permission =
+                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                requestPermissions(permission, 112)
+            }
         }
     }
 
