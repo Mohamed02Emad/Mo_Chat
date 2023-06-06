@@ -11,15 +11,15 @@ import kotlinx.parcelize.Parcelize
 @Keep
 data class DirectContact(
     @PrimaryKey val roomId: String = "",
-    val users : ArrayList<String> = ArrayList(),
-    var hasChat : Boolean = false,
-    var user1 : String = "",
-    var user2 : String = "",
-    var user1Image : String = "",
-    var user2Image : String = "",
+    val users: ArrayList<String> = ArrayList(),
+    var hasChat: Boolean = false,
+    var user1: String = "",
+    var user2: String = "",
+    var user1Image: String = "",
+    var user2Image: String = "",
 //Room variables to map it later
-    var chatPinState:Boolean=false,
-    var chatBackgroundColor:Int = 2,
-    var lastMessage:String = "" ,
-    var lastMessageData : String = "",
-    ): Parcelable
+    var chatPinState: Boolean = false,
+    var chatBackgroundColor: Int = 2,
+    var lastMessage: String = "",
+    var lastMessageData: String = "",
+) : Parcelable

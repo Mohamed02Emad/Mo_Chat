@@ -123,7 +123,7 @@ class HomeRoomAdapter(
 
         fun editRoom(room: Room, position: Int) = editClickListener(room, position)
 
-        fun onPinRoom(room:Room,position: Int) = pinClickListener(room, position)
+        fun onPinRoom(room: Room, position: Int) = pinClickListener(room, position)
 
     }
 

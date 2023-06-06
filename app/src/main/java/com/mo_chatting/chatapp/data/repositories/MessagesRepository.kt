@@ -1,7 +1,6 @@
 package com.mo_chatting.chatapp.data.repositories
 
 import android.content.Context
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -34,9 +33,9 @@ class MessagesRepository(
     fun getDao(): MessageDao = db.myDao()
     suspend fun addMesssageToChat(room: Room, message: Message) {
         try {
-            val roomType = if (room.isDirectChat){
+            val roomType = if (room.isDirectChat) {
                 Constants.directChatCollection
-            }else{
+            } else {
                 Constants.roomsChatCollection
             }
             val msgRef =
@@ -78,9 +77,9 @@ class MessagesRepository(
     suspend fun getServerAllMessagesForThisRoom(room: Room): ArrayList<Message> {
         val arrayList = ArrayList<Message>()
         try {
-            val roomType = if (room.isDirectChat){
+            val roomType = if (room.isDirectChat) {
                 Constants.directChatCollection
-            }else{
+            } else {
                 Constants.roomsChatCollection
             }
             val msgRef = firebaseStore.collection("Chats/${roomType}/${room.roomId}")
@@ -110,7 +109,7 @@ class MessagesRepository(
     fun getLastMessageId(room: Room): Long {
         return try {
             db.myDao().getMessagesByRoomID(room.roomId).last().messageid ?: 0
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             0
         }
     }
@@ -118,12 +117,12 @@ class MessagesRepository(
     private suspend fun updateRoom(room: Room, fromChat: Boolean) {
         val map = mapMyRoom(room, fromChat)
         try {
-            val roomType = if (room.isDirectChat){
+            val roomType = if (room.isDirectChat) {
                 Constants.directChatCollection
-            }else{
+            } else {
                 Constants.roomsChatCollection
             }
-             val allRoomsRef = firebaseStore.collection(roomType)
+            val allRoomsRef = firebaseStore.collection(roomType)
 
             val roomQuery = allRoomsRef
                 .whereEqualTo("roomId", room.roomId)
@@ -142,26 +141,26 @@ class MessagesRepository(
 
     private fun mapMyRoom(updatedRoom: Room, fromChat: Boolean): Map<String, Any> {
         val map = mutableMapOf<String, Any>()
-         val room =if (!updatedRoom.isDirectChat) {
+        val room = if (!updatedRoom.isDirectChat) {
             updatedRoom
-        }else{
-           // getCachedDirectChat(updatedRoom.roomId)
-             updatedRoom
+        } else {
+            // getCachedDirectChat(updatedRoom.roomId)
+            updatedRoom
         }
-            map["roomName"] = room.roomName
-            map["roomPinState"] = room.roomPinState
-            map["roomTypeImage"] = room.roomTypeImage
-            map["roomId"] = room.roomId
-            map["roomOwnerId"] = room.roomOwnerId
-            map["hasPassword"] = room.hasPassword
-            map["password"] = room.password
-            map["roomBackgroundColor"] = room.roomBackgroundColor
-            map["lastMessageData"] = room.lastMessageData
-            map["lastMessage"] = room.lastMessage
-            if (!fromChat) {
-                map["listOFUsers"] = room.listOFUsers
-                map["listOFUsersNames"] = room.listOFUsersNames
-            }
+        map["roomName"] = room.roomName
+        map["roomPinState"] = room.roomPinState
+        map["roomTypeImage"] = room.roomTypeImage
+        map["roomId"] = room.roomId
+        map["roomOwnerId"] = room.roomOwnerId
+        map["hasPassword"] = room.hasPassword
+        map["password"] = room.password
+        map["roomBackgroundColor"] = room.roomBackgroundColor
+        map["lastMessageData"] = room.lastMessageData
+        map["lastMessage"] = room.lastMessage
+        if (!fromChat) {
+            map["listOFUsers"] = room.listOFUsers
+            map["listOFUsersNames"] = room.listOFUsersNames
+        }
 
         return map
     }

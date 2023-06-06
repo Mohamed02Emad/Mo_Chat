@@ -12,7 +12,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel  @Inject constructor(
+class MainActivityViewModel @Inject constructor(
     val appContext: Application,
     val firebaseAuth: FirebaseAuth,
     private val repository: RoomsRepository

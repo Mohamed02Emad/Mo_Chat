@@ -21,10 +21,10 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class GroupChatViewModel @Inject constructor(
     val appContext: Application,
     val firebaseAuth: FirebaseAuth,
-     firebaseFirestore: FirebaseFirestore,
+    firebaseFirestore: FirebaseFirestore,
     private val repository: RoomsRepository
 ) : ViewModel() {
     @Inject
@@ -93,7 +93,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun createUser() {
-        var id : String
+        var id: String
         if (userExists()) return
         do {
             id = createUserId()

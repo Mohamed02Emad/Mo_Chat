@@ -88,8 +88,8 @@ class ChatFragment : Fragment() {
     private fun setViews() {
         binding.tvRoomName.text = thisRoom.roomName
         setBackground(thisRoom.roomBackgroundColor)
-        if (thisRoom.isDirectChat){
-            val img : Uri? = Uri.parse(thisRoom.imgUrl)
+        if (thisRoom.isDirectChat) {
+            val img: Uri? = Uri.parse(thisRoom.imgUrl)
             Glide.with(requireContext())
                 .load(img)
                 .placeholder(R.drawable.ic_profile)
@@ -97,7 +97,7 @@ class ChatFragment : Fragment() {
                 .override(150, 150)
                 .centerCrop()
                 .into(binding.chatImg)
-        }else{
+        } else {
             setGroupImage()
         }
 

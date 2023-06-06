@@ -28,7 +28,7 @@ class UserImageDialog(
     val imageUri: String? = null,
     val isImageView: Boolean = false,
     val imgFromProfile: Uri? = null,
-    val myProfileUri : Uri? = null
+    val myProfileUri: Uri? = null
 ) : DialogFragment() {
 
     @Inject
@@ -59,7 +59,7 @@ class UserImageDialog(
             } else {
                 if (myProfileUri != null) {
                     myProfileUri
-                }else {
+                } else {
                     getUserImage()
                 }
             }

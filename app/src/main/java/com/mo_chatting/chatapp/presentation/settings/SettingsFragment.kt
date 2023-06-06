@@ -67,7 +67,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun changeDarkMode(it : Boolean) {
+    private fun changeDarkMode(it: Boolean) {
         try {
             CoroutineScope(Dispatchers.Main).launch {
                 if (it) {
@@ -76,7 +76,7 @@ class SettingsFragment : Fragment() {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
             }
-            }catch (e:Exception) {
+        } catch (e: Exception) {
             CoroutineScope(Dispatchers.Main).launch {
                 Toast.makeText(requireActivity(), e.message.toString(), Toast.LENGTH_SHORT)
                     .show()

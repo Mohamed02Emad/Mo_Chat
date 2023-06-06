@@ -36,7 +36,6 @@ class RoomsRepository(
     private val usersRef = firebaseStore.collection(Constants.users)
 
 
-
     suspend fun createNewRoom(room: Room) {
         try {
             room.listOFUsers.add(firebaseAuth.currentUser!!.uid)
@@ -152,7 +151,8 @@ class RoomsRepository(
 
     private suspend fun createChatForRoom(room: Room) {
         try {
-            val msgRef = firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
+            val msgRef =
+                firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
 
             msgRef.add(
                 Message(
@@ -211,7 +211,7 @@ class RoomsRepository(
         return map
     }
 
-    private suspend fun deleteCachedMessages(roomId: String) = withContext(Dispatchers.IO){
+    private suspend fun deleteCachedMessages(roomId: String) = withContext(Dispatchers.IO) {
         db.myDao().deleteAll(roomId)
     }
 
@@ -229,6 +229,7 @@ class RoomsRepository(
         } catch (_: Exception) {
         }
     }
+
     suspend fun getRoomById(roomId: String): Room? {
         val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
         try {
@@ -236,7 +237,7 @@ class RoomsRepository(
             val arrayList = java.util.ArrayList<Room>()
             for (i in newRooms!!.documents) {
                 if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
-                    if (i.toObject<Room>()!!.roomId==roomId){
+                    if (i.toObject<Room>()!!.roomId == roomId) {
                         return i.toObject<Room>()!!
                     }
                 }
@@ -246,7 +247,7 @@ class RoomsRepository(
         return null
     }
 
-    private fun cacheMessages(messages: QuerySnapshot) : Message?{
+    private fun cacheMessages(messages: QuerySnapshot): Message? {
         val arrayList = ArrayList<Message>()
         for (i in messages!!.documents) {
             arrayList.add(i.toObject<Message>()!!)
@@ -295,7 +296,6 @@ class RoomsRepository(
                 }
             }
     }
-
 
 
 }

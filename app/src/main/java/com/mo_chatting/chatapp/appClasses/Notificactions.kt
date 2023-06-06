@@ -8,10 +8,10 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.mo_chatting.chatapp.presentation.MainActivity.MainActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.PushNotification
 import com.mo_chatting.chatapp.data.retrofit.RetrofitInstance
+import com.mo_chatting.chatapp.presentation.MainActivity.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,7 +51,7 @@ fun showLocalNotification(
     val importance = NotificationManager.IMPORTANCE_HIGH
     val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
     notificationManager.createNotificationChannel(mChannel)
-    val notificationId =hexToDecimal(roomId!!)
+    val notificationId = hexToDecimal(roomId!!)
     notificationManager.notify(
         notificationId,
         notificationBuilder.build()

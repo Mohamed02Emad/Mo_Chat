@@ -72,7 +72,7 @@ class ProfileFragment : MyFragmentParent() {
                 startAnimation {
                     binding.progressBar.visibility = View.VISIBLE
                     it.isClickable = false
-                    lifecycleScope.launch(Dispatchers.Main){
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(400)
                         revertAnimation()
                         it.isClickable = true
@@ -107,10 +107,10 @@ class ProfileFragment : MyFragmentParent() {
 
         binding.etUserName.doAfterTextChanged {
             lifecycleScope.launch {
-                if (it.toString() == viewModel.getUserName() && !viewModel.userImageChanged){
-                    binding.btnSave.visibility=View.GONE
-                }else{
-                    binding.btnSave.visibility=View.VISIBLE
+                if (it.toString() == viewModel.getUserName() && !viewModel.userImageChanged) {
+                    binding.btnSave.visibility = View.GONE
+                } else {
+                    binding.btnSave.visibility = View.VISIBLE
                 }
             }
         }
@@ -162,7 +162,7 @@ class ProfileFragment : MyFragmentParent() {
     }
 
     private fun showUserImage() {
-        lifecycleScope.launch(Dispatchers.Main){
+        lifecycleScope.launch(Dispatchers.Main) {
             openUserImage()
         }
     }
@@ -171,7 +171,6 @@ class ProfileFragment : MyFragmentParent() {
         val name = viewModel.getUserName()
         if (name != "null" || name.isBlank()) {
             withContext(Dispatchers.Main) {
-
                 binding.etUserName.setText(name.trimStart().trimEnd())
             }
         } else {
@@ -191,7 +190,6 @@ class ProfileFragment : MyFragmentParent() {
                 showToast(e.message.toString())
             }
         }
-
         binding.etUserId.setText(viewModel.getUserId())
     }
 
@@ -220,7 +218,7 @@ class ProfileFragment : MyFragmentParent() {
                     CoroutineScope(Dispatchers.Main).launch {
                         binding.ivProfileImage.setImageURI(viewModel.uri.value)
                         viewModel.userImageChanged = true
-                        binding.btnSave.visibility=View.VISIBLE
+                        binding.btnSave.visibility = View.VISIBLE
                     }
                 }
             }
@@ -237,7 +235,7 @@ class ProfileFragment : MyFragmentParent() {
                     viewModel.uri.value = uri
                     binding.ivProfileImage.setImageURI(uri)
                     viewModel.userImageChanged = true
-                    binding.btnSave.visibility=View.VISIBLE
+                    binding.btnSave.visibility = View.VISIBLE
 
                 }
             }
@@ -248,7 +246,7 @@ class ProfileFragment : MyFragmentParent() {
         viewModel.userImageChanged = false
     }
 
-    private suspend fun openUserImage(){
+    private suspend fun openUserImage() {
         val img = viewModel.getUserImageFromDataStore()
         val uri = if (img != null) {
             img
@@ -256,13 +254,15 @@ class ProfileFragment : MyFragmentParent() {
             viewModel.setUserImageAtDataStore()
             viewModel.getUserImageFromDataStore()
         }
-        val userImageDialog = UserImageDialog(viewModel.firebaseAuth.uid!!,"firebase", imgFromProfile = uri)
-        userImageDialog.show(requireActivity().supportFragmentManager, null )
+        val userImageDialog =
+            UserImageDialog(viewModel.firebaseAuth.uid!!, "firebase", imgFromProfile = uri)
+        userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun copyIdToClipBoard(userId: String) {
         // Get a reference to the system clipboard
-        val clipboardManager = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboardManager =
+            requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         // Create a new ClipData object with the text to be copied
         val clipData = ClipData.newPlainText("User Id", userId)

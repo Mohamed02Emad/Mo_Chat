@@ -49,6 +49,7 @@ abstract class SwipeToDeleteCallback(context: Context) :
     ): Boolean {
         return false
     }
+
     override fun onChildDraw(
         c: Canvas,
         recyclerView: RecyclerView,

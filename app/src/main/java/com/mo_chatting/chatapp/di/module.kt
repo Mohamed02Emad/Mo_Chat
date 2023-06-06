@@ -40,6 +40,7 @@ object module {
         appContext,
         fireBaseRoomsDataSource
     )
+
     @Singleton
     @Provides
     fun provideDirectChatRepository(
@@ -49,8 +50,9 @@ object module {
         fireBaseRoomsDataSource: FireBaseRoomsDataSource
     ): DirectChatRepository = DirectChatRepository(
         firebaseFireStore, firebaseAuth,
-        appContext,fireBaseRoomsDataSource
+        appContext, fireBaseRoomsDataSource
     )
+
     @Singleton
     @Provides
     fun provideSearchUserRepository(
@@ -78,7 +80,8 @@ object module {
         firebaseFirestore: FirebaseFirestore,
         firebaseStorage: FirebaseStorage,
         @ApplicationContext appContext: Context
-    ):FireBaseRoomsDataSource = FireBaseRoomsDataSource(firebaseAuth, firebaseFirestore, firebaseStorage, appContext)
+    ): FireBaseRoomsDataSource =
+        FireBaseRoomsDataSource(firebaseAuth, firebaseFirestore, firebaseStorage, appContext)
 
     @Singleton
     @Provides

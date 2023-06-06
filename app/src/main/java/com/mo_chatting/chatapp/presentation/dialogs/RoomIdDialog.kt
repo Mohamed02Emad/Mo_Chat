@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 import com.mo_chatting.chatapp.databinding.FragmentRoomIdDialogBinding
 
@@ -52,7 +51,8 @@ class RoomIdDialog(val roomId: String) : DialogFragment() {
 
     private fun copyIdToClipBoard(roomId: String) {
         // Get a reference to the system clipboard
-        val clipboardManager = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboardManager =
+            requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         // Create a new ClipData object with the text to be copied
         val clipData = ClipData.newPlainText("Room Id", roomId)

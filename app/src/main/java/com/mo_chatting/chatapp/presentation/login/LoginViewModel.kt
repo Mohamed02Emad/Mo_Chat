@@ -7,32 +7,35 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(val firebaseAuth: FirebaseAuth,val repository: RoomsRepository): ViewModel() {
+class LoginViewModel @Inject constructor(
+    val firebaseAuth: FirebaseAuth,
+    val repository: RoomsRepository
+) : ViewModel() {
 
     private var _email = MutableLiveData<String>("")
-     val email : LiveData<String> = _email
+    val email: LiveData<String> = _email
 
     private var _password = MutableLiveData<String>("")
-     val password : LiveData<String> = _password
+    val password: LiveData<String> = _password
 
-    fun setEmail(email:String) {
+    fun setEmail(email: String) {
         _email.value = email
     }
-    fun setPassword(password:String){
-        _password.value=password
+
+    fun setPassword(password: String) {
+        _password.value = password
     }
 
     suspend fun resetPassword(email: String): Boolean {
         try {
             firebaseAuth.sendPasswordResetEmail(email).await()
             return true
-        } catch (_: Exception) { }
+        } catch (_: Exception) {
+        }
         return false
     }
 
@@ -47,7 +50,7 @@ class LoginViewModel @Inject constructor(val firebaseAuth: FirebaseAuth,val repo
         registerForUserRooms()
     }
 
-    private suspend fun registerForUserRooms(){
+    private suspend fun registerForUserRooms() {
         repository.reSubscribeForAllUserRooms()
     }
 

@@ -1,18 +1,11 @@
 package com.mo_chatting.chatapp.presentation.groupChat
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.ContentValues
-import android.content.Intent
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,7 +22,10 @@ import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.appClasses.swipeToDelete.SwipeToDeleteCallback
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentHomeBinding
-import com.mo_chatting.chatapp.presentation.dialogs.*
+import com.mo_chatting.chatapp.presentation.dialogs.AddRoomDialog
+import com.mo_chatting.chatapp.presentation.dialogs.CreateRoomDialog
+import com.mo_chatting.chatapp.presentation.dialogs.DialogsInterface
+import com.mo_chatting.chatapp.presentation.dialogs.EnterPasswordDialog
 import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +36,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeFragment : MyFragmentParent(), DialogsInterface {
+class GroupChatFragment : MyFragmentParent(), DialogsInterface {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -51,7 +46,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
 
     private lateinit var adapter: HomeRoomAdapter
     private lateinit var binding: FragmentHomeBinding
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: GroupChatViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,7 +58,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
-            while (viewModel.firebaseAuth.currentUser == null ){
+            while (viewModel.firebaseAuth.currentUser == null) {
 
             }
             viewModel.setupUserId()
@@ -91,7 +86,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
     }
 
     private fun settingsClicked() {
-        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
+        findNavController().navigate(GroupChatFragmentDirections.actionHomeFragmentToSettingsFragment())
     }
 
     private fun oservers() {
@@ -120,7 +115,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
                 false
             }, { room, position ->
                 // not used
-                deleteRoom(room,position)
+                deleteRoom(room, position)
             }, { room, position ->
                 // not used
                 editRoom(room, position)
@@ -153,11 +148,11 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             showToast("No Internet")
             return
         }
-        val builder = AlertDialog.Builder(context,R.style.MyDialog)
+        val builder = AlertDialog.Builder(context, R.style.MyDialog)
         builder.setTitle("Delete this item?")
         builder.setPositiveButton("Yes") { dialog, which ->
             lifecycleScope.launch {
-                    viewModel.deleteRoom(room)
+                viewModel.deleteRoom(room)
                 withContext(Dispatchers.Main) {
                     binding.rvHome.adapter!!.notifyItemRemoved(position)
                     val snackbar = Snackbar
@@ -191,7 +186,11 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
     }
 
     private fun onRoomClick(room: Room, position: Int) {
-        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToChatFragment(room))
+        findNavController().navigate(
+            GroupChatFragmentDirections.actionHomeFragmentToChatFragment(
+                room
+            )
+        )
     }
 
     private fun pinRoom(room: Room, position: Int) {
@@ -224,7 +223,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             val room = viewModel.checkIfRoomExist(roomId)
             if (room != null) {
                 if (room.hasPassword) {
-                    val enterPasswordDialog = EnterPasswordDialog(this@HomeFragment, room)
+                    val enterPasswordDialog = EnterPasswordDialog(this@GroupChatFragment, room)
                     enterPasswordDialog.show(requireActivity().supportFragmentManager, null)
                 } else {
                     viewModel.joinRoom(room)
@@ -243,6 +242,7 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
             viewModel.joinRoom(room)
         }
     }
+
     private fun setupSwipeToDelete() {
         val swipeToDeleteCallback: SwipeToDeleteCallback =
             object : SwipeToDeleteCallback(requireContext()) {
@@ -253,8 +253,12 @@ class HomeFragment : MyFragmentParent(), DialogsInterface {
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(binding.rvHome)
     }
+
     private fun removeAfterSwiped(viewHolder: RecyclerView.ViewHolder) {
-        deleteRoom(adapter.getItemByPosition(viewHolder.adapterPosition),viewHolder.adapterPosition)
+        deleteRoom(
+            adapter.getItemByPosition(viewHolder.adapterPosition),
+            viewHolder.adapterPosition
+        )
     }
 
 }

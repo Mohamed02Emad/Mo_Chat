@@ -28,7 +28,16 @@ class SearchUserRepository(
         val updatedUser2 = mapUser(newUser)
         updateUser(updatedUser, currentUserId)
         updateUser(updatedUser2, newUser.userId)
-        createDirectChatForUsers(currentUser.token, newUser.token, currentUserId, newUser.userId,currentUser.userName,newUser.userName,currentUser.imageUrl , newUser.imageUrl)
+        createDirectChatForUsers(
+            currentUser.token,
+            newUser.token,
+            currentUserId,
+            newUser.userId,
+            currentUser.userName,
+            newUser.userName,
+            currentUser.imageUrl,
+            newUser.imageUrl
+        )
     }
 
     suspend fun removeUserFromFriends(
@@ -56,7 +65,7 @@ class SearchUserRepository(
         return listToReturn
     }
 
-     suspend fun getUser(userId: String): User? {
+    suspend fun getUser(userId: String): User? {
         val userQuery = usersRef
             .whereEqualTo("userId", userId)
             .get()
@@ -89,13 +98,22 @@ class SearchUserRepository(
         val users = ArrayList<String>()
         users.add(currentUserId)
         users.add(newUserId)
-        val directChat = DirectContact(min + max, users,false,currentUserName,newUserName,currentUserimageUrl,newUserimageUrl)
+        val directChat = DirectContact(
+            min + max,
+            users,
+            false,
+            currentUserName,
+            newUserName,
+            currentUserimageUrl,
+            newUserimageUrl
+        )
         directChatsRef.add(directChat).await()
         createInitialMessage(directChat.roomId)
     }
 
     private suspend fun createInitialMessage(roomId: String) {
-        val msgRef = firebaseFireStore.collection("Chats/${Constants.directChatCollection}/${roomId}")
+        val msgRef =
+            firebaseFireStore.collection("Chats/${Constants.directChatCollection}/${roomId}")
 
         msgRef.add(
             Message(

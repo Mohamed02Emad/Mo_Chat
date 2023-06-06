@@ -21,7 +21,7 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // requestForPermission()
+        // requestForPermission()
         //checkCameraPermission()
         setContentView(R.layout.activity_auth)
     }

@@ -4,9 +4,9 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 @Keep
-data class PushNotification (
+data class PushNotification(
     @SerializedName("data")
-    val notification : NotificationData,
+    val notification: NotificationData,
     @SerializedName("to")
-    val to:String
+    val to: String
 )

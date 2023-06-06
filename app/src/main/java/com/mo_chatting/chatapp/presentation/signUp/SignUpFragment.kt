@@ -14,11 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.mo_chatting.chatapp.presentation.MainActivity.MainActivity
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.isValidEmail
 import com.mo_chatting.chatapp.appClasses.validatePassword
 import com.mo_chatting.chatapp.databinding.FragmentSignUpBinding
+import com.mo_chatting.chatapp.presentation.MainActivity.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +30,7 @@ import javax.inject.Inject
 class SignUpFragment : Fragment() {
 
     lateinit var binding: FragmentSignUpBinding
+
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
     private val viewModel: SignUpViewModel by viewModels()
@@ -110,25 +111,25 @@ class SignUpFragment : Fragment() {
 
         try {
             firebaseAuth.createUserWithEmailAndPassword(viewModel.email, viewModel.passwrod).await()
-                firebaseAuth.currentUser?.let { user ->
-                    val name = binding.etUserName.text.toString()
-                    val imageUri =
-                        Uri.parse("android.resource://${requireActivity().packageName}/${R.drawable.ic_profile}")
-                    val profileUpdates = UserProfileChangeRequest.Builder()
-                        .setDisplayName(name)
-                        .setPhotoUri(imageUri)
-                        .build()
+            firebaseAuth.currentUser?.let { user ->
+                val name = binding.etUserName.text.toString()
+                val imageUri =
+                    Uri.parse("android.resource://${requireActivity().packageName}/${R.drawable.ic_profile}")
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(name)
+                    .setPhotoUri(imageUri)
+                    .build()
 
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            user.updateProfile(profileUpdates).await()
-                            startActivity(Intent(requireActivity(), MainActivity::class.java))
-                            requireActivity().finish()
-                        } catch (_: Exception) {
-                        }
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        user.updateProfile(profileUpdates).await()
+                        startActivity(Intent(requireActivity(), MainActivity::class.java))
+                        requireActivity().finish()
+                    } catch (_: Exception) {
                     }
-
                 }
+
+            }
         } catch (e: java.lang.Exception) {
         }
     }

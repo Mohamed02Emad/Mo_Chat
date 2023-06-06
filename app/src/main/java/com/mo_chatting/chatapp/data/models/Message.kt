@@ -25,9 +25,9 @@ data class Message(
     var isLiked: Boolean = false,
     var isDeleted: Boolean = false,
     var messageType: MessageType = MessageType.TEXT,
-  //  var usersSeenInfoList : ArrayList<MessageSeenInfo> = ArrayList(),
-    @PrimaryKey val timeWithMillis :String = ""
-    ): Parcelable
+    //  var usersSeenInfoList : ArrayList<MessageSeenInfo> = ArrayList(),
+    @PrimaryKey val timeWithMillis: String = ""
+) : Parcelable
 
 enum class MessageState() { DELIVERED, SEEN, NOT_DELIVERED }
 enum class MessageType() { VOICE_RECORD, TEXT, IMAGE, VIDEO }

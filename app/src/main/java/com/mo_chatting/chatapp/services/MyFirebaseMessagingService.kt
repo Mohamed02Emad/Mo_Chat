@@ -1,6 +1,5 @@
 package com.mo_chatting.chatapp.services
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

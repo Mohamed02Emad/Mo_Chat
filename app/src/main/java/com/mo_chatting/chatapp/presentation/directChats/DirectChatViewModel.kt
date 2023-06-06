@@ -1,7 +1,6 @@
 package com.mo_chatting.chatapp.presentation.directChats
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,7 +40,7 @@ class DirectChatViewModel @Inject constructor(
     }
 
     fun addChat(token: String) {
-       // repository.addChat(token)
+        // repository.addChat(token)
     }
 
     suspend fun addNewChatsFromFireBaseToChatList(newChats: QuerySnapshot) {
@@ -49,7 +48,7 @@ class DirectChatViewModel @Inject constructor(
             val arrayList = ArrayList<DirectContact>()
             for (i in newChats!!.documents) {
                 val chat = i.toObject<DirectContact>()!!
-                    arrayList.add(chat)
+                arrayList.add(chat)
             }
             _chats.postValue(arrayList)
         } catch (_: Exception) {

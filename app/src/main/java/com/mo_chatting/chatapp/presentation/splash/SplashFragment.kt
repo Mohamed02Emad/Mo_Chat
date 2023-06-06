@@ -1,6 +1,5 @@
 package com.mo_chatting.chatapp.presentation.splash
 
-import android.animation.Animator
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,7 +29,7 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         //setLottieAnimation()
         lifecycleScope.launch(Dispatchers.Main) {
-        delay(300)
+            delay(300)
             try {
                 requireActivity().startActivity(
                     Intent(
@@ -39,10 +38,10 @@ class SplashFragment : Fragment() {
                     )
                 )
                 requireActivity().finish()
-            }catch (_:Exception){
+            } catch (_: Exception) {
             }
         }
-        }
+    }
 
 //    private fun setLottieAnimation() {
 //        binding.splashAnimation.addAnimatorListener(object : Animator.AnimatorListener {

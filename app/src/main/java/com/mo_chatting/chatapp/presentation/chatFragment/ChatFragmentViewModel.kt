@@ -162,7 +162,7 @@ class ChatFragmentViewModel @Inject constructor(
             message.messageid = getMessageId()
             repository.addMesssageToChat(room, message)
         } catch (e: Exception) {
-           //  Log.d("mohamed", "uploadImage: " + e.message.toString())
+            //  Log.d("mohamed", "uploadImage: " + e.message.toString())
         }
     }
 
@@ -173,8 +173,8 @@ class ChatFragmentViewModel @Inject constructor(
     }
 
     private fun getMessageId(): Long {
-      val lastMessageId = repository.getLastMessageId(thisRoom)
-      return (lastMessageId + 1)
+        val lastMessageId = repository.getLastMessageId(thisRoom)
+        return (lastMessageId + 1)
     }
 
     fun getDateForAllCountries(): String {
@@ -237,7 +237,7 @@ class ChatFragmentViewModel @Inject constructor(
     }
 
     suspend fun getCurrentUserImage(): String {
-          return dataStore.getUserImage()
+        return dataStore.getUserImage()
     }
 
 }

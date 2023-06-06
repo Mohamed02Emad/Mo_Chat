@@ -55,7 +55,7 @@ class ProfileViewModel @Inject constructor(
         dataStore.setUserName(userName)
     }
 
-     suspend fun getUserImageFromDataStore(): Uri? {
+    suspend fun getUserImageFromDataStore(): Uri? {
         val data = dataStore.getUserImage()
         return if (data == "null" || data.isBlank()) {
             null
@@ -64,7 +64,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-     suspend fun setUserImageAtDataStore() {
+    suspend fun setUserImageAtDataStore() {
         dataStore.setUserImage(getUserImage())
     }
 
@@ -109,8 +109,8 @@ class ProfileViewModel @Inject constructor(
                     .child(firebaseAuth.currentUser!!.uid)
                 userRef.child("image").setValue(downloadUri.toString())
                 CoroutineScope(Dispatchers.IO).launch {
-                    updateUserImageAtFireBase(downloadUri)
                     setUserImageAtDataStoreUri(downloadUri)
+                    updateUserImageAtFireBase(downloadUri)
                 }
             }
         }
@@ -134,12 +134,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUser(id : String): User? {
+    private suspend fun getUser(id: String): User? {
         val userQuery = usersRef
             .whereEqualTo("userId", id)
             .get()
             .await()
-        for (i in userQuery){
+        for (i in userQuery) {
             return i.toObject<User>()
         }
         return null
@@ -195,7 +195,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    suspend fun getUserId():String?{
+    suspend fun getUserId(): String? {
         return dataStore.getUserId()
     }
 

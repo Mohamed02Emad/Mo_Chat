@@ -9,18 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.mo_chatting.chatapp.databinding.FragmentJoinRoomDialogBinding
-import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.GroupChatFragment
 
-class JoinRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
+class JoinRoomDialog(val homeFragment: GroupChatFragment) : DialogFragment() {
 
-    private lateinit var binding:FragmentJoinRoomDialogBinding
+    private lateinit var binding: FragmentJoinRoomDialogBinding
     private var listener: DialogsInterface? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding=FragmentJoinRoomDialogBinding.inflate(layoutInflater)
+        binding = FragmentJoinRoomDialogBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -37,7 +37,7 @@ class JoinRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
             }
 
             btnJoin.setOnClickListener {
-                if (binding.etRoomId.text.toString().length==8){
+                if (binding.etRoomId.text.toString().length == 8) {
                     listener!!.onDataPassedJoinRoom(binding.etRoomId.text.toString())
                     this@JoinRoomDialog.dismiss()
                 }

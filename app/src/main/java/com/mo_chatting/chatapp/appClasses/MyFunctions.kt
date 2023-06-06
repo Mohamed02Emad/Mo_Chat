@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import androidx.room.PrimaryKey
 import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.data.models.NotificationData
 import com.mo_chatting.chatapp.data.models.Room

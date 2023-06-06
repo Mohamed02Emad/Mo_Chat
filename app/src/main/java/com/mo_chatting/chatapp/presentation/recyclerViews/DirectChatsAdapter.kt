@@ -12,8 +12,8 @@ import com.mo_chatting.chatapp.databinding.RoomCardBinding
 
 class DirectChatsAdapter(
     private val list: ArrayList<DirectContact>,
-    private val onClickListener:OnChatClickListener,
-    private val currentUserName:String
+    private val onClickListener: OnChatClickListener,
+    private val currentUserName: String
 ) :
     RecyclerView.Adapter<DirectChatsAdapter.HomeViewHolder>() {
 
@@ -33,12 +33,12 @@ class DirectChatsAdapter(
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val currentChat = list[position]
         holder.binding.apply {
-            ivRoomType.visibility= View.GONE
+            ivRoomType.visibility = View.GONE
 
-            val chatName = if (currentChat.user1 == currentUserName){
-                setImage(currentChat.user2Image,holder)
+            val chatName = if (currentChat.user1 == currentUserName) {
+                setImage(currentChat.user2Image, holder)
                 currentChat.user2
-            }else{
+            } else {
                 setImage(currentChat.user1Image, holder)
                 currentChat.user1
             }
@@ -49,7 +49,7 @@ class DirectChatsAdapter(
     }
 
     private fun setImage(imgUrl: String, holder: HomeViewHolder) {
-        val img : Uri? = Uri.parse(imgUrl)
+        val img: Uri? = Uri.parse(imgUrl)
         Glide.with(holder.binding.roomTypeBackground)
             .load(img)
             .placeholder(R.drawable.ic_profile)
@@ -100,7 +100,7 @@ class DirectChatsAdapter(
 
         fun editRoom(chat: DirectContact, position: Int) = editClickListener(chat, position)
 
-        fun onPinRoom(chat:DirectContact,position: Int) = pinClickListener(chat, position)
+        fun onPinRoom(chat: DirectContact, position: Int) = pinClickListener(chat, position)
 
     }
 

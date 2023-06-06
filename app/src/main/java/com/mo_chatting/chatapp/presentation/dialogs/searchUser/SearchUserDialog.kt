@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -15,18 +14,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.User
 import com.mo_chatting.chatapp.databinding.FragmentSearchUserDialogBinding
-import com.mo_chatting.chatapp.presentation.recyclerViews.HomeRoomAdapter
 import com.mo_chatting.chatapp.presentation.recyclerViews.SearchUsersAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SearchUserDialog : DialogFragment() {
 
     private lateinit var binding: FragmentSearchUserDialogBinding
     private val viewModel: SearchUserViewModel by viewModels()
-    private lateinit var adapter : SearchUsersAdapter
+    private lateinit var adapter: SearchUsersAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,12 +60,12 @@ class SearchUserDialog : DialogFragment() {
     private fun setUpRecyclerView(users: ArrayList<User>) {
         adapter = SearchUsersAdapter(
             viewModel.users.value!!,
-            SearchUsersAdapter.OnUserClickListener(){user, position,btnText ->
+            SearchUsersAdapter.OnUserClickListener() { user, position, btnText ->
                 lifecycleScope.launch {
                     val stringAdd = resources.getString(R.string.add)
-                    if (btnText == stringAdd){
-                    viewModel.addUserToFriends(user)
-                    }else {
+                    if (btnText == stringAdd) {
+                        viewModel.addUserToFriends(user)
+                    } else {
                         viewModel.removeUserFromFriends(user)
                     }
                 }
