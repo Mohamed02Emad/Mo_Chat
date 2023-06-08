@@ -81,13 +81,20 @@ class ProfileFragment : MyFragmentParent() {
                         it.visibility = View.GONE
                     }
                     if (viewModel.userImageChanged && viewModel.uri.value != null) {
-                        viewModel.updateUserImage()
-                    }
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        if (viewModel.getUserName() != binding.etUserName.text.toString()) {
-                            viewModel.updateUserName(binding.etUserName.text.toString())
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            viewModel.updateUserImage()
+                            if (viewModel.getUserName() != binding.etUserName.text.toString()) {
+                                viewModel.updateUserName(binding.etUserName.text.toString())
+                            }
+                        }
+                    }else{
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            if (viewModel.getUserName() != binding.etUserName.text.toString()) {
+                                viewModel.updateUserName(binding.etUserName.text.toString())
+                            }
                         }
                     }
+
 
                     if (!isInternetAvailable(requireContext())) {
                         Toast.makeText(

@@ -17,6 +17,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
+import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.models.User
 import com.mo_chatting.chatapp.data.repositories.RoomsRepository
@@ -95,7 +96,7 @@ class ProfileViewModel @Inject constructor(
         dataStore.clearAll()
     }
 
-    fun updateUserImage() {
+    suspend fun updateUserImage() {
         val imageStream = appContext.contentResolver.openInputStream(uri.value!!)
         val selectedImage = BitmapFactory.decodeStream(imageStream)
         val baos = ByteArrayOutputStream()
@@ -130,6 +131,8 @@ class ProfileViewModel @Inject constructor(
                     usersRef.document(document.id).set(mappedUser, SetOptions.merge())
                 }
             }
+            updateUserImageAtChats(downloadUri)
+
         } catch (_: Exception) {
         }
     }
@@ -152,6 +155,7 @@ class ProfileViewModel @Inject constructor(
     fun updateUserName(newName: String) {
 
         firebaseAuth.currentUser?.let { user ->
+            val oldUserName = user.displayName
             val profileUpdates = UserProfileChangeRequest.Builder()
                 .setDisplayName(newName)
                 .build()
@@ -159,7 +163,7 @@ class ProfileViewModel @Inject constructor(
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     user.updateProfile(profileUpdates).await()
-                    updateNameAtFirebase(newName)
+                    updateNameAtFirebase(newName,oldUserName)
                     updateRoomByName(newName, firebaseAuth.currentUser!!.uid)
                     dataStore.setUserName(newName)
                 } catch (_: Exception) {
@@ -169,7 +173,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateNameAtFirebase(newName: String) {
+    private suspend fun updateNameAtFirebase(newName: String, oldUserName: String?) {
         val user = getUser(dataStore.getUserId()!!)!!
         user.userName = newName
         val mappedUser = mapUser(user)
@@ -183,9 +187,12 @@ class ProfileViewModel @Inject constructor(
                     usersRef.document(document.id).set(mappedUser, SetOptions.merge())
                 }
             }
+            updateUserNameAtChats(newName,oldUserName)
         } catch (_: Exception) {
         }
     }
+
+
 
     private suspend fun updateRoomByName(newName: String, uid: String) {
         val userRooms = repository.getUserRoomsFlow().first()
@@ -209,4 +216,51 @@ class ProfileViewModel @Inject constructor(
         map["friends"] = user.friends
         return map
     }
+
+    private suspend fun updateUserImageAtChats(imgUri: Uri) {
+        try {
+            val chatsRef = firebaseFirestore.collection(Constants.directChatCollection)
+            val userId = dataStore.getUserId()!!
+            val userName = firebaseAuth.currentUser!!.displayName!!
+            val userChats = chatsRef.whereArrayContains("users", userId).get().await()
+            for (chat in userChats){
+                var currentChat = chat.toObject<DirectContact>()
+                if (currentChat.user1 == userName){
+                    currentChat.user1Image = imgUri.toString()
+                }else{
+                    currentChat.user2Image = imgUri.toString()
+                }
+                val mappedCaht = mapMyChat(currentChat)
+                chatsRef.document(chat.id).set(mappedCaht, SetOptions.merge())
+
+            }
+        }catch (_: Exception){}
+    }
+
+    private fun mapMyChat(currentChat: DirectContact): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+         map["user1"]=currentChat.user1
+         map["user2"]=currentChat.user2
+         map["user1Image"]=currentChat.user1Image
+         map["user2Image"]=currentChat.user2Image
+        return map
+    }
+
+    private suspend fun updateUserNameAtChats(newName: String, oldUserName: String?) {
+        val chatsRef = firebaseFirestore.collection(Constants.directChatCollection)
+        val userId = dataStore.getUserId()!!
+        val userChats = chatsRef.whereArrayContains("users", userId).get().await()
+        for (chat in userChats) {
+            var currentChat = chat.toObject<DirectContact>()
+            if (currentChat.user1 == oldUserName) {
+                currentChat.user1 = newName
+            } else {
+                currentChat.user2 = newName
+            }
+            val mappedCaht = mapMyChat(currentChat)
+            chatsRef.document(chat.id).set(mappedCaht, SetOptions.merge())
+
+        }
+    }
+
 }
