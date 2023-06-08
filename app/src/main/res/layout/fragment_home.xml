@@ -16,7 +16,7 @@
         android:elevation="0dp"
         android:src="@drawable/ic_settings"
         android:background="?attr/selectableItemBackground"
-        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintBottom_toTopOf="@id/rv_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
@@ -31,7 +31,7 @@
         android:elevation="0dp"
         android:src="@drawable/baseline_search_24"
         android:background="?attr/selectableItemBackground"
-        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintBottom_toTopOf="@id/rv_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
@@ -44,27 +44,26 @@
         android:text="@string/group_chats"
         android:textColor="@color/main_text"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintBottom_toTopOf="@id/rv_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="70dp"
-        android:background="@drawable/home_background" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_home"
+    <FrameLayout
+        android:id="@+id/rv_wrapper"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="16dp"
+        android:layout_marginTop="60dp"
+        android:background="@color/main_drawer"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/background" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

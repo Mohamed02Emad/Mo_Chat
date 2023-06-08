@@ -43,7 +43,7 @@ class DirectChatsAdapter(
                 currentChat.user1
             }
             tvRoomName.text = chatName.trimEnd().trimStart()
-            tvLastMessage.text = ""
+            tvLastMessage.text = currentChat.lastMessage
         }
         setCardOnClicks(holder, currentChat, position)
     }

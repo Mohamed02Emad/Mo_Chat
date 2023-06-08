@@ -8,17 +8,15 @@
     tools:context=".presentation.directChats.DirectChats">
 
 
-
-
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/btn_settings"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginStart="16dp"
+        android:background="?attr/selectableItemBackground"
         android:elevation="0dp"
         android:src="@drawable/ic_settings"
-        android:background="?attr/selectableItemBackground"
-        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintBottom_toTopOf="@id/rv_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
@@ -30,15 +28,14 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackground"
         android:elevation="0dp"
         android:src="@drawable/baseline_search_24"
-        android:background="?attr/selectableItemBackground"
-        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintBottom_toTopOf="@id/rv_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
         app:tint="@color/main_text" />
-
 
 
     <TextView
@@ -47,27 +44,26 @@
         android:text="@string/direct_chat"
         android:textColor="@color/main_text"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/background"
+        app:layout_constraintBottom_toTopOf="@id/rv_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="70dp"
-        android:background="@drawable/home_background" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_direct_chats"
+    <FrameLayout
+        android:id="@+id/rv_wrapper"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="16dp"
+        android:layout_marginTop="60dp"
+        android:background="@color/main_drawer"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/background" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_direct_chats"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"/>
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
