@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.MyFragmentParent
 import com.mo_chatting.chatapp.R
+import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.isInternetAvailable
 import com.mo_chatting.chatapp.appClasses.swipeToDelete.SwipeToDeleteCallback
 import com.mo_chatting.chatapp.data.models.Room
@@ -62,6 +63,7 @@ class GroupChatFragment : MyFragmentParent(), DialogsInterface {
 
             }
             viewModel.setupUserId()
+            viewModel.setConstantUid()
             setOnClicks()
             setupRecyclerView()
             oservers()

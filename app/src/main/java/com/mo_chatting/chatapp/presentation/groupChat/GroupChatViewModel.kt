@@ -161,4 +161,8 @@ class GroupChatViewModel @Inject constructor(
 
     }
 
+    suspend fun setConstantUid() {
+        Constants.id = dataStore.getUserId()!!
+    }
+
 }

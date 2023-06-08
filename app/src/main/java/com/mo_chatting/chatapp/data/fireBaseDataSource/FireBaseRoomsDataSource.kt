@@ -6,9 +6,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.appClasses.Constants
+import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
 
 class FireBaseRoomsDataSource(
     val firebaseAuth: FirebaseAuth,
@@ -36,9 +38,9 @@ class FireBaseRoomsDataSource(
         }
     }
 
-    fun setUpChatsListener(): Flow<QuerySnapshot> = callbackFlow {
+    fun setUpChatsListener(userId:String): Flow<QuerySnapshot> = callbackFlow {
         val listenerRegistration = firebaseFirestore
-            .collection(Constants.directChatCollection)
+            .collection(Constants.directChatCollection).whereArrayContains("users",userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     close(error)

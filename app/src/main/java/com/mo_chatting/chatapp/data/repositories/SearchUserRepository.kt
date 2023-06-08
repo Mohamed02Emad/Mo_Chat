@@ -6,6 +6,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.data.models.Message
@@ -123,6 +125,7 @@ class SearchUserRepository(
         )
         directChatsRef.add(directChat).await()
         createInitialMessage(directChat.roomId)
+        joinChatNotifications(directChat.roomId)
     }
 
     private suspend fun createInitialMessage(roomId: String) {
@@ -139,6 +142,7 @@ class SearchUserRepository(
                 messageDateAndTime = "--/--/----  --:--"
             )
         ).await()
+
     }
 
     private suspend fun deleteDirectChatForUser(
@@ -158,6 +162,8 @@ class SearchUserRepository(
         val chats = directChatsRef.whereEqualTo("chatToken", chatToken).get().await()
         for (chat in chats) {
             val directChat = directChatsRef.document(chat.id)
+            val obj = chat.toObject<DirectContact>()
+            leaveChatNotifications(obj.roomId)
             directChat.delete().await()
         }
     }
@@ -188,4 +194,16 @@ class SearchUserRepository(
         }
     }
 
+
+    private fun joinChatNotifications(token: String) {
+        Firebase.messaging.subscribeToTopic(token)
+            .addOnCompleteListener { task ->
+            }
+    }
+
+    private fun leaveChatNotifications(token: String) {
+        Firebase.messaging.unsubscribeFromTopic(token)
+            .addOnSuccessListener { task ->
+            }
+    }
 }

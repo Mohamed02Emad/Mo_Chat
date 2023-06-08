@@ -69,6 +69,10 @@ class ProfileFragment : MyFragmentParent() {
 
         binding.btnSave.apply {
             setOnClickListener {
+                if (!isInternetAvailable(requireContext())) {
+                    showToast("No Internet")
+                    return@setOnClickListener
+                }
                 startAnimation {
                     binding.progressBar.visibility = View.VISIBLE
                     it.isClickable = false
@@ -191,6 +195,7 @@ class ProfileFragment : MyFragmentParent() {
                 Glide.with(requireContext())
                     .load(img)
                     .override(500, 400)
+                    .placeholder(R.drawable.ic_profile)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(binding.ivProfileImage)
             } catch (e: Exception) {

@@ -1,6 +1,7 @@
 package com.mo_chatting.chatapp.presentation.directChats
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +12,9 @@ import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.data.repositories.DirectChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,6 +51,7 @@ class DirectChatViewModel @Inject constructor(
             val arrayList = ArrayList<DirectContact>()
             for (i in newChats!!.documents) {
                 val chat = i.toObject<DirectContact>()!!
+                repository.joinChatNotifications(chat.roomId)
                 arrayList.add(chat)
             }
             _chats.postValue(arrayList)

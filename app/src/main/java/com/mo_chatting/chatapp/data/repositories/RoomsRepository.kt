@@ -11,7 +11,9 @@ import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
+import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.fireBaseDataSource.FireBaseRoomsDataSource
+import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
@@ -23,6 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.util.*
+import javax.inject.Inject
 
 class RoomsRepository(
     private val firebaseStore: FirebaseFirestore,
@@ -30,6 +33,9 @@ class RoomsRepository(
     private val application: Context,
     private val fireBaseRoomsDataSource: FireBaseRoomsDataSource
 ) {
+    @Inject
+    lateinit var dataStore: DataStoreImpl
+
 
     private val allRoomsRef = firebaseStore.collection(roomsCollection)
     private val db = MessagesDataBase.getInstance(application)
@@ -216,14 +222,21 @@ class RoomsRepository(
     }
 
     suspend fun reSubscribeForAllUserRooms() {
+        val userId = dataStore.getUserId()!!
         val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
+        val newChats = fireBaseRoomsDataSource.setUpChatsListener(userId).first()
+
         try {
-            val userId = firebaseAuth.currentUser!!.uid
-            val arrayList = java.util.ArrayList<Room>()
+            var userId = firebaseAuth.currentUser!!.uid
             for (i in newRooms!!.documents) {
                 if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
                     joinRoomNotifications(i.toObject<Room>()!!.roomId)
-                    arrayList.add(i.toObject<Room>()!!)
+                }
+            }
+            userId = dataStore.getUserId()!!
+            for (i in newChats!!.documents) {
+                if (i.toObject<DirectContact>()!!.users.contains(userId)) {
+                    joinRoomNotifications(i.toObject<DirectContact>()!!.roomId)
                 }
             }
         } catch (_: Exception) {
