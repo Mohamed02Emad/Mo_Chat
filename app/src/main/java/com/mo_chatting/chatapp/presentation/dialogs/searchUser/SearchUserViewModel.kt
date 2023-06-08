@@ -47,4 +47,8 @@ class SearchUserViewModel @Inject constructor(private val repository: SearchUser
             repository.removeUserFromFriends(currentUserId, user.userId, user.token)
         }
     }
+
+    fun resetList() {
+        _users.value!!.clear()
+    }
 }

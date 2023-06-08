@@ -1,6 +1,7 @@
 package com.mo_chatting.chatapp.data.repositories
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -53,15 +54,28 @@ class SearchUserRepository(
     }
 
     suspend fun getUsersWithId(userId: String): ArrayList<User> {
-        val userQuery = usersRef
+        val userQueryById = usersRef
             .whereGreaterThanOrEqualTo("userId", userId)
             .whereLessThan("userId", userId + "\uf8ff")
             .get()
             .await()
+
+        val userQueryByName = usersRef
+            .whereGreaterThanOrEqualTo("userName", userId)
+            .whereLessThan("userName", userId + "\uf8ff")
+            .get()
+            .await()
         val listToReturn = ArrayList<User>()
-        for (user in userQuery) {
+        for (user in userQueryById) {
             listToReturn.add(user.toObject<User>())
         }
+        for (user in userQueryByName) {
+            val currentUser = user.toObject<User>()
+            if (!listToReturn.contains(currentUser)) {
+                listToReturn.add(currentUser)
+            }
+        }
+        Log.d("mohamed", "getUsersWithId: "+listToReturn.size)
         return listToReturn
     }
 

@@ -46,6 +46,9 @@ class SearchUserDialog : DialogFragment() {
                     lifecycleScope.launch {
                         viewModel.getUsersById(it)
                     }
+                }else{
+                    viewModel.resetList()
+                    adapter.notifyDataSetChanged()
                 }
             }
         }
