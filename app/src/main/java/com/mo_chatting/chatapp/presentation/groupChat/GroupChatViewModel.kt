@@ -165,4 +165,9 @@ class GroupChatViewModel @Inject constructor(
         Constants.id = dataStore.getUserId()!!
     }
 
+    suspend fun registerForUserDirectChats() {
+        val userId = dataStore.getUserId()
+        repository.reSubscribeForAllUserChats(userId!!)
+    }
+
 }

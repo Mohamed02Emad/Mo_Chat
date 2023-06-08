@@ -64,6 +64,7 @@ class GroupChatFragment : MyFragmentParent(), DialogsInterface {
             }
             viewModel.setupUserId()
             viewModel.setConstantUid()
+            viewModel.registerForUserDirectChats()
             setOnClicks()
             setupRecyclerView()
             oservers()

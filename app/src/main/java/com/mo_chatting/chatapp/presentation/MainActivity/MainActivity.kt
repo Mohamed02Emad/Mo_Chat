@@ -57,12 +57,13 @@ class MainActivity : AppCompatActivity() {
         val roomIdFromNotification = intent.getStringExtra("roomId") ?: return
         val room = getRoomByRoomId(roomIdFromNotification) ?: return
         try {
-            navHostFragment.navController.navigate(
-                GroupChatFragmentDirections.actionHomeFragmentToChatFragment(
-                    room
+            if (roomIdFromNotification.length<10) {
+                navHostFragment.navController.navigate(
+                    GroupChatFragmentDirections.actionHomeFragmentToChatFragment(
+                        room
+                    )
                 )
-            )
-
+            }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
             }

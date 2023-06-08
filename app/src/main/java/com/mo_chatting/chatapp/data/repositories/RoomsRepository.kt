@@ -221,24 +221,26 @@ class RoomsRepository(
         db.myDao().deleteAll(roomId)
     }
 
-    suspend fun reSubscribeForAllUserRooms() {
-        val userId = dataStore.getUserId()!!
-        val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
+    suspend fun reSubscribeForAllUserChats(userId: String){
         val newChats = fireBaseRoomsDataSource.setUpChatsListener(userId).first()
+        for (i in newChats.documents) {
+            if (i.toObject<DirectContact>()!!.users.contains(userId)) {
+                joinRoomNotifications(i.toObject<DirectContact>()!!.roomId)
+            }
+        }
+    }
+
+    suspend fun reSubscribeForAllUserRooms() {
+        val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
 
         try {
-            var userId = firebaseAuth.currentUser!!.uid
+            val userId = firebaseAuth.currentUser!!.uid
             for (i in newRooms!!.documents) {
                 if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
                     joinRoomNotifications(i.toObject<Room>()!!.roomId)
                 }
             }
-            userId = dataStore.getUserId()!!
-            for (i in newChats!!.documents) {
-                if (i.toObject<DirectContact>()!!.users.contains(userId)) {
-                    joinRoomNotifications(i.toObject<DirectContact>()!!.roomId)
-                }
-            }
+
         } catch (_: Exception) {
         }
     }

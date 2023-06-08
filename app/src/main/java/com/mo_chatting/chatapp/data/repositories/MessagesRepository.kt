@@ -19,7 +19,6 @@ class MessagesRepository(
     val application: Context
 ) {
 
-    private val usersRef = firebaseStore.collection(Constants.users)
     val db = MessagesDataBase.getInstance(application)
 
     suspend fun insertMessageToDatabase(message: Message) {
@@ -161,9 +160,7 @@ class MessagesRepository(
             map["listOFUsers"] = room.listOFUsers
             map["listOFUsersNames"] = room.listOFUsersNames
         }
-
         return map
     }
-
 
 }
