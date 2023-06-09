@@ -96,6 +96,7 @@
         android:background="?attr/selectableItemBackground"
         android:gravity="center"
         android:orientation="vertical"
+        android:visibility="gone"
         android:padding="3dp">
 
         <ImageView

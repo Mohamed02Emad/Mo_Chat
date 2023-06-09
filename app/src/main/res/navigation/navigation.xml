@@ -23,6 +23,9 @@
             app:destination="@id/settingsFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_homeFragment_to_directChats"
+            app:destination="@id/directChats" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"

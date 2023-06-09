@@ -4,8 +4,10 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -19,6 +21,7 @@ import com.mo_chatting.chatapp.databinding.ActivityMainBinding
 import com.mo_chatting.chatapp.presentation.groupChat.GroupChatFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -32,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var binding: ActivityMainBinding
+    private val viewModel : MainActivityViewModel by viewModels()
 
     private val pushPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -62,6 +66,10 @@ class MainActivity : AppCompatActivity() {
                     GroupChatFragmentDirections.actionHomeFragmentToChatFragment(
                         room
                     )
+                )
+            }else{
+                navHostFragment.navController.navigate(
+                    GroupChatFragmentDirections.actionHomeFragmentToDirectChats()
                 )
             }
         } catch (e: Exception) {
@@ -109,11 +117,17 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         isOnline = false
+        GlobalScope.launch {
+            viewModel.setOnlineState(isOnline)
+        }
     }
 
     override fun onResume() {
         super.onResume()
         isOnline = true
+        GlobalScope.launch {
+            viewModel.setOnlineState(isOnline)
+        }
     }
 
 }
