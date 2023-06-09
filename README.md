@@ -1,4 +1,4 @@
-# Auth , Profile , Notifications , Direct chat and Search for user 
+# Auth , Profile , Notifications , dark and light mode , low image quality mode , Direct chat and Search for user 
 ## this video is x2 speed
 https://github.com/Mohamed02Emad/chatApp/assets/81470639/d9a242f3-0872-4a2f-8e30-0ef7faf58eab
 
