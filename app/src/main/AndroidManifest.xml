@@ -33,6 +33,7 @@
         <activity
             android:name=".AuthActivity"
             android:exported="true" />
+
         <service
             android:name=".services.MyFirebaseMessagingService"
             android:directBootAware="true"

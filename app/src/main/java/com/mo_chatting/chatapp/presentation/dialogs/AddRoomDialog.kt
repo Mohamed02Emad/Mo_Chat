@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.mo_chatting.chatapp.databinding.FragmentAddRoomDialogBinding
-import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.GroupChatFragment
 
-class AddRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
+class AddRoomDialog(val homeFragment: GroupChatFragment) : DialogFragment() {
 
     private lateinit var binding: FragmentAddRoomDialogBinding
 
@@ -35,14 +35,14 @@ class AddRoomDialog(val homeFragment: HomeFragment) : DialogFragment() {
             }
 
             btnJoin.setOnClickListener {
-                val joinRoomDialog=JoinRoomDialog(homeFragment)
-                joinRoomDialog.show(requireActivity().supportFragmentManager,null)
+                val joinRoomDialog = JoinRoomDialog(homeFragment)
+                joinRoomDialog.show(requireActivity().supportFragmentManager, null)
                 this@AddRoomDialog.dismiss()
             }
 
             btnCreateNewRoom.setOnClickListener {
-                val createRoomDialogBinding = CreateRoomDialog(homeFragment,false)
-                createRoomDialogBinding.show(requireActivity().supportFragmentManager,null)
+                val createRoomDialogBinding = CreateRoomDialog(homeFragment, false)
+                createRoomDialogBinding.show(requireActivity().supportFragmentManager, null)
                 this@AddRoomDialog.dismiss()
             }
 

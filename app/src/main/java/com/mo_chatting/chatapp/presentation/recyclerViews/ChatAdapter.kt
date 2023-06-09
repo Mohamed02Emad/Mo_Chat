@@ -1,6 +1,5 @@
 package com.mo_chatting.chatapp.presentation.recyclerViews
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.MessageType
 import com.mo_chatting.chatapp.databinding.MyMessageCardBinding
@@ -17,7 +15,6 @@ import com.mo_chatting.chatapp.databinding.TheirMessageCardBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 class ChatAdapter(
     private val onClickListener: OnChatClickListener,
@@ -191,13 +188,13 @@ class ChatAdapter(
     class OnChatClickListener(
         private val clickListener: (message: Message, position: Int) -> Unit,
         private val longClickListener: (message: Message, position: Int) -> Boolean,
-        private val userNameClickListener: (userId: String, userName: String, isMe : Boolean) -> Unit,
+        private val userNameClickListener: (userId: String, userName: String, isMe: Boolean) -> Unit,
         private val ImageClicked: (messageImage: String?) -> Unit
     ) {
         fun onChatClick(message: Message, position: Int) = clickListener(message, position)
         fun onRoomLongClick(message: Message, position: Int) = longClickListener(message, position)
-        fun onUserNameClicked(userId: String, userName: String , isMe: Boolean) =
-            userNameClickListener(userId, userName , isMe)
+        fun onUserNameClicked(userId: String, userName: String, isMe: Boolean) =
+            userNameClickListener(userId, userName, isMe)
 
         fun onImageClicked(messageImage: String?) = ImageClicked(messageImage)
     }

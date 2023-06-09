@@ -1,12 +1,15 @@
 package com.mo_chatting.chatapp.presentation.chatFragment
 
 
+import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
@@ -24,6 +27,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.appClasses.Constants
@@ -42,6 +46,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ChatFragment : Fragment() {
@@ -83,7 +88,50 @@ class ChatFragment : Fragment() {
     private fun setViews() {
         binding.tvRoomName.text = thisRoom.roomName
         setBackground(thisRoom.roomBackgroundColor)
+        if (thisRoom.isDirectChat) {
+            val img: Uri? = Uri.parse(thisRoom.imgUrl)
+            Glide.with(requireContext())
+                .load(img)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .override(150, 150)
+                .centerCrop()
+                .into(binding.chatImg)
+        } else {
+            setGroupImage()
+        }
 
+    }
+
+    private fun setGroupImage() {
+        val image = when (thisRoom.roomTypeImage) {
+            0 -> {
+                R.drawable.ic_family
+            }
+            1 -> {
+                R.drawable.ic_technology
+            }
+            2 -> {
+                R.drawable.ic_talk
+            }
+            3 -> {
+                R.drawable.ic_study
+            }
+            4 -> {
+                R.drawable.ic_sport
+
+            }
+            5 -> {
+                R.drawable.ic_heart
+            }
+            6 -> {
+                R.drawable.ic_games
+            }
+            else -> {
+                R.drawable.ic_food
+            }
+        }
+        binding.chatImg.setImageResource(image)
     }
 
     private suspend fun setupRecyclerView() {
@@ -162,20 +210,30 @@ class ChatFragment : Fragment() {
 
             pushViewsToTopOfKeyBoard()
 
-            btnRoomInfo.setOnClickListener {
-                showMenu(it!!)
+            if (thisRoom.isDirectChat) {
+                btnRoomInfo.visibility = View.GONE
+            } else {
+                btnRoomInfo.setOnClickListener {
+                    showMenu(it!!)
+                }
             }
 
             clipCard.setOnClickListener {
                 try {
+                    checkCameraPermission()
                     showPopUpWindow(it)
                 } catch (e: Exception) {
                     //showToast(e.message.toString())
                 }
             }
         }
+        val roomType = if (thisRoom.isDirectChat) {
+            Constants.directChatCollection
+        } else {
+            Constants.roomsChatCollection
+        }
 
-        firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${thisRoom.roomId}")
+        firebaseStore.collection("Chats/${roomType}/${thisRoom.roomId}")
             .addSnapshotListener { value, error ->
                 error?.let {
                     return@addSnapshotListener
@@ -408,6 +466,20 @@ class ChatFragment : Fragment() {
     private fun showToast(string: String) {
         CoroutineScope(Dispatchers.Main).launch {
             Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun checkCameraPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (requireActivity().checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED || requireActivity().checkSelfPermission(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                == PackageManager.PERMISSION_DENIED
+            ) {
+                val permission =
+                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                requestPermissions(permission, 112)
+            }
         }
     }
 

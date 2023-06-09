@@ -11,7 +11,9 @@ import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.storage.FirebaseStorage
 import com.mo_chatting.chatapp.appClasses.Constants
 import com.mo_chatting.chatapp.appClasses.Constants.roomsCollection
+import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.fireBaseDataSource.FireBaseRoomsDataSource
+import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.data.source.messagesRoom.MessagesDataBase
@@ -23,6 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.util.*
+import javax.inject.Inject
 
 class RoomsRepository(
     private val firebaseStore: FirebaseFirestore,
@@ -30,9 +33,13 @@ class RoomsRepository(
     private val application: Context,
     private val fireBaseRoomsDataSource: FireBaseRoomsDataSource
 ) {
+    @Inject
+    lateinit var dataStore: DataStoreImpl
+
 
     private val allRoomsRef = firebaseStore.collection(roomsCollection)
     private val db = MessagesDataBase.getInstance(application)
+    private val usersRef = firebaseStore.collection(Constants.users)
 
 
     suspend fun createNewRoom(room: Room) {
@@ -150,7 +157,8 @@ class RoomsRepository(
 
     private suspend fun createChatForRoom(room: Room) {
         try {
-            val msgRef = firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
+            val msgRef =
+                firebaseStore.collection("Chats/${Constants.roomsChatCollection}/${room.roomId}")
 
             msgRef.add(
                 Message(
@@ -209,24 +217,34 @@ class RoomsRepository(
         return map
     }
 
-    private suspend fun deleteCachedMessages(roomId: String) = withContext(Dispatchers.IO){
+    private suspend fun deleteCachedMessages(roomId: String) = withContext(Dispatchers.IO) {
         db.myDao().deleteAll(roomId)
+    }
+
+    suspend fun reSubscribeForAllUserChats(userId: String){
+        val newChats = fireBaseRoomsDataSource.setUpChatsListener(userId).first()
+        for (i in newChats.documents) {
+            if (i.toObject<DirectContact>()!!.users.contains(userId)) {
+                joinRoomNotifications(i.toObject<DirectContact>()!!.roomId)
+            }
+        }
     }
 
     suspend fun reSubscribeForAllUserRooms() {
         val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
+
         try {
             val userId = firebaseAuth.currentUser!!.uid
-            val arrayList = java.util.ArrayList<Room>()
             for (i in newRooms!!.documents) {
                 if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
                     joinRoomNotifications(i.toObject<Room>()!!.roomId)
-                    arrayList.add(i.toObject<Room>()!!)
                 }
             }
+
         } catch (_: Exception) {
         }
     }
+
     suspend fun getRoomById(roomId: String): Room? {
         val newRooms = fireBaseRoomsDataSource.setUpRoomsListener().first()
         try {
@@ -234,7 +252,7 @@ class RoomsRepository(
             val arrayList = java.util.ArrayList<Room>()
             for (i in newRooms!!.documents) {
                 if (i.toObject<Room>()!!.listOFUsers.contains(userId)) {
-                    if (i.toObject<Room>()!!.roomId==roomId){
+                    if (i.toObject<Room>()!!.roomId == roomId) {
                         return i.toObject<Room>()!!
                     }
                 }
@@ -244,7 +262,7 @@ class RoomsRepository(
         return null
     }
 
-    private fun cacheMessages(messages: QuerySnapshot) : Message?{
+    private fun cacheMessages(messages: QuerySnapshot): Message? {
         val arrayList = ArrayList<Message>()
         for (i in messages!!.documents) {
             arrayList.add(i.toObject<Message>()!!)
@@ -293,5 +311,6 @@ class RoomsRepository(
                 }
             }
     }
+
 
 }

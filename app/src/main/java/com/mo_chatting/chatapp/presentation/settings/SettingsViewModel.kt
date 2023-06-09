@@ -14,17 +14,17 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor() : ViewModel() {
     @Inject
-    lateinit var dataStore:DataStoreImpl
+    lateinit var dataStore: DataStoreImpl
 
     private val _imageQualitySwitch = MutableLiveData<Boolean?>(false)
-    val imageQualitySwitch :LiveData<Boolean?> = _imageQualitySwitch
+    val imageQualitySwitch: LiveData<Boolean?> = _imageQualitySwitch
 
     private val _darkModeSwitch = MutableLiveData<Boolean?>(false)
-    val darkModeSwitch :LiveData<Boolean?> = _darkModeSwitch
+    val darkModeSwitch: LiveData<Boolean?> = _darkModeSwitch
 
 
     private val _notification = MutableLiveData<Boolean?>(false)
-    val notification :LiveData<Boolean?> = _notification
+    val notification: LiveData<Boolean?> = _notification
 
     init {
         CoroutineScope(Dispatchers.Main).launch {
@@ -35,24 +35,22 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     }
 
 
-    suspend fun getDarkMode():Boolean = dataStore.getDarkMode()
-    suspend fun setDarkMode(){
+    suspend fun getDarkMode(): Boolean = dataStore.getDarkMode()
+    suspend fun setDarkMode() {
         val newValue = !dataStore.getDarkMode()
         viewModelScope.launch(Dispatchers.Main) {
-            _darkModeSwitch.value= newValue
+            _darkModeSwitch.value = newValue
         }
         dataStore.setDarkMode(newValue)
     }
 
-    suspend fun getLowImageQuality():Boolean = dataStore.getLowImageQuality()
-    suspend fun setLowImageQuality()= dataStore.setLowImageQuality(!dataStore.getLowImageQuality())
+    suspend fun getLowImageQuality(): Boolean = dataStore.getLowImageQuality()
+    suspend fun setLowImageQuality() = dataStore.setLowImageQuality(!dataStore.getLowImageQuality())
 
 
-
-    suspend fun getNotificationEnabled():Boolean = dataStore.getNotificationEnabled()
-    suspend fun setNotificationEnabled()= dataStore.setNotificationEnabled(!dataStore.getNotificationEnabled())
-
-
+    suspend fun getNotificationEnabled(): Boolean = dataStore.getNotificationEnabled()
+    suspend fun setNotificationEnabled() =
+        dataStore.setNotificationEnabled(!dataStore.getNotificationEnabled())
 
 
 }

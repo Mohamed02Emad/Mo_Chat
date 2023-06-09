@@ -1,7 +1,10 @@
 package com.mo_chatting.chatapp.presentation.profile
 
+import android.Manifest
 import android.app.Activity
 import android.content.*
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -30,6 +33,7 @@ import kotlinx.coroutines.*
 class ProfileFragment : MyFragmentParent() {
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,10 +69,14 @@ class ProfileFragment : MyFragmentParent() {
 
         binding.btnSave.apply {
             setOnClickListener {
+                if (!isInternetAvailable(requireContext())) {
+                    showToast("No Internet")
+                    return@setOnClickListener
+                }
                 startAnimation {
                     binding.progressBar.visibility = View.VISIBLE
                     it.isClickable = false
-                    lifecycleScope.launch(Dispatchers.Main){
+                    lifecycleScope.launch(Dispatchers.Main) {
                         delay(400)
                         revertAnimation()
                         it.isClickable = true
@@ -77,13 +85,20 @@ class ProfileFragment : MyFragmentParent() {
                         it.visibility = View.GONE
                     }
                     if (viewModel.userImageChanged && viewModel.uri.value != null) {
-                        viewModel.updateUserImage()
-                    }
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        if (viewModel.getUserName() != binding.etUserName.text.toString()) {
-                            viewModel.updateUserName(binding.etUserName.text.toString())
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            viewModel.updateUserImage()
+                            if (viewModel.getUserName() != binding.etUserName.text.toString()) {
+                                viewModel.updateUserName(binding.etUserName.text.toString())
+                            }
+                        }
+                    }else{
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            if (viewModel.getUserName() != binding.etUserName.text.toString()) {
+                                viewModel.updateUserName(binding.etUserName.text.toString())
+                            }
                         }
                     }
+
 
                     if (!isInternetAvailable(requireContext())) {
                         Toast.makeText(
@@ -97,15 +112,16 @@ class ProfileFragment : MyFragmentParent() {
         }
 
         binding.ivProfileImage.setOnClickListener {
+
             showProfileImageOptions()
         }
 
         binding.etUserName.doAfterTextChanged {
             lifecycleScope.launch {
-                if (it.toString() == viewModel.getUserName() && !viewModel.userImageChanged){
-                    binding.btnSave.visibility=View.GONE
-                }else{
-                    binding.btnSave.visibility=View.VISIBLE
+                if (it.toString() == viewModel.getUserName() && !viewModel.userImageChanged) {
+                    binding.btnSave.visibility = View.GONE
+                } else {
+                    binding.btnSave.visibility = View.VISIBLE
                 }
             }
         }
@@ -125,6 +141,7 @@ class ProfileFragment : MyFragmentParent() {
         }
         val btnChange: LinearLayout = view.findViewById(R.id.change_image)
         btnChange.setOnClickListener {
+            checkCameraPermission()
             editUserImage()
             dialog.dismiss()
         }
@@ -148,7 +165,6 @@ class ProfileFragment : MyFragmentParent() {
         val btnGallery: LinearLayout = view.findViewById(R.id.gallery_choice)
         btnGallery.setOnClickListener {
             startPhotoPicker()
-
             dialog.dismiss()
         }
         dialog.setCancelable(true)
@@ -157,7 +173,7 @@ class ProfileFragment : MyFragmentParent() {
     }
 
     private fun showUserImage() {
-        lifecycleScope.launch(Dispatchers.Main){
+        lifecycleScope.launch(Dispatchers.Main) {
             openUserImage()
         }
     }
@@ -166,7 +182,6 @@ class ProfileFragment : MyFragmentParent() {
         val name = viewModel.getUserName()
         if (name != "null" || name.isBlank()) {
             withContext(Dispatchers.Main) {
-
                 binding.etUserName.setText(name.trimStart().trimEnd())
             }
         } else {
@@ -180,13 +195,13 @@ class ProfileFragment : MyFragmentParent() {
                 Glide.with(requireContext())
                     .load(img)
                     .override(500, 400)
+                    .placeholder(R.drawable.ic_profile)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(binding.ivProfileImage)
             } catch (e: Exception) {
                 showToast(e.message.toString())
             }
         }
-
         binding.etUserId.setText(viewModel.getUserId())
     }
 
@@ -215,7 +230,7 @@ class ProfileFragment : MyFragmentParent() {
                     CoroutineScope(Dispatchers.Main).launch {
                         binding.ivProfileImage.setImageURI(viewModel.uri.value)
                         viewModel.userImageChanged = true
-                        binding.btnSave.visibility=View.VISIBLE
+                        binding.btnSave.visibility = View.VISIBLE
                     }
                 }
             }
@@ -232,7 +247,7 @@ class ProfileFragment : MyFragmentParent() {
                     viewModel.uri.value = uri
                     binding.ivProfileImage.setImageURI(uri)
                     viewModel.userImageChanged = true
-                    binding.btnSave.visibility=View.VISIBLE
+                    binding.btnSave.visibility = View.VISIBLE
 
                 }
             }
@@ -243,7 +258,7 @@ class ProfileFragment : MyFragmentParent() {
         viewModel.userImageChanged = false
     }
 
-    private suspend fun openUserImage(){
+    private suspend fun openUserImage() {
         val img = viewModel.getUserImageFromDataStore()
         val uri = if (img != null) {
             img
@@ -251,19 +266,37 @@ class ProfileFragment : MyFragmentParent() {
             viewModel.setUserImageAtDataStore()
             viewModel.getUserImageFromDataStore()
         }
-        val userImageDialog = UserImageDialog(viewModel.firebaseAuth.uid!!,"firebase", imgFromProfile = uri)
-        userImageDialog.show(requireActivity().supportFragmentManager, null )
+        val userImageDialog =
+            UserImageDialog(viewModel.firebaseAuth.uid!!, "firebase", imgFromProfile = uri)
+        userImageDialog.show(requireActivity().supportFragmentManager, null)
     }
 
     private fun copyIdToClipBoard(userId: String) {
         // Get a reference to the system clipboard
-        val clipboardManager = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboardManager =
+            requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         // Create a new ClipData object with the text to be copied
         val clipData = ClipData.newPlainText("User Id", userId)
 
         // Set the ClipData object as the primary clip on the clipboard
         clipboardManager.setPrimaryClip(clipData)
+
+        showToast("Copied")
+    }
+
+    private fun checkCameraPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (requireActivity().checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED || requireActivity().checkSelfPermission(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                == PackageManager.PERMISSION_DENIED
+            ) {
+                val permission =
+                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                requestPermissions(permission, 112)
+            }
+        }
     }
 
 }

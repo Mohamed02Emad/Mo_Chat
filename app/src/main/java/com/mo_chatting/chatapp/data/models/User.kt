@@ -9,5 +9,6 @@ data class User(
     var token: String = "",
     var userAbout: String = " hi there ^_- ",
     var imageUrl: String = "null",
+    var isOnline: Boolean = false,
     var friends: ArrayList<String> = ArrayList()
 )

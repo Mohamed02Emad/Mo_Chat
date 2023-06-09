@@ -49,7 +49,8 @@ class RoomUsersDialog(val thisRoom: Room) : DialogFragment() {
     private suspend fun setupRecyclerView() {
         adapter = UsersAdapter(generateList())
         binding.rvUsers.adapter = adapter
-        binding.rvUsers.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL,false)
+        binding.rvUsers.layoutManager =
+            LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     private suspend fun generateList(): ArrayList<Pair<Uri?, String>> {

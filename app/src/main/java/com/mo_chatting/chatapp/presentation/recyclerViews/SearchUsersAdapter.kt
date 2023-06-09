@@ -2,11 +2,9 @@ package com.mo_chatting.chatapp.presentation.recyclerViews
 
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.User
 import com.mo_chatting.chatapp.databinding.SearchUserCardBinding
@@ -41,7 +39,7 @@ class SearchUsersAdapter(
     }
 
     private fun setUserImage(imageUrl: String, holder: HomeViewHolder) {
-        val img : Uri? = Uri.parse(imageUrl)
+        val img: Uri? = Uri.parse(imageUrl)
         Glide.with(holder.binding.ivUserImage)
             .load(img)
             .placeholder(R.drawable.ic_profile)
@@ -59,13 +57,13 @@ class SearchUsersAdapter(
         holder.binding.apply {
             btnAdd.apply {
                 setOnClickListener {
-                    val btnText =holder.binding.btnAdd.text.toString()
+                    val btnText = holder.binding.btnAdd.text.toString()
                     val stringAdd = resources.getString(R.string.add)
                     val stringUndo = resources.getString(R.string.undo)
-                    onClickListener.onAddClick(currentUser, position,btnText)
-                    if ( btnText == stringAdd){
+                    onClickListener.onAddClick(currentUser, position, btnText)
+                    if (btnText == stringAdd) {
                         holder.binding.btnAdd.text = stringUndo
-                    }else{
+                    } else {
                         holder.binding.btnAdd.text = stringAdd
                     }
                 }
@@ -83,10 +81,11 @@ class SearchUsersAdapter(
 
 
     class OnUserClickListener(
-        private val clickListener: (user: User, position: Int, btnText:String) -> Unit
+        private val clickListener: (user: User, position: Int, btnText: String) -> Unit
 
     ) {
-        fun onAddClick(user: User, position: Int,btnText:String) = clickListener(user, position,btnText)
+        fun onAddClick(user: User, position: Int, btnText: String) =
+            clickListener(user, position, btnText)
     }
 }
 

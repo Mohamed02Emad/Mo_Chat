@@ -4,7 +4,6 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +13,6 @@ import androidx.paging.cachedIn
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
-import com.mo_chatting.chatapp.appClasses.getCurrentDate
 import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.Message
 import com.mo_chatting.chatapp.data.models.MessageType
@@ -27,7 +25,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -165,7 +162,7 @@ class ChatFragmentViewModel @Inject constructor(
             message.messageid = getMessageId()
             repository.addMesssageToChat(room, message)
         } catch (e: Exception) {
-           //  Log.d("mohamed", "uploadImage: " + e.message.toString())
+            //  Log.d("mohamed", "uploadImage: " + e.message.toString())
         }
     }
 
@@ -176,8 +173,8 @@ class ChatFragmentViewModel @Inject constructor(
     }
 
     private fun getMessageId(): Long {
-      val lastMessageId = repository.getLastMessageId(thisRoom)
-      return (lastMessageId + 1)
+        val lastMessageId = repository.getLastMessageId(thisRoom)
+        return (lastMessageId + 1)
     }
 
     fun getDateForAllCountries(): String {
@@ -240,7 +237,7 @@ class ChatFragmentViewModel @Inject constructor(
     }
 
     suspend fun getCurrentUserImage(): String {
-          return dataStore.getUserImage()
+        return dataStore.getUserImage()
     }
 
 }

@@ -14,17 +14,21 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mo_chatting.chatapp.R
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentCreateRoomDialogBinding
-import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.GroupChatFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val room:Room? = null) : DialogFragment() {
+class CreateRoomDialog(
+    val homeFragment: GroupChatFragment,
+    val isEdit: Boolean,
+    val room: Room? = null
+) : DialogFragment() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
-    private var roomType=0
+    private var roomType = 0
 
     lateinit var binding: FragmentCreateRoomDialogBinding
     private var listener: DialogsInterface? = null
@@ -45,16 +49,16 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
     }
 
     private fun setViews() {
-        if (isEdit){
-            roomType=room!!.roomTypeImage
+        if (isEdit) {
+            roomType = room!!.roomTypeImage
             setRoomType(roomType)
-            binding.btnCreateNewRoom.text="Save"
+            binding.btnCreateNewRoom.text = "Save"
             binding.etRoomName.setText(room.roomName)
-            if (room.hasPassword){
-                binding.checkboxPassword.isChecked=true
-            }else{
-                binding.checkboxPassword.isChecked=false
-                binding.etPassword.visibility=View.GONE
+            if (room.hasPassword) {
+                binding.checkboxPassword.isChecked = true
+            } else {
+                binding.checkboxPassword.isChecked = false
+                binding.etPassword.visibility = View.GONE
             }
         }
 //        else{
@@ -71,23 +75,23 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
             btnCreateNewRoom.setOnClickListener {
                 if (binding.etRoomName.text.isNotEmpty()) {
 
-                    if (binding.checkboxPassword.isChecked && etPassword.text.isEmpty()){
-                        Toast.makeText(requireContext(),"Enter Password",Toast.LENGTH_LONG).show()
+                    if (binding.checkboxPassword.isChecked && etPassword.text.isEmpty()) {
+                        Toast.makeText(requireContext(), "Enter Password", Toast.LENGTH_LONG).show()
                         return@setOnClickListener
                     }
 
-                    if (isEdit){
+                    if (isEdit) {
                         room!!.apply {
-                            roomName=binding.etRoomName.text.toString()
-                            hasPassword=binding.checkboxPassword.isChecked
+                            roomName = binding.etRoomName.text.toString()
+                            hasPassword = binding.checkboxPassword.isChecked
                             password = binding.etPassword.text.toString()
                             roomTypeImage = roomType
                             roomOwnerId = firebaseAuth.currentUser!!.uid
                         }
                         listener?.onRoomEditPassed(
-                           room
+                            room
                         )
-                    }else {
+                    } else {
                         listener?.onDataPassedCreateRoom(
                             Room(
                                 roomName = binding.etRoomName.text.toString(),
@@ -100,17 +104,17 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
                     }
 
                     this@CreateRoomDialog.dismiss()
-                }else{
-                    Toast.makeText(requireContext(),"Enter Room name",Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(requireContext(), "Enter Room name", Toast.LENGTH_LONG).show()
                 }
             }
 
             checkboxPassword.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (!isChecked){
+                if (!isChecked) {
                     binding.etPassword.setText("")
-                    binding.etPassword.isVisible=false
-                }else{
-                    binding.etPassword.isVisible=true
+                    binding.etPassword.isVisible = false
+                } else {
+                    binding.etPassword.isVisible = true
                 }
 
             }
@@ -124,7 +128,7 @@ class CreateRoomDialog(val homeFragment: HomeFragment,val isEdit :Boolean, val r
 
     private fun changeRoomType() {
         roomType++
-        if (roomType>7) roomType=0
+        if (roomType > 7) roomType = 0
         setRoomType(roomType)
     }
 

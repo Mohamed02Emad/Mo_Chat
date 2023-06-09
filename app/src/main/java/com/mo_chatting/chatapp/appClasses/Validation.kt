@@ -1,11 +1,10 @@
 package com.mo_chatting.chatapp.appClasses
 
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 
 fun isValidEmail(email: CharSequence): ValidationResault {
-    if (email.isBlank()) return ValidationResault(false,"email field is empty")
+    if (email.isBlank()) return ValidationResault(false, "email field is empty")
     var isValid = true
     var message = "is valid"
     val expression = "^[\\w.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$"
@@ -15,7 +14,7 @@ fun isValidEmail(email: CharSequence): ValidationResault {
         isValid = false
         message = "invalid email pattern"
     }
-    return ValidationResault(isValid, message = message )
+    return ValidationResault(isValid, message = message)
 }
 
 fun validatePassword(password: String): ValidationResault {
@@ -36,11 +35,11 @@ fun validatePassword(password: String): ValidationResault {
     return ValidationResault(true, "is valid")
 }
 
-fun validateUserName(userName:String):ValidationResault{
-    if (userName.isBlank())return ValidationResault(false,"name is empty")
-    if (userName.length==1)return ValidationResault(false,"name is too short")
-    if (userName.length>30)return ValidationResault(false,"name is too long")
-    return ValidationResault(true,"is valid")
+fun validateUserName(userName: String): ValidationResault {
+    if (userName.isBlank()) return ValidationResault(false, "name is empty")
+    if (userName.length == 1) return ValidationResault(false, "name is too short")
+    if (userName.length > 30) return ValidationResault(false, "name is too long")
+    return ValidationResault(true, "is valid")
 }
 
 class ValidationResault(val isValid: Boolean, val message: String)

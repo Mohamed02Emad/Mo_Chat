@@ -12,7 +12,9 @@ import com.mo_chatting.chatapp.data.dataStore.DataStoreImpl
 import com.mo_chatting.chatapp.data.models.DirectContact
 import com.mo_chatting.chatapp.data.repositories.DirectChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,24 +43,16 @@ class DirectChatViewModel @Inject constructor(
     }
 
     fun addChat(token: String) {
-        repository.addChat(token)
+        // repository.addChat(token)
     }
 
     suspend fun addNewChatsFromFireBaseToChatList(newChats: QuerySnapshot) {
         try {
-            val userId = dataStore.getUserId()!!
-            val arrayList = java.util.ArrayList<DirectContact>()
-            val userFriends = repository.getFriendList(userId)
+            val arrayList = ArrayList<DirectContact>()
             for (i in newChats!!.documents) {
                 val chat = i.toObject<DirectContact>()!!
-                val users = ArrayList<String>()
-                users.addAll(chat.users)
-                users.remove(userId)
-                val otherUser = users.first()
-                if (chat.users.contains(userId) && userFriends.contains(otherUser)
-                ) {
-                    arrayList.add(chat)
-                }
+                repository.joinChatNotifications(chat.roomId)
+                arrayList.add(chat)
             }
             _chats.postValue(arrayList)
         } catch (_: Exception) {

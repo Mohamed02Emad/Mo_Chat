@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mo_chatting.chatapp.presentation.MainActivity.MainActivity
 
-open class MyFragmentParent: Fragment()  {
+open class MyFragmentParent : Fragment() {
     fun showToast(string: String) {
         Toast.makeText(requireContext(), string, Toast.LENGTH_LONG).show()
     }

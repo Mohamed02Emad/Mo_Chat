@@ -11,9 +11,9 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.mo_chatting.chatapp.data.models.Room
 import com.mo_chatting.chatapp.databinding.FragmentEnterPasswordDialogBinding
-import com.mo_chatting.chatapp.presentation.groupChat.HomeFragment
+import com.mo_chatting.chatapp.presentation.groupChat.GroupChatFragment
 
-class EnterPasswordDialog(val homeFragment: HomeFragment,val room: Room) : DialogFragment() {
+class EnterPasswordDialog(val homeFragment: GroupChatFragment, val room: Room) : DialogFragment() {
 
     private lateinit var binding: FragmentEnterPasswordDialogBinding
     private var listener: DialogsInterface? = null
@@ -40,16 +40,16 @@ class EnterPasswordDialog(val homeFragment: HomeFragment,val room: Room) : Dialo
             }
 
             btnSave.setOnClickListener {
-              if (binding.etPassword.text.isNotEmpty()){
-                  if (binding.etPassword.text.toString() == room.password){
-                      listener!!.onPasswordReceive(room = room)
-                      this@EnterPasswordDialog.dismiss()
-                  }else{
-                      Toast.makeText(requireContext(),"WrongPassword",Toast.LENGTH_LONG).show()
-                  }
-              }else{
-                  Toast.makeText(requireContext(),"Empty password",Toast.LENGTH_LONG).show()
-              }
+                if (binding.etPassword.text.isNotEmpty()) {
+                    if (binding.etPassword.text.toString() == room.password) {
+                        listener!!.onPasswordReceive(room = room)
+                        this@EnterPasswordDialog.dismiss()
+                    } else {
+                        Toast.makeText(requireContext(), "WrongPassword", Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Empty password", Toast.LENGTH_LONG).show()
+                }
             }
 
 
