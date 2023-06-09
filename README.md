@@ -1,4 +1,7 @@
-# chatApp
-## this video is 2.5x speed 
-## the app is not ready yet
-https://user-images.githubusercontent.com/81470639/235365105-2ae080c6-c22b-4195-97bf-35f252dd781d.mp4
+# Auth , Profile , Notifications , Direct chat and Search for user 
+## this video is x2 speed
+https://github.com/Mohamed02Emad/chatApp/assets/81470639/d9a242f3-0872-4a2f-8e30-0ef7faf58eab
+
+# Pagination , Create Group chat and search for a Gropup
+## this video is 2x speed
+https://github.com/Mohamed02Emad/chatApp/assets/81470639/a88ffb54-59af-435d-9032-aa00cd0e55d8
